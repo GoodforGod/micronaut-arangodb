@@ -50,6 +50,7 @@ dependencies {
     compileOnly 'io.micronaut:micronaut-inject-java'
 
     api 'com.arangodb:arangodb-java-driver:6.6.0'
+    implementation 'io.micronaut:micronaut-runtime'
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'io.micronaut.test:micronaut-test-junit5'

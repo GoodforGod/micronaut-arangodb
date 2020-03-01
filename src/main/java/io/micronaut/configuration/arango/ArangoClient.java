@@ -3,13 +3,15 @@ package io.micronaut.configuration.arango;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 
+import java.io.Closeable;
+
 /**
  * Description in progress
  *
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-public class ArangoClient {
+public class ArangoClient implements Closeable {
 
     private final String database;
     private final ArangoDBAsync arangodb;
@@ -41,7 +43,8 @@ public class ArangoClient {
         return arangodb;
     }
 
-    public void shutdown() {
+    @Override
+    public void close() {
         if (arangodb != null)
             arangodb.shutdown();
     }

@@ -24,7 +24,6 @@ public class ArangoConfiguration {
 
     private String host = DEFAULT_HOST;
     private int port = DEFAULT_PORT;
-
     private String database = DEFAULT_DATABASE;
 
     private boolean createDatabaseIfNotExist = true;
