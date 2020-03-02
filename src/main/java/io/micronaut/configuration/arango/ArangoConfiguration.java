@@ -10,7 +10,7 @@ import static com.arangodb.internal.ArangoDefaults.DEFAULT_PORT;
 import static io.micronaut.configuration.arango.ArangoSettings.DEFAULT_DATABASE;
 
 /**
- * Description in progress
+ * ArangoDB configuration class.
  *
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
@@ -47,6 +47,9 @@ public class ArangoConfiguration {
         return host;
     }
 
+    /**
+     * @param host for arango database to connect
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -55,6 +58,9 @@ public class ArangoConfiguration {
         return port;
     }
 
+    /**
+     * @param port for arango database to connect
+     */
     public void setPort(int port) {
         this.port = port;
     }

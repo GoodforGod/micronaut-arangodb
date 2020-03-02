@@ -18,12 +18,12 @@ import static io.micronaut.health.HealthStatus.DOWN;
 import static io.micronaut.health.HealthStatus.UP;
 
 /**
- * Description in progress
+ * A {@link HealthIndicator} for ArangoDB.
  *
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Requires(beans = ArangoClient.class)
+@Requires(beans = ArangoClient.class, classes = HealthIndicator.class)
 @Singleton
 public class ArangoHealthIndicator implements HealthIndicator {
 

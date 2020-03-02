@@ -6,14 +6,23 @@ import com.arangodb.async.ArangoDatabaseAsync;
 import java.io.Closeable;
 
 /**
- * Description in progress
+ * ArangoDB accessor {@link ArangoDBAsync} and database name as configured for
+ * application.
  *
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
 public class ArangoClient implements Closeable {
 
+    /**
+     * Configured database name for application
+     * {@link ArangoConfiguration#getDatabase()}.
+     */
     private final String database;
+
+    /**
+     * ArangoDB accessor {@link ArangoDBAsync}.
+     */
     private final ArangoDBAsync arangodb;
 
     public ArangoClient(String database, ArangoDBAsync db) {
@@ -26,18 +35,14 @@ public class ArangoClient implements Closeable {
     }
 
     /**
-     * Connection to specified arango database
-     *
-     * @return arango db connection
+     * @return Accessor to specified ArangoDB database.
      */
     public ArangoDatabaseAsync db() {
         return arangodb.db(database);
     }
 
     /**
-     * Database as a arango client
-     *
-     * @return database
+     * @return Configured ArangoDB accessor {@link ArangoDBAsync}.
      */
     public ArangoDBAsync accessor() {
         return arangodb;

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Description in progress
+ * Default factory for creating ArangoDB {@link ArangoDBAsync}.
  *
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
@@ -23,6 +23,12 @@ public class ArangoClientFactory {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    /**
+     * Factory method to return a client.
+     * 
+     * @param configuration configuration pulled in
+     * @return {@link ArangoClient}
+     */
     @Refreshable(ArangoSettings.PREFIX)
     @Bean(preDestroy = "shutdown")
     @Primary
@@ -34,6 +40,7 @@ public class ArangoClientFactory {
         final ArangoClient client = new ArangoClient(configuration.getDatabase(), accessor);
 
         final boolean isDatabaseNotSystem = !ArangoSettings.DEFAULT_DATABASE.equals(configuration.getDatabase());
+
         if (configuration.isCreateDatabaseIfNotExist() && isDatabaseNotSystem) {
             client.accessor().db(configuration.getDatabase()).exists()
                     .thenCompose(isExist -> {

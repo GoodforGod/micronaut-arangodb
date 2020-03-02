@@ -1,7 +1,7 @@
 package io.micronaut.configuration.arango;
 
 /**
- * Description in progress
+ * Common constants to for ArangoDB settings.
  *
  * @author Anton Kurako (GoodforGod)
  * @since 1.3.2020
