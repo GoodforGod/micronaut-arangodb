@@ -39,7 +39,7 @@ public class ArangoClient implements Closeable {
      *
      * @return database
      */
-    public ArangoDBAsync getArangoDB() {
+    public ArangoDBAsync accessor() {
         return arangodb;
     }
 

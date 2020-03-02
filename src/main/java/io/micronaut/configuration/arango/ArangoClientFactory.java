@@ -9,6 +9,8 @@ import io.micronaut.runtime.context.scope.Refreshable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  * Description in progress
  *
@@ -25,20 +27,29 @@ public class ArangoClientFactory {
     @Bean(preDestroy = "shutdown")
     @Primary
     public ArangoClient getArangoClient(ArangoConfiguration configuration) {
-        final ArangoDBAsync async = configuration.getConfigBuilder()
+        final ArangoDBAsync accessor = configuration.getConfigBuilder()
                 .host(configuration.getHost(), configuration.getPort())
                 .build();
 
+        final ArangoClient client = new ArangoClient(configuration.getDatabase(), accessor);
+
         final boolean isDatabaseNotSystem = !ArangoSettings.DEFAULT_DATABASE.equals(configuration.getDatabase());
         if (configuration.isCreateDatabaseIfNotExist() && isDatabaseNotSystem) {
-            logger.debug("Creating arango database '{}' as specified for arango configuration, " +
-                    "you can turn off initial database creating by setting 'createDatabaseIfNotExist' property to 'false'",
-                    configuration.getDatabase());
-
-            async.createDatabase(configuration.getDatabase()).exceptionally(e -> {
-                logger.error("Failed to setup database with '{}' error message", e.getMessage());
-                return false;
-            });
+            client.accessor().db(configuration.getDatabase()).exists()
+                    .thenCompose(isExist -> {
+                        if (isExist) {
+                            logger.debug("Database '{}' is already initialized", configuration.getDatabase());
+                            return CompletableFuture.completedFuture(true);
+                        } else {
+                            logger.debug("Creating arango database '{}' as specified for Arango configuration, " +
+                                    "you can turn off initial database creating by setting 'createDatabaseIfNotExist' property to 'false'",
+                                    configuration.getDatabase());
+                            return client.accessor().createDatabase(configuration.getDatabase());
+                        }
+                    }).exceptionally(e -> {
+                        logger.error("Failed to setup database with '{}' error message", e.getMessage());
+                        return false;
+                    });
         } else if (isDatabaseNotSystem) {
             logger.debug("Database creation is set to 'false', skipping database creation...");
         } else {
@@ -46,6 +57,6 @@ public class ArangoClientFactory {
                     ArangoSettings.DEFAULT_DATABASE);
         }
 
-        return new ArangoClient(configuration.getDatabase(), async);
+        return client;
     }
 }
