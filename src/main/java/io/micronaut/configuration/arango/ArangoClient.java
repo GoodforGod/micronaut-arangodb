@@ -3,8 +3,6 @@ package io.micronaut.configuration.arango;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 
-import java.io.Closeable;
-
 /**
  * ArangoDB accessor {@link ArangoDBAsync} and database name as configured for
  * application.
@@ -12,7 +10,7 @@ import java.io.Closeable;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-public class ArangoClient implements Closeable {
+public class ArangoClient implements AutoCloseable {
 
     /**
      * Configured database name for application

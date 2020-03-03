@@ -25,7 +25,7 @@ public class ArangoClientFactory {
 
     /**
      * Factory method to return a client.
-     * 
+     *
      * @param configuration configuration pulled in
      * @return {@link ArangoClient}
      */
@@ -39,31 +39,41 @@ public class ArangoClientFactory {
 
         final ArangoClient client = new ArangoClient(configuration.getDatabase(), accessor);
 
-        final boolean isDatabaseNotSystem = !ArangoSettings.DEFAULT_DATABASE.equals(configuration.getDatabase());
+        createDatabaseIfConfigured(configuration, client);
 
-        if (configuration.isCreateDatabaseIfNotExist() && isDatabaseNotSystem) {
-            client.accessor().db(configuration.getDatabase()).exists()
-                    .thenCompose(isExist -> {
-                        if (isExist) {
-                            logger.debug("Database '{}' is already initialized", configuration.getDatabase());
-                            return CompletableFuture.completedFuture(true);
-                        } else {
-                            logger.debug("Creating arango database '{}' as specified for Arango configuration, " +
-                                    "you can turn off initial database creating by setting 'createDatabaseIfNotExist' property to 'false'",
-                                    configuration.getDatabase());
-                            return client.accessor().createDatabase(configuration.getDatabase());
-                        }
-                    }).exceptionally(e -> {
-                        logger.error("Failed to setup database with '{}' error message", e.getMessage());
-                        return false;
-                    });
-        } else if (isDatabaseNotSystem) {
+        return client;
+    }
+
+    /**
+     * Creates database {@link ArangoConfiguration#isCreateDatabaseIfNotExist()} if
+     * configured in {@link ArangoConfiguration}
+     *
+     * @param configuration for ArngoDB client.
+     * @param client        ArangoDB.
+     */
+    private void createDatabaseIfConfigured(ArangoConfiguration configuration, ArangoClient client) {
+        final boolean isDatabaseSystem = !ArangoSettings.DEFAULT_DATABASE.equals(configuration.getDatabase());
+
+        if (configuration.isCreateDatabaseIfNotExist() && !isDatabaseSystem) {
+            client.accessor().db(configuration.getDatabase()).exists().thenCompose(isExist -> {
+                if (isExist) {
+                    logger.debug("Database '{}' is already initialized", configuration.getDatabase());
+                    return CompletableFuture.completedFuture(true);
+                } else {
+                    logger.debug("Creating arango database '{}' as specified for Arango configuration, " +
+                            "you can turn off initial database creating by setting 'createDatabaseIfNotExist' property to 'false'",
+                            configuration.getDatabase());
+                    return client.accessor().createDatabase(configuration.getDatabase());
+                }
+            }).exceptionally(e -> {
+                logger.error("Failed to setup database with '{}' error message", e.getMessage());
+                return false;
+            });
+        } else if (isDatabaseSystem) {
             logger.debug("Database creation is set to 'false', skipping database creation...");
         } else {
             logger.debug("Database creation is set to 'true', for '{}' database, skipping database creation...",
                     ArangoSettings.DEFAULT_DATABASE);
         }
-
-        return client;
     }
 }

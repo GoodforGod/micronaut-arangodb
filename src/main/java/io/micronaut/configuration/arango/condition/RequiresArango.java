@@ -12,10 +12,10 @@ import java.lang.annotation.*;
  * @author Anton Kurako (GoodforGod)
  * @since 2.3.2020
  */
+@Requires(classes = ArangoClient.class)
+@Requires(property = ArangoSettings.PREFIX)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.PACKAGE, ElementType.TYPE })
-@Requires(classes = ArangoClient.class)
-@Requires(property = ArangoSettings.PREFIX)
 public @interface RequiresArango {
 }
