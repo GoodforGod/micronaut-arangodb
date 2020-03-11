@@ -48,7 +48,7 @@ public class ArangoHealthIndicator implements HealthIndicator {
     }
 
     private Map<String, Object> buildDetails(ArangoDBVersion version) {
-        final Map<String, Object> details = new HashMap<>();
+        final Map<String, Object> details = new HashMap<>(3);
         details.put("database", client.getDatabase());
         details.put("version", version.getVersion());
         details.put("server", version.getServer());

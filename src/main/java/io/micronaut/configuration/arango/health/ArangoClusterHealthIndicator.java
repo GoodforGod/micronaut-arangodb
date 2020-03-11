@@ -2,6 +2,7 @@ package io.micronaut.configuration.arango.health;
 
 import com.arangodb.velocystream.Response;
 import io.micronaut.configuration.arango.ArangoClient;
+import io.micronaut.configuration.arango.ArangoSettings;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
@@ -41,7 +42,7 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
 
     @Override
     public Publisher<HealthResult> getResult() {
-        return Flowable.fromFuture(client.db().route("/_admin/cluster/health").get())
+        return Flowable.fromFuture(client.accessor().db(ArangoSettings.DEFAULT_DATABASE).route("/_admin/cluster/health").get())
                 .timeout(10, TimeUnit.SECONDS)
                 .retry(3)
                 .map(this::buildReport)

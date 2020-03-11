@@ -7,11 +7,6 @@ plugins {
     id 'com.diffplug.gradle.spotless' version '3.27.1'
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 group = groupId
 version = artifactVersion
 
@@ -53,6 +48,8 @@ dependencies {
 
     implementation 'io.micronaut:micronaut-runtime'
     implementation 'io.micronaut:micronaut-management'
+
+    testImplementation 'com.github.goodforgod:arangodb-testcontainer:1.0.0'
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'io.micronaut.test:micronaut-test-junit5'
