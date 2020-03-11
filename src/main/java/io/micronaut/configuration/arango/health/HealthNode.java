@@ -3,11 +3,10 @@ package io.micronaut.configuration.arango.health;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Arango node health info
+ * A HealthNode DTO for ArangoDB {@link HealthCluster} health check information.
  *
- * @author Anton Kurako
- * @see HealthCluster#getNodes()
- * @since 07.02.2020
+ * @author Anton Kurako (GoodforGod)
+ * @since 09.3.2020
  */
 public class HealthNode {
 

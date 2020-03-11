@@ -15,13 +15,13 @@ import javax.inject.Inject;
  * @author Anton Kurako (GoodforGod)
  * @since 28.2.2020
  */
-@Property(name = "arango.database", value = "custom")
+@Property(name = "arangodb.database", value = "custom")
 @MicronautTest
 @Testcontainers
-class ArangoClientTests extends ArangoRunner{
+class ArangoClientTests extends ArangoRunner {
 
     @Container
-    private static final ArangoContainer container = new ArangoContainer().setPort(8528);
+    private static final ArangoContainer container = new ArangoContainer().withoutAuthentication();
 
     @Inject
     private ArangoClient client;

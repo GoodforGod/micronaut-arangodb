@@ -19,13 +19,13 @@ import javax.inject.Inject;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Property(name = "arango.port", value = "8529")
+@Property(name = "arangodb.port", value = "8529")
 @MicronautTest
 @Testcontainers
 public class ArangoHealthDownTests extends ArangoRunner {
 
     @Container
-    private static final ArangoContainer container = new ArangoContainer().setPort(8528);
+    private static final ArangoContainer container = new ArangoContainer().withoutAuthentication().setPort(8528);
 
     @Inject
     private ArangoHealthIndicator healthIndicator;

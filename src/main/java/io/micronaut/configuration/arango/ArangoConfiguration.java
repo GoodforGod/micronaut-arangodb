@@ -16,17 +16,18 @@ import static io.micronaut.configuration.arango.ArangoSettings.DEFAULT_DATABASE;
  * @since 29.2.2020
  */
 @Requires(property = ArangoSettings.PREFIX)
+@Requires(classes = ArangoDBAsync.Builder.class)
 @ConfigurationProperties(ArangoSettings.PREFIX)
 public class ArangoConfiguration {
 
     @ConfigurationBuilder(prefixes = "", excludes = { "host" })
-    private ArangoDBAsync.Builder config = new ArangoDBAsync.Builder();
+    protected ArangoDBAsync.Builder config = new ArangoDBAsync.Builder();
 
     private String host = DEFAULT_HOST;
     private int port = DEFAULT_PORT;
     private String database = DEFAULT_DATABASE;
 
-    private boolean createDatabaseIfNotExist = true;
+    private boolean createDatabaseIfNotExist = false;
 
     /**
      * @return whenever to create database on client creation
@@ -89,7 +90,7 @@ public class ArangoConfiguration {
     /**
      * @return client configuration
      */
-    public ArangoDBAsync getConfig() {
+    public ArangoDBAsync getAccessor() {
         return config.build();
     }
 }

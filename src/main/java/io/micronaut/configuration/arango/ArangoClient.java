@@ -23,9 +23,9 @@ public class ArangoClient implements AutoCloseable {
      */
     private final ArangoDBAsync arangodb;
 
-    public ArangoClient(String database, ArangoDBAsync db) {
-        this.database = database;
-        this.arangodb = db;
+    public ArangoClient(ArangoConfiguration configuration) {
+        this.database = configuration.getDatabase();
+        this.arangodb = configuration.getAccessor();
     }
 
     public String getDatabase() {

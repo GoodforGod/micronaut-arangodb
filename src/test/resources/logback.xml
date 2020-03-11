@@ -13,5 +13,5 @@
         <appender-ref ref="ASYNC"/>
     </root>
 
-    <logger name="io.micronaut.context" level="TRACE"/>
+    <logger name="io.micronaut.context" level="INFO"/>
 </configuration>

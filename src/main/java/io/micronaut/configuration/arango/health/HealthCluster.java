@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
 
 /**
- * Arango cluster health
+ * A ArangoDB cluster health DTO object.
  *
- * @author Anton Kurako
- * @since 07.02.2020
+ * @author Anton Kurako (GoodforGod)
+ * @since 09.3.2020
  */
 public class HealthCluster {
 
