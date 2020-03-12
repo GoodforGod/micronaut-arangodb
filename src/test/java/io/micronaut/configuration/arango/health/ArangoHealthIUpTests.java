@@ -29,6 +29,9 @@ public class ArangoHealthIUpTests extends ArangoRunner {
     @Inject
     private ArangoHealthIndicator healthIndicator;
 
+    @Inject
+    private ArangoClusterHealthIndicator clusterHealthIndicator;
+
     @Test
     void healthUpWhenDatabaseUp() {
         final HealthResult result = Single.fromPublisher(healthIndicator.getResult()).blockingGet();
@@ -36,6 +39,17 @@ public class ArangoHealthIUpTests extends ArangoRunner {
 
         assertEquals(HealthStatus.UP, result.getStatus());
         assertEquals("arangodb", result.getName());
+        assertTrue(result.getDetails() instanceof Map);
+        assertFalse(((Map) result.getDetails()).isEmpty());
+    }
+
+    @Test
+    void healthClusterDownWhenDatabaseIsSingle() {
+        final HealthResult result = Single.fromPublisher(clusterHealthIndicator.getResult()).blockingGet();
+        assertNotNull(result);
+
+        assertEquals(HealthStatus.UNKNOWN, result.getStatus());
+        assertEquals("arangodb (cluster)", result.getName());
         assertTrue(result.getDetails() instanceof Map);
         assertFalse(((Map) result.getDetails()).isEmpty());
     }
