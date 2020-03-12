@@ -10,9 +10,9 @@ import io.micronaut.runtime.context.scope.Refreshable;
  * @author Anton Kurako (GoodforGod)
  * @since 11.3.2020
  */
-@Requires(beans = { ArangoConfiguration.class })
+@Requires(beans = ArangoConfiguration.class)
 @Factory
-public class ArangoAsyncFactory {
+public class ArangoAccessorFactory {
 
     /**
      * Factory method to return a arango db async connection.

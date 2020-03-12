@@ -23,6 +23,7 @@ import static io.micronaut.health.HealthStatus.UP;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
+@Requires(property = "arangodb.health.enabled", value = "true", defaultValue = "true")
 @Requires(beans = ArangoClient.class, classes = HealthIndicator.class)
 @Singleton
 public class ArangoHealthIndicator implements HealthIndicator {

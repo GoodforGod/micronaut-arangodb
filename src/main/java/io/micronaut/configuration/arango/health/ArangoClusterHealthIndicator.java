@@ -33,6 +33,7 @@ import static io.micronaut.health.HealthStatus.*;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
+@Requires(property = "arangodb.health.cluster.enabled", value = "true", defaultValue = "false")
 @Requires(beans = ArangoClient.class, classes = HealthIndicator.class)
 @Singleton
 public class ArangoClusterHealthIndicator implements HealthIndicator {
@@ -62,12 +63,7 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     }
 
     private HealthResult buildReport(Response response) {
-        if (HttpStatus.NOT_FOUND.getCode() == response.getResponseCode()) {
-            return getBuilder()
-                    .status(UNKNOWN)
-                    .details("Arango Database is in Single Mode, cluster health is unavailable.")
-                    .build();
-        } else if (HttpStatus.OK.getCode() == response.getResponseCode()) {
+        if (HttpStatus.OK.getCode() == response.getResponseCode()) {
             return buildHealthResponse(response);
         } else {
             return buildUnknownReport(response);
@@ -92,7 +88,7 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
                 .filter(node -> !node.isCanBeDeleted())
                 .filter(node -> !"Agent".equals(node.getRole()))
                 .map(healthNode -> {
-                    final Map<String, Object> nodeHealth = new HashMap<>(3);
+                    final Map<String, Object> nodeHealth = new HashMap<>(2);
                     nodeHealth.put("name", healthNode.getShortName());
                     nodeHealth.put("status", convertNodeStatusToHealthStatus(healthNode.getStatus()));
                     return nodeHealth;
@@ -101,7 +97,6 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
         final Map<String, Object> details = new HashMap<>(2);
         details.put("clusterId", healthCluster.getClusterId());
         details.put("nodes", healths);
-
         return details;
     }
 
@@ -129,7 +124,7 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     private HealthResult buildErrorReport(Throwable t) {
         return getBuilder()
                 .status(DOWN)
-                .exception(t)
+                .exception(t.getCause())
                 .build();
     }
 

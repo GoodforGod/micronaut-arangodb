@@ -12,7 +12,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.inject.Inject;
-import java.util.Map;
 
 /**
  * Tests when health is DOWN
@@ -21,6 +20,7 @@ import java.util.Map;
  * @since 29.2.2020
  */
 @Property(name = "arangodb.port", value = "8529")
+@Property(name = "arangodb.health.cluster.enabled", value = "true")
 @MicronautTest
 @Testcontainers
 public class ArangoHealthDownTests extends ArangoRunner {
@@ -51,7 +51,6 @@ public class ArangoHealthDownTests extends ArangoRunner {
 
         assertEquals(HealthStatus.DOWN, result.getStatus());
         assertEquals("arangodb (cluster)", result.getName());
-        assertTrue(result.getDetails() instanceof Map);
-        assertFalse(((Map) result.getDetails()).isEmpty());
+        assertNotNull(result.getDetails());
     }
 }

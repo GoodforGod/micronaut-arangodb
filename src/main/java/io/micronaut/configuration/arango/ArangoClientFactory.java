@@ -1,6 +1,6 @@
 package io.micronaut.configuration.arango;
 
-import com.arangodb.async.ArangoDBAsync;
+import com.arangodb.ArangoDBException;
 import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Primary;
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Requires(beans = { ArangoConfiguration.class })
+@Requires(beans = ArangoConfiguration.class)
 @Factory
 public class ArangoClientFactory {
 
@@ -68,7 +68,9 @@ public class ArangoClientFactory {
                     return false;
                 }).get(30, TimeUnit.SECONDS);
             } catch (Exception e) {
-                logger.error("Could not create datebase in 30 seconds, failed with: {}", e.getMessage());
+                logger.error("Could not create database in 30 seconds, failed with: {}", e.getMessage());
+                throw new ArangoDBException(
+                        "Could not initialize database due to connection failure: " + configuration.getDatabase());
             }
         } else if (isDatabaseSystem) {
             logger.debug("Database creation is set to 'true', for system database, skipping database creation...");

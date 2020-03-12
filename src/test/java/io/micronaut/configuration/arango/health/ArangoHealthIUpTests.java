@@ -1,6 +1,7 @@
 package io.micronaut.configuration.arango.health;
 
 import io.micronaut.configuration.arango.ArangoRunner;
+import io.micronaut.context.annotation.Property;
 import io.micronaut.health.HealthStatus;
 import io.micronaut.management.health.indicator.HealthResult;
 import io.micronaut.test.annotation.MicronautTest;
@@ -19,6 +20,7 @@ import java.util.Map;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
+@Property(name = "arangodb.health.cluster.enabled", value = "true")
 @MicronautTest
 @Testcontainers
 public class ArangoHealthIUpTests extends ArangoRunner {
@@ -48,9 +50,8 @@ public class ArangoHealthIUpTests extends ArangoRunner {
         final HealthResult result = Single.fromPublisher(clusterHealthIndicator.getResult()).blockingGet();
         assertNotNull(result);
 
-        assertEquals(HealthStatus.UNKNOWN, result.getStatus());
+        assertEquals(HealthStatus.DOWN, result.getStatus());
         assertEquals("arangodb (cluster)", result.getName());
-        assertTrue(result.getDetails() instanceof Map);
-        assertFalse(((Map) result.getDetails()).isEmpty());
+        assertNotNull(result.getDetails());
     }
 }
