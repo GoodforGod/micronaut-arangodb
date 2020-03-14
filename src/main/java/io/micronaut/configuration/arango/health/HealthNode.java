@@ -1,6 +1,11 @@
 package io.micronaut.configuration.arango.health;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.health.HealthStatus;
+
+import static io.micronaut.core.util.StringUtils.isEmpty;
+import static io.micronaut.health.HealthStatus.*;
+import static io.micronaut.health.HealthStatus.UNKNOWN;
 
 /**
  * A HealthNode DTO for ArangoDB {@link HealthCluster} health check information.
@@ -65,5 +70,19 @@ public class HealthNode {
 
     public String getStatus() {
         return status;
+    }
+
+    public HealthStatus getHealthStatus() {
+        if (isEmpty(status))
+            return UNKNOWN;
+
+        switch (status) {
+            case "GOOD":
+                return UP;
+            case "FAILED":
+                return DOWN;
+            default:
+                return UNKNOWN;
+        }
     }
 }

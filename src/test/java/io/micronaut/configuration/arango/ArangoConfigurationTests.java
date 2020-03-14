@@ -40,6 +40,7 @@ class ArangoConfigurationTests extends ArangoRunner {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.createDatabaseIfNotExist", true);
+        properties.put("arangodb.loadBalancingStrategy", "ONE_RANDOM");
 
         final ApplicationContext context = ApplicationContext.run(properties);
 
