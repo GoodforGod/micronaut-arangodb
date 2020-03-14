@@ -91,6 +91,6 @@ public class ArangoConfiguration {
      * @return client configuration
      */
     public ArangoDBAsync getAccessor() {
-        return config.build();
+        return config.host(getHost(), getPort()).build();
     }
 }
