@@ -112,14 +112,14 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     private HealthResult buildUnknownReport(Response response) {
         return getBuilder()
                 .status(UNKNOWN)
-                .details(response.getBody().getAsString())
+                .details(response.getBody().toString())
                 .build();
     }
 
     private HealthResult buildErrorReport(Throwable t) {
         return getBuilder()
                 .status(DOWN)
-                .exception(t.getCause())
+                .exception(t)
                 .build();
     }
 
@@ -129,7 +129,7 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
 
     private Optional<HealthCluster> convertToClusterHealth(Response response) {
         try {
-            return Optional.ofNullable(mapper.readValue(response.getBody().getAsString(), HealthCluster.class));
+            return Optional.ofNullable(mapper.readValue(response.getBody().toString(), HealthCluster.class));
         } catch (Exception e) {
             logger.error(e.getMessage());
             return Optional.empty();

@@ -26,7 +26,7 @@ import java.util.Map;
 public class ArangoHealthUpTests extends ArangoRunner {
 
     @Container
-    private static final ArangoContainer container = new ArangoContainer().withoutAuthentication();
+    private static final ArangoContainer container = new ArangoContainer().withoutAuth();
 
     @Inject
     private ArangoHealthIndicator healthIndicator;

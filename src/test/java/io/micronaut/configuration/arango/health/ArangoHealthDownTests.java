@@ -26,7 +26,7 @@ import javax.inject.Inject;
 public class ArangoHealthDownTests extends ArangoRunner {
 
     @Container
-    private static final ArangoContainer container = new ArangoContainer().withoutAuthentication().setPort(8528);
+    private static final ArangoContainer container = new ArangoContainer().withoutAuth().withPort(8528);
 
     @Inject
     private ArangoHealthIndicator healthIndicator;
