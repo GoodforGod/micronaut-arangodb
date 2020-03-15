@@ -16,9 +16,9 @@ import static io.micronaut.configuration.arango.ArangoSettings.DEFAULT_DATABASE;
  * @since 29.2.2020
  */
 @Requires(property = ArangoSettings.PREFIX)
-@Requires(classes = ArangoDBAsync.Builder.class)
+@Requires(classes = ArangoDBAsync.class)
 @ConfigurationProperties(ArangoSettings.PREFIX)
-public class ArangoConfiguration {
+public class ArangoClientConfiguration {
 
     @ConfigurationBuilder(prefixes = "", excludes = { "host" })
     protected ArangoDBAsync.Builder config = new ArangoDBAsync.Builder();
@@ -84,13 +84,13 @@ public class ArangoConfiguration {
      * @return client configuration builder
      */
     public ArangoDBAsync.Builder getConfigBuilder() {
-        return config;
+        return config.host(getHost(), getPort());
     }
 
     /**
      * @return client configuration
      */
     public ArangoDBAsync getAccessor() {
-        return config.host(getHost(), getPort()).build();
+        return getConfigBuilder().build();
     }
 }

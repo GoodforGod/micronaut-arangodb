@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Requires(beans = ArangoConfiguration.class)
+@Requires(beans = ArangoClientConfiguration.class)
 @Factory
 public class ArangoClientFactory {
 
@@ -35,20 +35,20 @@ public class ArangoClientFactory {
     @Bean(preDestroy = "close")
     @Singleton
     @Primary
-    public ArangoClient getClient(ArangoConfiguration configuration) {
+    public ArangoClient getClient(ArangoClientConfiguration configuration) {
         final ArangoClient client = new ArangoClient(configuration);
         createDatabaseIfConfiguredAsync(configuration, client);
         return client;
     }
 
     /**
-     * Creates database {@link ArangoConfiguration#isCreateDatabaseIfNotExist()} if
-     * configured in {@link ArangoConfiguration}
+     * Creates database {@link ArangoClientConfiguration#isCreateDatabaseIfNotExist()} if
+     * configured in {@link ArangoClientConfiguration}
      *
      * @param configuration for ArngoDB client.
      * @param client        ArangoDB.
      */
-    private void createDatabaseIfConfiguredAsync(ArangoConfiguration configuration, ArangoClient client) {
+    private void createDatabaseIfConfiguredAsync(ArangoClientConfiguration configuration, ArangoClient client) {
         final boolean isDatabaseSystem = ArangoSettings.DEFAULT_DATABASE.equals(configuration.getDatabase());
 
         if (configuration.isCreateDatabaseIfNotExist() && !isDatabaseSystem) {

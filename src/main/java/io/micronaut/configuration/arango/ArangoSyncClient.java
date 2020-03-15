@@ -1,16 +1,17 @@
 package io.micronaut.configuration.arango;
 
+import com.arangodb.ArangoDB;
+import com.arangodb.ArangoDatabase;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 
 /**
- * ArangoDB accessor {@link ArangoDBAsync} and database name as configured for
- * application.
+ * Description in progress
  *
  * @author Anton Kurako (GoodforGod)
- * @since 29.2.2020
+ * @since 15.3.2020
  */
-public class ArangoClient implements AutoCloseable {
+public class ArangoSyncClient implements AutoCloseable {
 
     /**
      * Configured database name for application
@@ -21,9 +22,9 @@ public class ArangoClient implements AutoCloseable {
     /**
      * ArangoDB accessor {@link ArangoDBAsync}.
      */
-    private final ArangoDBAsync arangodb;
+    private final ArangoDB arangodb;
 
-    public ArangoClient(ArangoClientConfiguration configuration) {
+    public ArangoSyncClient(ArangoSyncClientConfiguration configuration) {
         this.database = configuration.getDatabase();
         this.arangodb = configuration.getAccessor();
     }
@@ -35,14 +36,14 @@ public class ArangoClient implements AutoCloseable {
     /**
      * @return Accessor to specified ArangoDB database.
      */
-    public ArangoDatabaseAsync db() {
+    public ArangoDatabase db() {
         return arangodb.db(database);
     }
 
     /**
      * @return Configured ArangoDB accessor {@link ArangoDBAsync}.
      */
-    public ArangoDBAsync accessor() {
+    public ArangoDB accessor() {
         return arangodb;
     }
 
