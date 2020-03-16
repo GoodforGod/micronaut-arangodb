@@ -45,12 +45,13 @@ public class ArangoDatabaseInitializer {
 
         if (configuration.isCreateDatabaseIfNotExist() && !isDatabaseSystem) {
             try {
+                final long setupStart = System.nanoTime();
                 accessor.db(configuration.getDatabase()).exists().thenCompose(isExist -> {
                     if (isExist) {
                         logger.debug("Database '{}' is already initialized", configuration.getDatabase());
                         return CompletableFuture.completedFuture(true);
                     } else {
-                        logger.debug("Creating arango database '{}' as specified for Arango configuration, " +
+                        logger.debug("Creating Arango database '{}' as specified for Arango configuration, " +
                                 "you can turn off initial database creating by setting 'createDatabaseIfNotExist' property to 'false'",
                                 configuration.getDatabase());
                         return accessor.createDatabase(configuration.getDatabase());
@@ -59,6 +60,8 @@ public class ArangoDatabaseInitializer {
                     logger.error("Failed to setup database with '{}' error message", e.getMessage());
                     return false;
                 }).get(30, TimeUnit.SECONDS);
+                final long tookNanoTime = System.nanoTime() - setupStart;
+                logger.info("Database '{}' initialization took '{}' millis", configuration.getDatabase(), tookNanoTime / 1000000);
             } catch (Exception e) {
                 logger.error("Could not create database in 30 seconds, failed with: {}", e.getMessage());
                 throw new ArangoDBException(
