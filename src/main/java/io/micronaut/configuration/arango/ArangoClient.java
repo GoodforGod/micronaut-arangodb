@@ -4,8 +4,8 @@ import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 
 /**
- * ArangoDB accessor {@link ArangoDBAsync} and database name as configured for
- * application.
+ * ArangoDB Async Accessor {@link ArangoDBAsync} and database name as configured
+ * for application.
  *
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020

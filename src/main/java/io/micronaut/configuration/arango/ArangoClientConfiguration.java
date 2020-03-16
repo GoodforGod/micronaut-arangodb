@@ -10,7 +10,7 @@ import static com.arangodb.internal.ArangoDefaults.DEFAULT_PORT;
 import static io.micronaut.configuration.arango.ArangoSettings.DEFAULT_DATABASE;
 
 /**
- * ArangoDB configuration class.
+ * ArangoDB Async configuration class.
  *
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020

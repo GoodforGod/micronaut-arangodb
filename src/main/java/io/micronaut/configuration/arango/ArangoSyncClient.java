@@ -3,10 +3,10 @@ package io.micronaut.configuration.arango;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.async.ArangoDBAsync;
-import com.arangodb.async.ArangoDatabaseAsync;
 
 /**
- * Description in progress
+ * ArangoDB Sync Accessor {@link ArangoDB} and database name as configured for
+ * application.
  *
  * @author Anton Kurako (GoodforGod)
  * @since 15.3.2020

@@ -1,7 +1,6 @@
 package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDB;
-import com.arangodb.async.ArangoDBAsync;
 import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
@@ -11,7 +10,7 @@ import static com.arangodb.internal.ArangoDefaults.DEFAULT_PORT;
 import static io.micronaut.configuration.arango.ArangoSettings.DEFAULT_DATABASE;
 
 /**
- * ArangoDB configuration class.
+ * ArangoDB Sync configuration class.
  *
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
