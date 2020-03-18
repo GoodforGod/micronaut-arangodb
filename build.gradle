@@ -67,10 +67,6 @@ test {
         events "passed", "skipped", "failed"
         exceptionFormat "full"
     }
-
-    environment([
-            "USE_INTEGRATION_TESTS"   : "$useIntegrationTests",
-    ])
 }
 
 tasks.withType(JavaCompile) {
@@ -96,11 +92,38 @@ javadoc {
 publishing {
     publications {
         mavenJava(MavenPublication) {
+
             from components.java
             artifact sourcesJar
             artifact javadocJar
+
+            pom {
+                name = 'Micronaut ArangoDB Configuration'
+                url = 'https://github.com/GoodforGod/micronaut-arangodb'
+                description = 'This is integration between Micronaut and ArangoDB.'
+
+                license {
+                    name = 'Apache License 2.0'
+                    url = 'https://github.com/GoodforGod/micronaut-arangodb/blob/master/LICENSE'
+                    distribution = 'repo'
+                }
+
+                developer {
+                    id = 'GoodforGod'
+                    name = 'Anton Kurako'
+                    email = 'goodforgod.dev@gmail.com'
+                    url = 'https://github.com/GoodforGod'
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/GoodforGod/micronaut-arangodb.git'
+                    developerConnection = 'scm:git:ssh://GoodforGod/micronaut-arangodb.git'
+                    url = 'https://github.com/GoodforGod/micronaut-arangodb/tree/master'
+                }
+            }
         }
     }
+
     repositories {
         maven {
             def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
