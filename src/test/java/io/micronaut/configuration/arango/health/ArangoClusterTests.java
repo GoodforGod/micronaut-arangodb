@@ -38,11 +38,11 @@ class ArangoClusterTests extends ArangoRunner {
     private static ArangoClusterDefault clusterDefault = ArangoClusterDefault.build();
 
     @Container
-    private static final ArangoContainer agency1 = clusterDefault.getAgency1();
+    private static final ArangoContainer agent1 = clusterDefault.getAgent1();
     @Container
-    private static final ArangoContainer agency2 = clusterDefault.getAgency2();
+    private static final ArangoContainer agent2 = clusterDefault.getAgent2();
     @Container
-    private static final ArangoContainer agency3 = clusterDefault.getAgency3();
+    private static final ArangoContainer agent3 = clusterDefault.getAgent3();
     @Container
     private static final ArangoContainer db1 = clusterDefault.getDatabase1();
     @Container
@@ -81,7 +81,7 @@ class ArangoClusterTests extends ArangoRunner {
         assertEquals("arangodb (cluster)", result.getName());
         assertNotNull(result.getDetails());
         assertTrue(result.getDetails() instanceof Map);
-        assertTrue(((Map) result.getDetails()).get("nodes") instanceof Collection);
+        assertTrue(((Map) result.getDetails()).get("nodes") instanceof Map);
         assertEquals(7, ((Collection) ((Map) result.getDetails()).get("nodes")).size());
     }
 

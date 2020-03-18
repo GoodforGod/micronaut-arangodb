@@ -3,6 +3,7 @@ package io.micronaut.configuration.arango.health;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * A ArangoDB cluster health DTO object.
@@ -21,6 +22,10 @@ public class HealthCluster {
 
     public Map<String, HealthNode> getNodes() {
         return nodes;
+    }
+
+    public Stream<HealthNode> streamNodes() {
+        return nodes.entrySet().stream().map(e -> e.getValue().setNodeId(e.getKey()));
     }
 
     public String getClusterId() {

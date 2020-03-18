@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.micronaut.core.util.StringUtils.isEmpty;
 import static io.micronaut.health.HealthStatus.*;
 
 /**
@@ -89,23 +90,28 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     }
 
     private Map<String, Object> buildDetails(HealthCluster healthCluster) {
-        final List<Map<String, Object>> healths = streamCriticalNodes(healthCluster)
-                .map(healthNode -> {
-                    final Map<String, Object> nodeHealth = new HashMap<>(2);
-                    nodeHealth.put("name", healthNode.getShortName());
-                    nodeHealth.put("status", healthNode.getHealthStatus());
-                    return nodeHealth;
-                }).collect(Collectors.toList());
+        final List<Map<Object, Object>> formattedNodesHealth = streamCriticalNodes(healthCluster)
+                .map(h -> {
+                    final int capacity = h.isLeading() ? 3 : 2;
+                    final Map<Object, Object> report = new HashMap<>(capacity);
+                    final String name = isEmpty(h.getShortName()) ? h.getRoleWithNodeId() : h.getShortName();
+                    report.put("name", name);
+                    report.put("status", h.getStatus());
+                    if (h.isLeading())
+                        report.put("leading", true);
+
+                    return report;
+                })
+                .collect(Collectors.toList());
 
         final Map<String, Object> details = new HashMap<>(2);
         details.put("clusterId", healthCluster.getClusterId());
-        details.put("nodes", healths);
+        details.put("nodes", formattedNodesHealth);
         return details;
     }
 
     private Stream<HealthNode> streamCriticalNodes(HealthCluster healthCluster) {
-        return healthCluster.getNodes().values().stream()
-                .filter(node -> !node.isCanBeDeleted());
+        return healthCluster.streamNodes().filter(node -> !node.isCanBeDeleted());
     }
 
     private HealthResult buildUnknownReport(Response response) {
@@ -115,10 +121,10 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
                 .build();
     }
 
-    private HealthResult buildErrorReport(Throwable t) {
+    private HealthResult buildErrorReport(Throwable e) {
         return getBuilder()
                 .status(DOWN)
-                .exception(t)
+                .exception(e)
                 .build();
     }
 

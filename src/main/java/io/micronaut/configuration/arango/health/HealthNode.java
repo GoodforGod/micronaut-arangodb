@@ -22,6 +22,7 @@ public class HealthNode {
         UNKNOWN
     }
 
+    private String nodeId;
     @JsonProperty("ShortName")
     private String shortName;
     @JsonProperty("Endpoint")
@@ -44,10 +45,25 @@ public class HealthNode {
     @JsonProperty("Leader")
     private String leader;
     @JsonProperty("Leading")
-    private Boolean leading;
+    private boolean isLeading;
 
-    public Boolean getLeading() {
-        return leading;
+    public String getRoleWithNodeId() {
+        return isEmpty(nodeId)
+                ? role
+                : role + " (" + nodeId + ")";
+    }
+
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    public HealthNode setNodeId(String nodeId) {
+        this.nodeId = nodeId;
+        return this;
+    }
+
+    public Boolean isLeading() {
+        return isLeading;
     }
 
     public String getShortName() {
@@ -87,7 +103,7 @@ public class HealthNode {
     }
 
     public NodeRole getNodeRole() {
-        if(isEmpty(role))
+        if (isEmpty(role))
             return NodeRole.UNKNOWN;
 
         switch (role) {

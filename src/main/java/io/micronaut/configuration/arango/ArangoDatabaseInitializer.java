@@ -63,7 +63,7 @@ public class ArangoDatabaseInitializer {
                         return CompletableFuture.completedFuture(true);
                     } else {
                         logger.debug("Creating Arango database '{}' as specified for Arango configuration, " +
-                                        "you can turn off initial database creating by setting 'createDatabaseIfNotExist' property to 'false'",
+                                "you can turn off initial database creating by setting 'createDatabaseIfNotExist' property to 'false'",
                                 configuration.getDatabase());
                         return accessor.createDatabase(configuration.getDatabase());
                     }
