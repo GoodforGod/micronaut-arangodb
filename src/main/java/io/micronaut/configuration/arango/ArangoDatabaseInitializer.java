@@ -33,35 +33,44 @@ public class ArangoDatabaseInitializer {
         this.configuration = configuration;
     }
 
+    @PostConstruct
+    protected void setupDatabase() {
+        try {
+            final long setupStart = System.nanoTime();
+            setupDatabaseIfConfiguredAsync().get(30, TimeUnit.SECONDS);
+            final long tookNanoTime = System.nanoTime() - setupStart;
+            logger.info("Database '{}' initialization took '{}' millis", configuration.getDatabase(), tookNanoTime / 1000000);
+        } catch (Exception e) {
+            logger.error("Could not create database in 30 seconds, failed with: {}", e.getMessage());
+            throw new ArangoDBException("Could not initialize database due to connection failure: " + configuration.getDatabase());
+        }
+    }
+
     /**
      * Creates database
      * {@link ArangoClientConfiguration#isCreateDatabaseIfNotExist()} if configured
      * in {@link ArangoClientConfiguration}
      */
-    @PostConstruct
-    protected void setupDatabaseIfConfiguredAsync() {
+    protected CompletableFuture<Boolean> setupDatabaseIfConfiguredAsync() {
         final ArangoDBAsync accessor = configuration.getAccessor();
         final boolean isDatabaseSystem = ArangoSettings.DEFAULT_DATABASE.equals(configuration.getDatabase());
 
         if (configuration.isCreateDatabaseIfNotExist() && !isDatabaseSystem) {
             try {
-                final long setupStart = System.nanoTime();
-                accessor.db(configuration.getDatabase()).exists().thenCompose(isExist -> {
+                return accessor.db(configuration.getDatabase()).exists().thenCompose(isExist -> {
                     if (isExist) {
                         logger.debug("Database '{}' is already initialized", configuration.getDatabase());
                         return CompletableFuture.completedFuture(true);
                     } else {
                         logger.debug("Creating Arango database '{}' as specified for Arango configuration, " +
-                                "you can turn off initial database creating by setting 'createDatabaseIfNotExist' property to 'false'",
+                                        "you can turn off initial database creating by setting 'createDatabaseIfNotExist' property to 'false'",
                                 configuration.getDatabase());
                         return accessor.createDatabase(configuration.getDatabase());
                     }
                 }).exceptionally(e -> {
                     logger.error("Failed to setup database with '{}' error message", e.getMessage());
                     return false;
-                }).get(30, TimeUnit.SECONDS);
-                final long tookNanoTime = System.nanoTime() - setupStart;
-                logger.info("Database '{}' initialization took '{}' millis", configuration.getDatabase(), tookNanoTime / 1000000);
+                });
             } catch (Exception e) {
                 logger.error("Could not create database in 30 seconds, failed with: {}", e.getMessage());
                 throw new ArangoDBException(
@@ -69,9 +78,11 @@ public class ArangoDatabaseInitializer {
             }
         } else if (isDatabaseSystem) {
             logger.debug("Database creation is set to 'true', for system database, skipping database creation...");
+            return CompletableFuture.completedFuture(true);
         } else {
             logger.debug("Database creation is set to 'true', for '{}' database, skipping database creation...",
                     ArangoSettings.DEFAULT_DATABASE);
+            return CompletableFuture.completedFuture(true);
         }
     }
 }

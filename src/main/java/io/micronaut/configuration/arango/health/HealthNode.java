@@ -15,6 +15,13 @@ import static io.micronaut.health.HealthStatus.UNKNOWN;
  */
 public class HealthNode {
 
+    public enum NodeRole {
+        AGENT,
+        COORDINATOR,
+        DBSERVER,
+        UNKNOWN
+    }
+
     @JsonProperty("ShortName")
     private String shortName;
     @JsonProperty("Endpoint")
@@ -31,10 +38,17 @@ public class HealthNode {
     private String version;
     @JsonProperty("Engine")
     private String engine;
-    @JsonProperty("Leader")
-    private String leader;
     @JsonProperty("Status")
     private String status;
+
+    @JsonProperty("Leader")
+    private String leader;
+    @JsonProperty("Leading")
+    private Boolean leading;
+
+    public Boolean getLeading() {
+        return leading;
+    }
 
     public String getShortName() {
         return shortName;
@@ -72,12 +86,29 @@ public class HealthNode {
         return status;
     }
 
+    public NodeRole getNodeRole() {
+        if(isEmpty(role))
+            return NodeRole.UNKNOWN;
+
+        switch (role) {
+            case "AGENT":
+                return NodeRole.AGENT;
+            case "COORDINATOR":
+                return NodeRole.COORDINATOR;
+            case "DBSERVER":
+                return NodeRole.DBSERVER;
+            default:
+                return NodeRole.UNKNOWN;
+        }
+    }
+
     public HealthStatus getHealthStatus() {
         if (isEmpty(status))
             return UNKNOWN;
 
         switch (status) {
             case "GOOD":
+            case "BAD":
                 return UP;
             case "FAILED":
                 return DOWN;

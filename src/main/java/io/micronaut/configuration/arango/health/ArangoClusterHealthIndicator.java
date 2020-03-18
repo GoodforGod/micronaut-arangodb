@@ -105,8 +105,7 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
 
     private Stream<HealthNode> streamCriticalNodes(HealthCluster healthCluster) {
         return healthCluster.getNodes().values().stream()
-                .filter(node -> !node.isCanBeDeleted())
-                .filter(node -> !"Agent".equals(node.getRole()));
+                .filter(node -> !node.isCanBeDeleted());
     }
 
     private HealthResult buildUnknownReport(Response response) {

@@ -17,6 +17,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -80,6 +81,8 @@ class ArangoClusterTests extends ArangoRunner {
         assertEquals("arangodb (cluster)", result.getName());
         assertNotNull(result.getDetails());
         assertTrue(result.getDetails() instanceof Map);
+        assertTrue(((Map) result.getDetails()).get("nodes") instanceof Collection);
+        assertEquals(7, ((Collection) ((Map) result.getDetails()).get("nodes")).size());
     }
 
     @Test
@@ -89,8 +92,8 @@ class ArangoClusterTests extends ArangoRunner {
         final Boolean createdDb = client.accessor().db(dbName).create().get(60, TimeUnit.SECONDS);
         assertTrue(createdDb);
 
-        final CollectionEntity collection = client.accessor().db(dbName).collection(collectionName)
-                .create().get(60, TimeUnit.SECONDS);
+        final CollectionEntity collection = client.accessor().db(dbName).collection(collectionName).create()
+                .get(60, TimeUnit.SECONDS);
         assertNotNull(collection);
         assertNotNull(collection.getId());
 
@@ -99,8 +102,8 @@ class ArangoClusterTests extends ArangoRunner {
         document.addAttribute("my-property", "yes");
 
         final DocumentCreateEntity<BaseDocument> docEntity = client.accessor()
-                .db(dbName).collection(collectionName)
-                .insertDocument(document).get(60, TimeUnit.SECONDS);
+                .db(dbName).collection(collectionName).insertDocument(document)
+                .get(60, TimeUnit.SECONDS);
         assertNotNull(docEntity);
         assertNotNull(docEntity.getId());
     }
