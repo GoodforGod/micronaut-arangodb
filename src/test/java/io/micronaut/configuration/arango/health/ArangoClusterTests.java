@@ -81,7 +81,7 @@ class ArangoClusterTests extends ArangoRunner {
         assertEquals("arangodb (cluster)", result.getName());
         assertNotNull(result.getDetails());
         assertTrue(result.getDetails() instanceof Map);
-        assertTrue(((Map) result.getDetails()).get("nodes") instanceof Map);
+        assertTrue(((Map) result.getDetails()).get("nodes") instanceof Collection);
         assertEquals(7, ((Collection) ((Map) result.getDetails()).get("nodes")).size());
     }
 

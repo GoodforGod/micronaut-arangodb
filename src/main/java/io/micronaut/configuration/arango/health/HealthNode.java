@@ -49,8 +49,8 @@ public class HealthNode {
 
     public String getRoleWithNodeId() {
         return isEmpty(nodeId)
-                ? role
-                : role + " (" + nodeId + ")";
+                ? getNodeRole().name()
+                : getNodeRole().name() + " (" + nodeId + ")";
     }
 
     public String getNodeId() {

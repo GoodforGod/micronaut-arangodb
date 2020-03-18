@@ -40,7 +40,7 @@ repositories {
 }
 
 dependencies {
-    micronautBom platform('io.micronaut:micronaut-bom:1.3.0')
+    micronautBom platform('io.micronaut:micronaut-bom:1.3.3')
 
     annotationProcessor 'io.micronaut:micronaut-inject-java'
     compileOnly 'io.micronaut:micronaut-inject-java'
