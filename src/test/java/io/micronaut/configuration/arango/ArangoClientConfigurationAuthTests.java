@@ -34,7 +34,7 @@ public class ArangoClientConfigurationAuthTests extends ArangoRunner {
 
         final ArangoClientConfiguration configuration = context.getBean(ArangoClientConfiguration.class);
         try {
-            configuration.getConfigBuilder().build().db(ArangoSettings.DEFAULT_DATABASE).getInfo().join();
+            configuration.getConfig().build().db(ArangoSettings.DEFAULT_DATABASE).getInfo().join();
             fail("Should've failed with auth error");
         } catch (Exception e) {
             assertNotNull(e);
@@ -50,7 +50,7 @@ public class ArangoClientConfigurationAuthTests extends ArangoRunner {
         final ApplicationContext context = ApplicationContext.run(properties);
 
         final ArangoClientConfiguration configuration = context.getBean(ArangoClientConfiguration.class);
-        final DatabaseEntity entity = configuration.getConfigBuilder().build().db(ArangoSettings.DEFAULT_DATABASE).getInfo()
+        final DatabaseEntity entity = configuration.getConfig().build().db(ArangoSettings.DEFAULT_DATABASE).getInfo()
                 .join();
         assertNotNull(entity);
     }

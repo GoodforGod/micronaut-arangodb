@@ -83,7 +83,7 @@ public class ArangoClientConfiguration {
     /**
      * @return client configuration builder
      */
-    public ArangoDBAsync.Builder getConfigBuilder() {
+    public ArangoDBAsync.Builder getConfig() {
         return config.host(getHost(), getPort());
     }
 
@@ -91,6 +91,6 @@ public class ArangoClientConfiguration {
      * @return client configuration
      */
     public ArangoDBAsync getAccessor() {
-        return getConfigBuilder().build();
+        return getConfig().build();
     }
 }
