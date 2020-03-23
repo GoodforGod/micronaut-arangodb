@@ -50,6 +50,8 @@ public class ArangoDatabaseInitializer {
      * Creates database
      * {@link ArangoClientConfiguration#isCreateDatabaseIfNotExist()} if configured
      * in {@link ArangoClientConfiguration}
+     * 
+     * @return True if database was created or existed already, False otherwise
      */
     protected CompletableFuture<Boolean> setupDatabaseIfConfiguredAsync() {
         final ArangoDBAsync accessor = configuration.getAccessor();
