@@ -47,7 +47,6 @@ dependencies {
 
     api 'com.arangodb:arangodb-java-driver:6.6.0'
 
-    implementation 'io.micronaut:micronaut-runtime'
     implementation 'io.micronaut:micronaut-management'
 
     testAnnotationProcessor 'io.micronaut:micronaut-inject-java'

@@ -112,22 +112,138 @@ Configuring timeout, chunksize, maxConnections, connectionTtl, acquireHostList, 
 Check [ArangoDB official](https://www.arangodb.com/docs/stable/drivers/java-reference-setup.html) info about each parameter.
 ```yaml
 arangodb:
-  timeout: 3000                   # default - 0 in milliseconds
-  chunksize: 3000                 # default - 30000
-  useSsl: true                    # default - false
-  maxConnections: 30              # default - 1
-  connectionTtl: 200              # default - null
-  acquireHostList: true           # default - false
-  loadBalancingStrategy: 1234     # default - NONE (check LoadBalancingStrategy for more)
+  timeout: 3000                         # default - 0 in milliseconds
+  chunksize: 3000                       # default - 30000
+  useSsl: true                          # default - false
+  maxConnections: 30                    # default - 1
+  connectionTtl: 200                    # default - null
+  acquireHostList: true                 # default - false
+  loadBalancingStrategy: ONE_RANDOM     # default - NONE (check LoadBalancingStrategy for more)
 ```
 
 #### Database Initialization
 
+There is an option to initialize database if it doesn't exist on startup via *createDatabaseIfNotExist* option.
+
+Usage:
+
+```yaml
+arangodb:
+  createDatabaseIfNotExist: true    # default - false
+```
+
 ### Health Check
+
+Health check for ArangoDB is provided and is *turned on* by default.
+
+ArangoDB health check is part of [Micronaut Health Endpoint](https://docs.micronaut.io/latest/guide/index.html#healthEndpoint).
+
+Example of ArangoDB health:
+
+```json
+{
+  "name": "service",
+  "status": "UP",
+  "details": {
+    "arangodb": {
+      "name": "arangodb",
+      "status": "UP",
+      "details": {
+        "version": "3.6.1",
+        "database": "_system"
+      }
+    }
+  }
+}
+```
+
+Where database *version* is specified and *database* name service is connected to as per [configuration](#Configuration).
+
+You can explicitly *turn off* health check.
+
+```yaml
+arangodb:
+  health:
+    enabled: false      # default - true 
+```
 
 #### Cluster Health Check
 
+There is also available ArangoDB Cluster Health Check that monitors cluster health 
+(if service is connected to *cluster ArangoDB*)
+and reports is *nodes* that can **not be deleted** according to [documentation](https://www.arangodb.com/docs/stable/http/cluster-health.html) from *cluster are down*, so *application is also down*.
+
+In other case application will be *UP* and running with errors like various connection issues due to unstable cluster.
+
+**Both health checks** will be present in health output if all are enabled.
+
+ArangoDB Cluster Health output example:
+
+```json
+{
+  "name": "service",
+  "status": "UP",
+  "details": {
+    "arangodb (cluster)": {
+      "name": "arangodb (cluster)",
+      "status": "UP",
+      "details": {
+        "clusterId": "89b7e1a8-53f5-44ea-bb5c-9e7cb201417c",
+        "nodes": [
+          {
+            "name": "Coordinator0002",
+            "status": "GOOD"
+          },
+          {
+            "name": "Coordinator0001",
+            "status": "GOOD"
+          },
+          {
+            "name": "DBServer0001",
+            "status": "GOOD"
+          },
+          {
+            "name": "DBServer0002",
+            "status": "GOOD"
+          },
+          {
+            "name": "AGENT (AGNT-4206f181-8791-4c3f-952d-79d9aa58b7c2)",
+            "leading": true,
+            "status": "GOOD"
+          },
+          {
+            "name": "AGENT (AGNT-2cc832bf-a8b7-4f8a-823a-15d778594bc1)",
+            "status": "GOOD"
+          },
+          {
+            "name": "AGENT (AGNT-78172be0-1adc-47ea-8152-3a3b0ab0b10e)",
+            "status": "GOOD"
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+HealthCheck provides status of each node in cluster and their *ShortName* for [DBServer and Coordinator](https://www.arangodb.com/docs/stable/http/cluster-health.html)
+or *NodeID* for *Agent* nodes and flag for leading *Agent* node.
+
+You can turn on Cluster Health Check via configuration:
+
+```yaml
+arangodb:
+  health:
+    cluster:
+      enabled: true      # default - false
+```
+
 ## Testing
+
+For testing purposes it is recommended to use [ArangoDB TestContainer library](https://github.com/GoodforGod/arangodb-testcontainer) 
+this library itself uses them for testing. 
+TestContainers allows you to use integration tests in all docker friendly environments, 
+check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Version History
 

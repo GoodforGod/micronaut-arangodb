@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.health.HealthStatus;
 
 import static io.micronaut.core.util.StringUtils.isEmpty;
-import static io.micronaut.health.HealthStatus.*;
+import static io.micronaut.health.HealthStatus.DOWN;
 import static io.micronaut.health.HealthStatus.UNKNOWN;
 
 /**
@@ -103,33 +103,22 @@ public class HealthNode {
     }
 
     public NodeRole getNodeRole() {
-        if (isEmpty(role))
+        if ("AGENT".equalsIgnoreCase(role))
+            return NodeRole.AGENT;
+        else if ("COORDINATOR".equalsIgnoreCase(role))
+            return NodeRole.COORDINATOR;
+        else if ("DBSERVER".equalsIgnoreCase(role))
+            return NodeRole.DBSERVER;
+        else
             return NodeRole.UNKNOWN;
-
-        switch (role) {
-            case "AGENT":
-                return NodeRole.AGENT;
-            case "COORDINATOR":
-                return NodeRole.COORDINATOR;
-            case "DBSERVER":
-                return NodeRole.DBSERVER;
-            default:
-                return NodeRole.UNKNOWN;
-        }
     }
 
     public HealthStatus getHealthStatus() {
-        if (isEmpty(status))
+        if ("GOOD".equalsIgnoreCase(status))
+            return HealthStatus.UP;
+        else if ("BAD".equalsIgnoreCase(status))
+            return DOWN;
+        else
             return UNKNOWN;
-
-        switch (status) {
-            case "GOOD":
-            case "BAD":
-                return UP;
-            case "FAILED":
-                return DOWN;
-            default:
-                return UNKNOWN;
-        }
     }
 }

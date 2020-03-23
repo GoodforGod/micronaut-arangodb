@@ -1,9 +1,9 @@
 package io.micronaut.configuration.arango;
 
-import com.arangodb.ArangoDBException;
 import com.arangodb.async.ArangoDBAsync;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.exceptions.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ public class ArangoDatabaseInitializer {
             logger.info("Database '{}' initialization took '{}' millis", configuration.getDatabase(), tookNanoTime / 1000000);
         } catch (Exception e) {
             logger.error("Could not create database in 30 seconds, failed with: {}", e.getMessage());
-            throw new ArangoDBException("Could not initialize database due to connection failure: " + configuration.getDatabase());
+            throw new ConfigurationException("Could not initialize database due to connection failure: " + configuration.getDatabase());
         }
     }
 
@@ -73,7 +73,7 @@ public class ArangoDatabaseInitializer {
                 });
             } catch (Exception e) {
                 logger.error("Could not create database in 30 seconds, failed with: {}", e.getMessage());
-                throw new ArangoDBException(
+                throw new ConfigurationException(
                         "Could not initialize database due to connection failure: " + configuration.getDatabase());
             }
         } else if (isDatabaseSystem) {
