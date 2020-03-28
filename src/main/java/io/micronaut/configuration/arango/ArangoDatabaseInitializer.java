@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * @since 16.3.2020
  */
 @Requires(property = "arangodb.createDatabaseIfNotExist", value = "true", defaultValue = "false")
-@Requires(beans = ArangoClient.class)
+@Requires(beans = ArangoClientConfiguration.class)
 @Context
 public class ArangoDatabaseInitializer {
 
