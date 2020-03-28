@@ -30,7 +30,7 @@ public class ArangoClientConfiguration {
     private boolean createDatabaseIfNotExist = false;
 
     /**
-     * @return whenever to create database on client creation
+     * @return whenever to create database on context initialization
      */
     public boolean isCreateDatabaseIfNotExist() {
         return createDatabaseIfNotExist;
@@ -38,7 +38,7 @@ public class ArangoClientConfiguration {
 
     /**
      * @param createDatabaseIfNotExist indicates to create database if not exist
-     *                                 while creating client
+     *                                 while context initialization
      */
     public void setCreateDatabaseIfNotExist(boolean createDatabaseIfNotExist) {
         this.createDatabaseIfNotExist = createDatabaseIfNotExist;

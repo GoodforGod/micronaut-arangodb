@@ -20,29 +20,25 @@ import java.util.concurrent.TimeUnit;
  * @see ArangoClientConfiguration#isCreateDatabaseIfNotExist()
  * @since 16.3.2020
  */
-@Requires(property = "arangodb.createDatabaseIfNotExist")
+@Requires(property = "arangodb.createDatabaseIfNotExist", value = "true", defaultValue = "false")
 @Requires(beans = ArangoClient.class)
 @Context
 public class ArangoDatabaseInitializer {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final ArangoClientConfiguration configuration;
-
-    @Inject
-    public ArangoDatabaseInitializer(ArangoClientConfiguration configuration) {
-        this.configuration = configuration;
-    }
 
     @PostConstruct
-    protected void setupDatabase() {
+    @Inject
+    protected void setupDatabase(ArangoClientConfiguration configuration) {
+        final String database = configuration.getDatabase();
         try {
             final long setupStart = System.nanoTime();
-            setupDatabaseIfConfiguredAsync().get(30, TimeUnit.SECONDS);
+            setupDatabaseIfConfiguredAsync(configuration).get(30, TimeUnit.SECONDS);
             final long tookNanoTime = System.nanoTime() - setupStart;
-            logger.info("Database '{}' initialization took '{}' millis", configuration.getDatabase(), tookNanoTime / 1000000);
+            logger.info("Database '{}' initialization took '{}' millis", database, tookNanoTime / 1000000);
         } catch (Exception e) {
-            logger.error("Could not create database in 30 seconds, failed with: {}", e.getMessage());
-            throw new ConfigurationException("Could not initialize database due to connection failure: " + configuration.getDatabase());
+            logger.error("Could not create '{}' database in 30 seconds, failed with: {}", database, e.getMessage());
+            throw new ConfigurationException("Could not initialize database due to connection failure: " + e.getMessage());
         }
     }
 
@@ -50,10 +46,11 @@ public class ArangoDatabaseInitializer {
      * Creates database
      * {@link ArangoClientConfiguration#isCreateDatabaseIfNotExist()} if configured
      * in {@link ArangoClientConfiguration}
-     * 
+     *
+     * @param configuration to get settings from
      * @return True if database was created or existed already, False otherwise
      */
-    protected CompletableFuture<Boolean> setupDatabaseIfConfiguredAsync() {
+    protected CompletableFuture<Boolean> setupDatabaseIfConfiguredAsync(ArangoClientConfiguration configuration) {
         final ArangoDBAsync accessor = configuration.getAccessor();
         final boolean isDatabaseSystem = ArangoSettings.DEFAULT_DATABASE.equals(configuration.getDatabase());
 
