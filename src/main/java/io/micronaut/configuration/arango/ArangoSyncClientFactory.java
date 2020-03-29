@@ -14,7 +14,7 @@ import javax.inject.Singleton;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Requires(beans = ArangoClientConfiguration.class)
+@Requires(beans = ArangoSyncClientConfiguration.class)
 @Factory
 public class ArangoSyncClientFactory {
 

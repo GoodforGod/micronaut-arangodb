@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * @since 16.3.2020
  */
 @Requires(property = "arangodb.createDatabaseIfNotExist", value = "true", defaultValue = "false")
-@Requires(beans = ArangoClient.class)
+@Requires(beans = ArangoClientConfiguration.class)
 @Context
 public class ArangoDatabaseInitializer {
 
@@ -35,7 +35,7 @@ public class ArangoDatabaseInitializer {
             final long setupStart = System.nanoTime();
             setupDatabaseIfConfiguredAsync(configuration).get(30, TimeUnit.SECONDS);
             final long tookNanoTime = System.nanoTime() - setupStart;
-            logger.info("Database '{}' initialization took '{}' millis", database, tookNanoTime / 1000000);
+            logger.debug("Database '{}' initialization took '{}' millis", database, tookNanoTime / 1000000);
         } catch (Exception e) {
             logger.error("Could not create '{}' database in 30 seconds, failed with: {}", database, e.getMessage());
             throw new ConfigurationException("Could not initialize database due to connection failure: " + e.getMessage());
@@ -61,7 +61,7 @@ public class ArangoDatabaseInitializer {
                         logger.debug("Database '{}' is already initialized", configuration.getDatabase());
                         return CompletableFuture.completedFuture(true);
                     } else {
-                        logger.debug("Creating Arango database '{}' as specified for Arango configuration, " +
+                        logger.debug("Creating Arango database '{}' as specified per configuration, " +
                                 "you can turn off initial database creating by setting 'createDatabaseIfNotExist' property to 'false'",
                                 configuration.getDatabase());
                         return accessor.createDatabase(configuration.getDatabase());
@@ -76,11 +76,11 @@ public class ArangoDatabaseInitializer {
                         "Could not initialize database due to connection failure: " + configuration.getDatabase());
             }
         } else if (isDatabaseSystem) {
-            logger.debug("Database creation is set to 'true', for system database, skipping database creation...");
-            return CompletableFuture.completedFuture(true);
-        } else {
             logger.debug("Database creation is set to 'true', for '{}' database, skipping database creation...",
                     ArangoSettings.DEFAULT_DATABASE);
+            return CompletableFuture.completedFuture(true);
+        } else {
+            logger.debug("Database creation is set to 'false'");
             return CompletableFuture.completedFuture(true);
         }
     }

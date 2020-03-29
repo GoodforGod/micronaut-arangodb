@@ -75,7 +75,7 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
             final Map<String, Object> details = buildDetails(health);
             final List<String> down = streamCriticalNodes(health)
                     .filter(n -> DOWN.equals(n.getHealthStatus()))
-                    .map(HealthNode::getShortName)
+                    .map(h -> isEmpty(h.getShortName()) ? h.getRoleWithNodeId() : h.getShortName())
                     .collect(Collectors.toList());
 
             if (!down.isEmpty()) {

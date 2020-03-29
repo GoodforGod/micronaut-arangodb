@@ -1,10 +1,9 @@
 # Micronaut ArangoDB Configuration
 
-![Java CI](https://github.com/GoodforGod/arangodb-testcontainer/workflows/Java%20CI/badge.svg)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=GoodforGod_arangodb-testcontainer&metric=alert_status)](https://sonarcloud.io/dashboard?id=GoodforGod_arangodb-testcontainer)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=GoodforGod_arangodb-testcontainer&metric=coverage)](https://sonarcloud.io/dashboard?id=GoodforGod_arangodb-testcontainer)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=GoodforGod_arangodb-testcontainer&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=GoodforGod_arangodb-testcontainer)
-
+![Java CI](https://github.com/GoodforGod/micronaut-arangodb/workflows/Java%20CI/badge.svg)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=GoodforGod_micronaut-arangodb&metric=alert_status)](https://sonarcloud.io/dashboard?id=GoodforGod_micronaut-arangodb)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=GoodforGod_micronaut-arangodb&metric=coverage)](https://sonarcloud.io/dashboard?id=GoodforGod_micronaut-arangodb)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=GoodforGod_micronaut-arangodb&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=GoodforGod_micronaut-arangodb)
 
 This project includes integration between Micronaut and ArangoDB.
 
@@ -241,8 +240,9 @@ arangodb:
 ## Testing
 
 For testing purposes it is recommended to use [ArangoDB TestContainer library](https://github.com/GoodforGod/arangodb-testcontainer) 
-this library itself uses them for testing. 
-TestContainers allows you to use integration tests in all docker friendly environments, 
+(this project is tested via that library). 
+
+TestContainers allows you to use integration tests with real database in all docker friendly environments, 
 check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Version History
