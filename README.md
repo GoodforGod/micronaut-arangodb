@@ -240,8 +240,9 @@ arangodb:
 ## Testing
 
 For testing purposes it is recommended to use [ArangoDB TestContainer library](https://github.com/GoodforGod/arangodb-testcontainer) 
-this library itself uses them for testing. 
-TestContainers allows you to use integration tests in all docker friendly environments, 
+(this project is tested via that library). 
+
+TestContainers allows you to use integration tests with real database in all docker friendly environments, 
 check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Version History
