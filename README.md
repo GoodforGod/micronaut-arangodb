@@ -48,14 +48,15 @@ compile 'com.arangodb:arangodb-java-driver'
 
 Both async *ArangoDBAsync* and sync *ArangoDB* accessors are then available for dependency injection.
 
-Accessors are injected as [**prototypes**](https://docs.micronaut.io/latest/guide/index.html#builtInScopes) remember that while using them.
+Accessors are injected as [**prototypes**](https://docs.micronaut.io/latest/guide/index.html#builtInScopes) 
+beans remember that while using them.
 
 ```java
 @Inject
 private ArangoDBAsync async;
 
 @Inject
-private ArangoDBAsync sync;
+private ArangoDB sync;
 ```
 
 ### Clients
@@ -65,7 +66,8 @@ Configuration supports to setup database for your application
 
 So in order to use database specified as per [configuration](#Configuration) inject provided Arango Clients instead.
 
-Clients are injected as [**singletons**](https://docs.micronaut.io/latest/guide/index.html#builtInScopes) remember that while using them.
+Clients are injected as [**singletons**](https://docs.micronaut.io/latest/guide/index.html#builtInScopes) 
+beans remember that while using them.
 
 ```java
 @Inject
