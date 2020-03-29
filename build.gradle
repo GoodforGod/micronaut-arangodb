@@ -45,7 +45,6 @@ configurations {
 repositories {
     mavenLocal()
     mavenCentral()
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
 }
 
 dependencies {
@@ -59,7 +58,7 @@ dependencies {
     implementation 'io.micronaut:micronaut-management'
 
     testAnnotationProcessor 'io.micronaut:micronaut-inject-java'
-    testImplementation 'com.github.goodforgod:arangodb-testcontainer:1.1.0-SNAPSHOT'
+    testImplementation 'com.github.goodforgod:arangodb-testcontainer:1.1.0'
 
     testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.3'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'

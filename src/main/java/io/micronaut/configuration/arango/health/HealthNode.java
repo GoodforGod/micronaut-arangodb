@@ -62,7 +62,7 @@ public class HealthNode {
         return this;
     }
 
-    public Boolean isLeading() {
+    public boolean isLeading() {
         return isLeading;
     }
 
