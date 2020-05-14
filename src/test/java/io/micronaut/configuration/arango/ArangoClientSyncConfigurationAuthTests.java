@@ -17,7 +17,7 @@ import java.util.Map;
  * @since 11.3.2020
  */
 @Testcontainers
-public class ArangoSyncClientConfigurationAuthTests extends ArangoRunner {
+public class ArangoClientSyncConfigurationAuthTests extends ArangoRunner {
 
     private static final String PASS = "mypass";
 
@@ -32,7 +32,7 @@ public class ArangoSyncClientConfigurationAuthTests extends ArangoRunner {
 
         final ApplicationContext context = ApplicationContext.run(properties);
 
-        final ArangoSyncClientConfiguration configuration = context.getBean(ArangoSyncClientConfiguration.class);
+        final ArangoClientSyncConfiguration configuration = context.getBean(ArangoClientSyncConfiguration.class);
         try {
             configuration.getConfig().build().db(ArangoSettings.DEFAULT_DATABASE).getInfo();
             fail("Should've failed with auth error");
@@ -49,7 +49,7 @@ public class ArangoSyncClientConfigurationAuthTests extends ArangoRunner {
 
         final ApplicationContext context = ApplicationContext.run(properties);
 
-        final ArangoSyncClientConfiguration configuration = context.getBean(ArangoSyncClientConfiguration.class);
+        final ArangoClientSyncConfiguration configuration = context.getBean(ArangoClientSyncConfiguration.class);
         final DatabaseEntity entity = configuration.getConfig().build().db(ArangoSettings.DEFAULT_DATABASE).getInfo();
         assertNotNull(entity);
     }

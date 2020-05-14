@@ -18,7 +18,7 @@ import static io.micronaut.configuration.arango.ArangoSettings.DEFAULT_DATABASE;
 @Requires(property = ArangoSettings.PREFIX)
 @Requires(classes = ArangoDB.class)
 @ConfigurationProperties(ArangoSettings.PREFIX)
-public class ArangoSyncClientConfiguration {
+public class ArangoClientSyncConfiguration {
 
     @ConfigurationBuilder(prefixes = "", excludes = { "host" })
     protected ArangoDB.Builder config = new ArangoDB.Builder();
@@ -84,7 +84,7 @@ public class ArangoSyncClientConfiguration {
      * @return client configuration builder
      */
     public ArangoDB.Builder getConfig() {
-        return config;
+        return config.host(getHost(), getPort());
     }
 
     /**

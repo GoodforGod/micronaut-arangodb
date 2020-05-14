@@ -10,9 +10,9 @@ import io.micronaut.runtime.context.scope.Refreshable;
  * @author Anton Kurako (GoodforGod)
  * @since 11.3.2020
  */
-@Requires(beans = ArangoSyncClientConfiguration.class)
+@Requires(beans = ArangoClientSyncConfiguration.class)
 @Factory
-public class ArangoSyncAccessorFactory {
+public class ArangoAccessorSyncFactory {
 
     /**
      * Factory method to return a AranoDB sync connection.
@@ -24,7 +24,7 @@ public class ArangoSyncAccessorFactory {
     @Bean(preDestroy = "shutdown")
     @Primary
     @Prototype
-    public ArangoDB getAccessorSync(ArangoSyncClientConfiguration configuration) {
+    public ArangoDB getAccessorSync(ArangoClientSyncConfiguration configuration) {
         return configuration.getAccessor();
     }
 }
