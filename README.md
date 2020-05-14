@@ -106,26 +106,14 @@ In case you want inject clients as [**prototypes**](https://docs.micronaut.io/la
 you can use *named* bean injection.
 
 ```java
-@MicronautTest
-class ArangoClientTests {
-  
-    @Named("prototype")
-    @Inject
-    private ArangoClient asyncClient;    
-    
-    @Named("prototype")
-    @Inject
-    private ArangoClientSync syncClient;    
+@Named("prototype")
+@Inject
+private ArangoClient asyncClient;    
 
-    void checkConfiguredDatabase() {
-        final String databaseAsync = asyncClient.getDatabase(); // Database as per config
-        final String databaseSync = syncClient.getDatabase(); // Database as per config
-        assertEquals(database, database);
-    
-        final ArangoDBAsync async = asyncClient.accessor();
-        final ArangoDB sync = syncClient.accessor();
-    }
-}
+@Named("prototype")
+@Inject
+private ArangoClientSync syncClient;    
+```
 
 ### Configuring ArangoDB Driver
 
@@ -136,6 +124,7 @@ Configuration supports all available ArangoDB driver settings.
 Configuring timeout, chunksize, maxConnections, connectionTtl, acquireHostList, loadBalancingStrategy for *clients & accessors*
 
 Check [ArangoDB official](https://www.arangodb.com/docs/stable/drivers/java-reference-setup.html) info about each parameter.
+
 ```yaml
 arangodb:
   timeout: 3000                         # default - 0 in milliseconds
@@ -273,6 +262,8 @@ TestContainers allows you to use integration tests with real database in all doc
 check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Version History
+
+**1.1.0** - Client as prototype injection added, health indicators accessors instead of clients, sync client renamed.
 
 **1.0.0** - Initial version, sync and async clients and drivers injection, database initialization, health check, cluster health check.
 
