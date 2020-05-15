@@ -5,10 +5,6 @@ import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 
-import static com.arangodb.internal.ArangoDefaults.DEFAULT_HOST;
-import static com.arangodb.internal.ArangoDefaults.DEFAULT_PORT;
-import static io.micronaut.configuration.arango.ArangoSettings.DEFAULT_DATABASE;
-
 /**
  * ArangoDB Sync configuration class.
  *

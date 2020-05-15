@@ -43,9 +43,8 @@ public class ArangoDatabaseInitializer {
     }
 
     /**
-     * Creates database
-     * {@link ArangoConfiguration#isCreateDatabaseIfNotExist()} if configured
-     * in {@link ArangoConfiguration}
+     * Creates database {@link ArangoConfiguration#isCreateDatabaseIfNotExist()} if
+     * configured in {@link ArangoConfiguration}
      *
      * @param configuration to get settings from
      * @return True if database was created or existed already, False otherwise
