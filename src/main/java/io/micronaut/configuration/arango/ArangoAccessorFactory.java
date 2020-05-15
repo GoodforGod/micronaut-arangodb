@@ -10,7 +10,7 @@ import io.micronaut.runtime.context.scope.Refreshable;
  * @author Anton Kurako (GoodforGod)
  * @since 11.3.2020
  */
-@Requires(beans = ArangoClientConfiguration.class)
+@Requires(beans = ArangoConfiguration.class)
 @Factory
 public class ArangoAccessorFactory {
 
@@ -24,7 +24,7 @@ public class ArangoAccessorFactory {
     @Bean(preDestroy = "shutdown")
     @Primary
     @Prototype
-    public ArangoDBAsync getAccessorAsync(ArangoClientConfiguration configuration) {
+    public ArangoDBAsync getAccessor(ArangoConfiguration configuration) {
         return configuration.getAccessor();
     }
 }

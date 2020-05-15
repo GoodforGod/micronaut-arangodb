@@ -11,7 +11,7 @@ This project includes integration between Micronaut and ArangoDB.
 **Gradle**
 ```groovy
 dependencies {
-    compile 'com.github.goodforgod:micronaut-arangodb:1.0.0'
+    compile 'com.github.goodforgod:micronaut-arangodb:1.1.1'
 }
 ```
 
@@ -20,7 +20,7 @@ dependencies {
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.1</version>
 </dependency>
 ```
 
@@ -48,7 +48,7 @@ compile 'com.arangodb:arangodb-java-driver'
 
 Both async *ArangoDBAsync* and sync *ArangoDB* accessors are then available for dependency injection.
 
-Accessors are injected as [**prototypes**](https://docs.micronaut.io/latest/guide/index.html#builtInScopes) 
+Accessors injected as [**prototypes**](https://docs.micronaut.io/latest/guide/index.html#builtInScopes) 
 beans remember that while using them.
 
 ```java
@@ -61,12 +61,12 @@ private ArangoDB sync;
 
 ### Clients
 
-Configuration supports to setup database for your application 
+Configuration supports setup database for your application 
 (ArangoDB accessors do not require or have database config).
 
 So in order to use database specified as per [configuration](#Configuration) inject provided Arango Clients instead.
 
-Clients are injected as [**singletons**](https://docs.micronaut.io/latest/guide/index.html#builtInScopes) 
+Clients injected as [**singletons**](https://docs.micronaut.io/latest/guide/index.html#builtInScopes) 
 beans remember that while using them.
 
 ```java
@@ -74,10 +74,10 @@ beans remember that while using them.
 private ArangoClient asyncClient;
 
 @Inject
-private ArangoSyncClient syncClient;
+private ArangoClientSync syncClient;
 ```
 
-Both clients provides as sync and async implementation and are same [accessors](#Accessors) 
+Both clients provide as sync and async implementation and are same [accessors](#Accessors) 
 but with knowledge about database specified per config.
 So you can use connection with knowledge about database your app is working with.
 
@@ -89,7 +89,7 @@ class ArangoClientTests {
     private ArangoClient asyncClient;    
 
     @Inject
-    private ArangoSyncClient syncClient;    
+    private ArangoClientSync syncClient;    
 
     void checkConfiguredDatabase() {
         final String databaseAsync = asyncClient.getDatabase(); // Database as per config
@@ -102,6 +102,19 @@ class ArangoClientTests {
 }
 ```
 
+In case you want inject clients as [**prototypes**](https://docs.micronaut.io/latest/guide/index.html#builtInScopes) 
+you can use *named* bean injection.
+
+```java
+@Named("prototype")
+@Inject
+private ArangoClient asyncClient;    
+
+@Named("prototype")
+@Inject
+private ArangoClientSync syncClient;    
+```
+
 ### Configuring ArangoDB Driver
 
 All accessors and clients are provided as [**refreshable**](https://docs.micronaut.io/latest/guide/index.html#builtInScopes) with *arangodb* key for bean refresh.
@@ -111,6 +124,7 @@ Configuration supports all available ArangoDB driver settings.
 Configuring timeout, chunksize, maxConnections, connectionTtl, acquireHostList, loadBalancingStrategy for *clients & accessors*
 
 Check [ArangoDB official](https://www.arangodb.com/docs/stable/drivers/java-reference-setup.html) info about each parameter.
+
 ```yaml
 arangodb:
   timeout: 3000                         # default - 0 in milliseconds
@@ -248,6 +262,8 @@ TestContainers allows you to use integration tests with real database in all doc
 check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Version History
+
+**1.1.0** - Client as prototype injection added, health indicators accessors instead of clients, sync client renamed.
 
 **1.0.0** - Initial version, sync and async clients and drivers injection, database initialization, health check, cluster health check.
 

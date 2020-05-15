@@ -27,7 +27,7 @@ class ArangoClientTests extends ArangoRunner {
     private ArangoClient client;
 
     @Inject
-    private ArangoSyncClient syncClient;
+    private ArangoClientSync syncClient;
 
     @Test
     void createDatabaseSuccess() {

@@ -1,27 +1,16 @@
 package io.micronaut.configuration.arango;
 
-import com.arangodb.ArangoDB;
-import io.micronaut.context.annotation.ConfigurationBuilder;
-import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.context.annotation.Requires;
-
 import static com.arangodb.internal.ArangoDefaults.DEFAULT_HOST;
 import static com.arangodb.internal.ArangoDefaults.DEFAULT_PORT;
 import static io.micronaut.configuration.arango.ArangoSettings.DEFAULT_DATABASE;
 
 /**
- * ArangoDB Sync configuration class.
+ * Abstract ArangoDB configuration class.
  *
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Requires(property = ArangoSettings.PREFIX)
-@Requires(classes = ArangoDB.class)
-@ConfigurationProperties(ArangoSettings.PREFIX)
-public class ArangoSyncClientConfiguration {
-
-    @ConfigurationBuilder(prefixes = "", excludes = { "host" })
-    protected ArangoDB.Builder config = new ArangoDB.Builder();
+public abstract class AbstractArangoConfiguration {
 
     private String host = DEFAULT_HOST;
     private int port = DEFAULT_PORT;
@@ -30,7 +19,7 @@ public class ArangoSyncClientConfiguration {
     private boolean createDatabaseIfNotExist = false;
 
     /**
-     * @return whenever to create database on client creation
+     * @return whenever to create database on context initialization
      */
     public boolean isCreateDatabaseIfNotExist() {
         return createDatabaseIfNotExist;
@@ -38,7 +27,7 @@ public class ArangoSyncClientConfiguration {
 
     /**
      * @param createDatabaseIfNotExist indicates to create database if not exist
-     *                                 while creating client
+     *                                 while context initialization
      */
     public void setCreateDatabaseIfNotExist(boolean createDatabaseIfNotExist) {
         this.createDatabaseIfNotExist = createDatabaseIfNotExist;
@@ -78,19 +67,5 @@ public class ArangoSyncClientConfiguration {
      */
     public void setDatabase(String database) {
         this.database = database;
-    }
-
-    /**
-     * @return client configuration builder
-     */
-    public ArangoDB.Builder getConfig() {
-        return config;
-    }
-
-    /**
-     * @return client configuration
-     */
-    public ArangoDB getAccessor() {
-        return getConfig().host(getHost(), getPort()).build();
     }
 }

@@ -2,7 +2,6 @@ package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
-import com.arangodb.async.ArangoDBAsync;
 
 /**
  * ArangoDB Sync Accessor {@link ArangoDB} and database name as configured for
@@ -11,20 +10,20 @@ import com.arangodb.async.ArangoDBAsync;
  * @author Anton Kurako (GoodforGod)
  * @since 15.3.2020
  */
-public class ArangoSyncClient implements AutoCloseable {
+public class ArangoClientSync implements AutoCloseable {
 
     /**
      * Configured database name for application
-     * {@link ArangoClientConfiguration#getDatabase()}.
+     * {@link ArangoConfiguration#getDatabase()}.
      */
     private final String database;
 
     /**
-     * ArangoDB accessor {@link ArangoDBAsync}.
+     * ArangoDB accessor {@link ArangoDB}.
      */
     private final ArangoDB arangodb;
 
-    public ArangoSyncClient(ArangoSyncClientConfiguration configuration) {
+    public ArangoClientSync(ArangoSyncConfiguration configuration) {
         this.database = configuration.getDatabase();
         this.arangodb = configuration.getAccessor();
     }
@@ -41,7 +40,7 @@ public class ArangoSyncClient implements AutoCloseable {
     }
 
     /**
-     * @return Configured ArangoDB accessor {@link ArangoDBAsync}.
+     * @return Configured ArangoDB accessor {@link ArangoDB}.
      */
     public ArangoDB accessor() {
         return arangodb;

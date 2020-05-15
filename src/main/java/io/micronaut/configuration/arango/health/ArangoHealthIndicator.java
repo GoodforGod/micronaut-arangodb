@@ -1,5 +1,6 @@
 package io.micronaut.configuration.arango.health;
 
+import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.entity.ArangoDBVersion;
 import io.micronaut.configuration.arango.ArangoClient;
 import io.micronaut.context.annotation.Requires;
@@ -32,16 +33,18 @@ public class ArangoHealthIndicator implements HealthIndicator {
      * The name to expose details with.
      */
     private static final String NAME = "arangodb";
-    private final ArangoClient client;
+    private final ArangoDBAsync accessor;
+    private final String database;
 
     @Inject
-    public ArangoHealthIndicator(ArangoClient client) {
-        this.client = client;
+    public ArangoHealthIndicator(ArangoDBAsync accessor, ArangoClient client) {
+        this.accessor = accessor;
+        this.database = client.getDatabase();
     }
 
     @Override
     public Publisher<HealthResult> getResult() {
-        return Flowable.fromFuture(client.db().getVersion())
+        return Flowable.fromFuture(accessor.db().getVersion())
                 .timeout(10, TimeUnit.SECONDS)
                 .retry(3)
                 .map(this::buildUpReport)
@@ -50,7 +53,7 @@ public class ArangoHealthIndicator implements HealthIndicator {
 
     private Map<String, Object> buildDetails(ArangoDBVersion version) {
         final Map<String, Object> details = new HashMap<>(2);
-        details.put("database", client.getDatabase());
+        details.put("database", database);
         details.put("version", version.getVersion());
         return details;
     }
