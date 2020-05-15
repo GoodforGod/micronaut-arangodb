@@ -14,14 +14,14 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * ArangoDB database initialized activated by
- * {@link ArangoClientConfiguration#isCreateDatabaseIfNotExist()}
+ * {@link ArangoConfiguration#isCreateDatabaseIfNotExist()}
  *
  * @author Anton Kurako (GoodforGod)
- * @see ArangoClientConfiguration#isCreateDatabaseIfNotExist()
+ * @see ArangoConfiguration#isCreateDatabaseIfNotExist()
  * @since 16.3.2020
  */
 @Requires(property = "arangodb.createDatabaseIfNotExist", value = "true", defaultValue = "false")
-@Requires(beans = ArangoClientConfiguration.class)
+@Requires(beans = ArangoConfiguration.class)
 @Context
 public class ArangoDatabaseInitializer {
 
@@ -29,7 +29,7 @@ public class ArangoDatabaseInitializer {
 
     @PostConstruct
     @Inject
-    protected void setupDatabase(ArangoClientConfiguration configuration) {
+    protected void setupDatabase(ArangoConfiguration configuration) {
         final String database = configuration.getDatabase();
         try {
             final long setupStart = System.nanoTime();
@@ -44,13 +44,13 @@ public class ArangoDatabaseInitializer {
 
     /**
      * Creates database
-     * {@link ArangoClientConfiguration#isCreateDatabaseIfNotExist()} if configured
-     * in {@link ArangoClientConfiguration}
+     * {@link ArangoConfiguration#isCreateDatabaseIfNotExist()} if configured
+     * in {@link ArangoConfiguration}
      *
      * @param configuration to get settings from
      * @return True if database was created or existed already, False otherwise
      */
-    protected CompletableFuture<Boolean> setupDatabaseIfConfiguredAsync(ArangoClientConfiguration configuration) {
+    protected CompletableFuture<Boolean> setupDatabaseIfConfiguredAsync(ArangoConfiguration configuration) {
         final ArangoDBAsync accessor = configuration.getAccessor();
         final boolean isDatabaseSystem = ArangoSettings.DEFAULT_DATABASE.equals(configuration.getDatabase());
 

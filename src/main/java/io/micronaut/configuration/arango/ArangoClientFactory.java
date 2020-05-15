@@ -12,7 +12,7 @@ import javax.inject.Singleton;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Requires(beans = ArangoClientConfiguration.class)
+@Requires(beans = ArangoConfiguration.class)
 @Factory
 public class ArangoClientFactory {
 
@@ -26,7 +26,7 @@ public class ArangoClientFactory {
     @Bean(preDestroy = "close")
     @Singleton
     @Primary
-    public ArangoClient getClient(ArangoClientConfiguration configuration) {
+    public ArangoClient getClient(ArangoConfiguration configuration) {
         return getClientPrototype(configuration);
     }
 
@@ -40,7 +40,7 @@ public class ArangoClientFactory {
     @Bean(preDestroy = "close")
     @Named("prototype")
     @Prototype
-    protected ArangoClient getClientPrototype(ArangoClientConfiguration configuration) {
+    protected ArangoClient getClientPrototype(ArangoConfiguration configuration) {
         return new ArangoClient(configuration);
     }
 }

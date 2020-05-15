@@ -1,27 +1,16 @@
 package io.micronaut.configuration.arango;
 
-import com.arangodb.async.ArangoDBAsync;
-import io.micronaut.context.annotation.ConfigurationBuilder;
-import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.context.annotation.Requires;
-
 import static com.arangodb.internal.ArangoDefaults.DEFAULT_HOST;
 import static com.arangodb.internal.ArangoDefaults.DEFAULT_PORT;
 import static io.micronaut.configuration.arango.ArangoSettings.DEFAULT_DATABASE;
 
 /**
- * ArangoDB Async configuration class.
+ * Abstract ArangoDB configuration class.
  *
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Requires(property = ArangoSettings.PREFIX)
-@Requires(classes = ArangoDBAsync.class)
-@ConfigurationProperties(ArangoSettings.PREFIX)
-public class ArangoClientConfiguration {
-
-    @ConfigurationBuilder(prefixes = "", excludes = { "host" })
-    protected ArangoDBAsync.Builder config = new ArangoDBAsync.Builder();
+public abstract class AbstractArangoConfiguration {
 
     private String host = DEFAULT_HOST;
     private int port = DEFAULT_PORT;
@@ -78,19 +67,5 @@ public class ArangoClientConfiguration {
      */
     public void setDatabase(String database) {
         this.database = database;
-    }
-
-    /**
-     * @return client configuration builder
-     */
-    public ArangoDBAsync.Builder getConfig() {
-        return config.host(getHost(), getPort());
-    }
-
-    /**
-     * @return client configuration
-     */
-    public ArangoDBAsync getAccessor() {
-        return getConfig().build();
     }
 }

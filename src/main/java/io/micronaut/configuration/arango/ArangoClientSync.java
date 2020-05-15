@@ -14,7 +14,7 @@ public class ArangoClientSync implements AutoCloseable {
 
     /**
      * Configured database name for application
-     * {@link ArangoClientConfiguration#getDatabase()}.
+     * {@link ArangoConfiguration#getDatabase()}.
      */
     private final String database;
 
@@ -23,7 +23,7 @@ public class ArangoClientSync implements AutoCloseable {
      */
     private final ArangoDB arangodb;
 
-    public ArangoClientSync(ArangoClientSyncConfiguration configuration) {
+    public ArangoClientSync(ArangoSyncConfiguration configuration) {
         this.database = configuration.getDatabase();
         this.arangodb = configuration.getAccessor();
     }
