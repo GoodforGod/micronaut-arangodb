@@ -11,7 +11,7 @@ This project includes integration between Micronaut and ArangoDB.
 **Gradle**
 ```groovy
 dependencies {
-    compile 'com.github.goodforgod:micronaut-arangodb:1.1.1'
+    compile 'com.github.goodforgod:micronaut-arangodb:1.2.0'
 }
 ```
 
@@ -20,7 +20,7 @@ dependencies {
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>1.1.1</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
@@ -256,12 +256,14 @@ arangodb:
 ## Testing
 
 For testing purposes it is recommended to use [ArangoDB TestContainer library](https://github.com/GoodforGod/arangodb-testcontainer) 
-(this project is tested via that library). 
+(this project tested via that library). 
 
 TestContainers allows you to use integration tests with real database in all docker friendly environments, 
 check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Version History
+
+**1.2.0** - Improved ArangoDB Health Check (more accurate db state check).
 
 **1.1.0** - Client as prototype injection added, health indicators accessors instead of clients, sync client renamed.
 
@@ -269,4 +271,4 @@ check here for [TestContainers](https://www.testcontainers.org/).
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+This project licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
