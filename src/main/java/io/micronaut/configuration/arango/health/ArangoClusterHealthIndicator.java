@@ -10,6 +10,7 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
 import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,7 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
 
     @Override
     public Publisher<HealthResult> getResult() {
-        return Flowable.fromFuture(accessor.db(ArangoSettings.DEFAULT_DATABASE).route("/_admin/cluster/health").get())
+        return Flowable.fromFuture(accessor.db(ArangoSettings.DEFAULT_DATABASE).route("/_admin/cluster/health").get(), Schedulers.io())
                 .timeout(10, TimeUnit.SECONDS)
                 .retry(3)
                 .map(this::buildReport)
@@ -64,11 +65,9 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     }
 
     private HealthResult buildReport(Response response) {
-        if (HttpStatus.OK.getCode() == response.getResponseCode()) {
-            return buildHealthResponse(response);
-        } else {
-            return buildUnknownReport(response);
-        }
+        return HttpStatus.OK.getCode() == response.getResponseCode()
+                ? buildHealthResponse(response)
+                : buildUnknownReport(response);
     }
 
     private HealthResult buildHealthResponse(Response response) {
