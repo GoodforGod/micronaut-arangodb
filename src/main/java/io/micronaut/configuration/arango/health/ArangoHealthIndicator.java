@@ -8,7 +8,6 @@ import io.micronaut.context.annotation.Requires;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
 import io.reactivex.Flowable;
-import io.reactivex.schedulers.Schedulers;
 import org.reactivestreams.Publisher;
 
 import javax.inject.Inject;
