@@ -1,8 +1,9 @@
 package io.micronaut.configuration.arango.health;
 
-import com.arangodb.async.ArangoDBAsync;
+import com.arangodb.ArangoDB;
 import com.arangodb.entity.ArangoDBVersion;
 import io.micronaut.configuration.arango.ArangoClient;
+import io.micronaut.configuration.arango.ArangoClientSync;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
@@ -33,18 +34,18 @@ public class ArangoHealthIndicator implements HealthIndicator {
      * The name to expose details with.
      */
     private static final String NAME = "arangodb";
-    private final ArangoDBAsync accessor;
+    private final ArangoDB accessor;
     private final String database;
 
     @Inject
-    public ArangoHealthIndicator(ArangoDBAsync accessor, ArangoClient client) {
+    public ArangoHealthIndicator(ArangoDB accessor, ArangoClientSync client) {
         this.accessor = accessor;
         this.database = client.getDatabase();
     }
 
     @Override
     public Publisher<HealthResult> getResult() {
-        return Flowable.fromFuture(accessor.db().getVersion())
+        return Flowable.fromCallable(() -> accessor.db().getVersion())
                 .timeout(10, TimeUnit.SECONDS)
                 .retry(3)
                 .map(this::buildUpReport)
