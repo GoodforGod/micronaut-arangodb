@@ -1,17 +1,19 @@
 package io.micronaut.configuration.arango.health;
 
 import com.arangodb.ArangoDB;
-import com.arangodb.entity.ArangoDBVersion;
+import com.arangodb.entity.DatabaseEntity;
 import io.micronaut.configuration.arango.ArangoClient;
 import io.micronaut.configuration.arango.ArangoClientSync;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
 import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 import org.reactivestreams.Publisher;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -45,30 +47,31 @@ public class ArangoHealthIndicator implements HealthIndicator {
 
     @Override
     public Publisher<HealthResult> getResult() {
-        return Flowable.fromCallable(() -> accessor.db().getVersion())
+        return Flowable.fromCallable(() -> accessor.db(database).getInfo())
                 .timeout(10, TimeUnit.SECONDS)
                 .retry(3)
                 .map(this::buildUpReport)
                 .onErrorReturn(this::buildDownReport);
     }
 
-    private Map<String, Object> buildDetails(ArangoDBVersion version) {
+    private Map<String, Object> buildDetails(DatabaseEntity db) {
         final Map<String, Object> details = new HashMap<>(2);
-        details.put("database", database);
-        details.put("version", version.getVersion());
+        details.put("database", db.getName());
+        details.put("id", db.getId());
         return details;
     }
 
-    private HealthResult buildUpReport(ArangoDBVersion version) {
+    private HealthResult buildUpReport(DatabaseEntity db) {
         return getBuilder()
                 .status(UP)
-                .details(buildDetails(version))
+                .details(buildDetails(db))
                 .build();
     }
 
     private HealthResult buildDownReport(Throwable t) {
         return getBuilder()
                 .status(DOWN)
+                .details(Collections.singletonMap("database", database))
                 .exception(t)
                 .build();
     }
