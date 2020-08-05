@@ -33,7 +33,7 @@ Just configure the host, port, credentials (if needed) of the ArangoDB accessor 
 arangodb:
   host: localhost     # default
   port: 8529          # default
-  database: _system   # default
+  database: _system   # default (is used for healthcheck)
   user: root          # default
   password: 1234      # or no pass if auth is not required
 ```
@@ -140,6 +140,8 @@ arangodb:
 
 There is an option to initialize database if it doesn't exist on startup via *createDatabaseIfNotExist* option.
 
+Use this option if your service is lazy initialized, to set up database for [HealthCheck](#health-check).
+
 Usage:
 
 ```yaml
@@ -150,6 +152,7 @@ arangodb:
 ### Health Check
 
 Health check for ArangoDB is provided and is *turned on* by default.
+HeathCheck is active for database that is specified in [configuration](#configuration).
 
 ArangoDB health check is part of [Micronaut Health Endpoint](https://docs.micronaut.io/latest/guide/index.html#healthEndpoint).
 
