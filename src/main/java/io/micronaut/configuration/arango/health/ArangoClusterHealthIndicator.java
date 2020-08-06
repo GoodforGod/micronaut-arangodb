@@ -1,16 +1,14 @@
 package io.micronaut.configuration.arango.health;
 
-import com.arangodb.async.ArangoDBAsync;
+import com.arangodb.ArangoDB;
 import com.arangodb.velocystream.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.micronaut.configuration.arango.ArangoClient;
 import io.micronaut.configuration.arango.ArangoSettings;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
 import io.reactivex.Flowable;
-import io.reactivex.schedulers.Schedulers;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +34,7 @@ import static io.micronaut.health.HealthStatus.*;
  * @since 29.2.2020
  */
 @Requires(property = "arangodb.health.cluster.enabled", value = "true", defaultValue = "false")
-@Requires(beans = ArangoClient.class, classes = HealthIndicator.class)
+@Requires(beans = ArangoDB.class, classes = HealthIndicator.class)
 @Singleton
 public class ArangoClusterHealthIndicator implements HealthIndicator {
 
@@ -46,18 +44,18 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
      * The name to expose details with.
      */
     private static final String NAME = "arangodb (cluster)";
-    private final ArangoDBAsync accessor;
+    private final ArangoDB accessor;
     private final ObjectMapper mapper;
 
     @Inject
-    public ArangoClusterHealthIndicator(ArangoDBAsync accessor, ObjectMapper mapper) {
+    public ArangoClusterHealthIndicator(ArangoDB accessor, ObjectMapper mapper) {
         this.accessor = accessor;
         this.mapper = mapper;
     }
 
     @Override
     public Publisher<HealthResult> getResult() {
-        return Flowable.fromFuture(accessor.db(ArangoSettings.DEFAULT_DATABASE).route("/_admin/cluster/health").get(), Schedulers.io())
+        return Flowable.fromCallable(() -> accessor.db(ArangoSettings.DEFAULT_DATABASE).route("/_admin/cluster/health").get())
                 .timeout(10, TimeUnit.SECONDS)
                 .retry(3)
                 .map(this::buildReport)
@@ -92,8 +90,8 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     private Map<String, Object> buildDetails(HealthCluster healthCluster) {
         final List<Map<Object, Object>> formattedNodesHealth = streamCriticalNodes(healthCluster)
                 .map(h -> {
-                    final int capacity = h.isLeading() ? 3 : 2;
-                    final Map<Object, Object> report = new HashMap<>(capacity);
+                    final int reportSize = h.isLeading() ? 3 : 2;
+                    final Map<Object, Object> report = new HashMap<>(reportSize);
                     final String name = isEmpty(h.getShortName()) ? h.getRoleWithNodeId() : h.getShortName();
                     report.put("name", name);
                     report.put("status", h.getStatus());
