@@ -57,12 +57,16 @@ dependencies {
 
     implementation 'io.micronaut:micronaut-management'
 
+    testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.3'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
     testAnnotationProcessor 'io.micronaut:micronaut-inject-java'
-    testImplementation 'com.github.goodforgod:arangodb-testcontainer:1.2.0'
-    testImplementation 'org.testcontainers:junit-jupiter:1.14.3'
 
     testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.3'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+    testImplementation 'org.testcontainers:junit-jupiter:1.14.3'
+    testImplementation 'com.github.goodforgod:arangodb-testcontainer:1.2.0'
 
     testImplementation 'io.micronaut.test:micronaut-test-core'
     testImplementation 'io.micronaut.test:micronaut-test-junit5'
