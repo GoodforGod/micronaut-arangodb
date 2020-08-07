@@ -8,10 +8,15 @@
 This project includes integration between Micronaut and ArangoDB.
 
 ## Dependency :rocket:
+
+Starting from version *2.0.0* library ships for *Micronaut 2*.
+
+Last release for **Micronaut 1** is [version *1.2.1*](https://github.com/GoodforGod/micronaut-arangodb/releases/tag/v1.2.1).
+
 **Gradle**
 ```groovy
 dependencies {
-    compile 'com.github.goodforgod:micronaut-arangodb:1.2.1'
+    compile 'com.github.goodforgod:micronaut-arangodb:2.0.0'
 }
 ```
 
@@ -20,7 +25,7 @@ dependencies {
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>1.2.1</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -265,6 +270,8 @@ TestContainers allows you to use integration tests with real database in all doc
 check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Version History
+
+**2.0.0** - Micronaut 2 support.
 
 **1.2.1** - Minor HealthCheck improvements, dependencies updated.
 

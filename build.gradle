@@ -45,10 +45,11 @@ configurations {
 repositories {
     mavenLocal()
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
-    micronautBom platform('io.micronaut:micronaut-bom:1.3.7')
+    micronautBom platform('io.micronaut:micronaut-bom:2.0.1')
 
     annotationProcessor 'io.micronaut:micronaut-inject-java'
     compileOnly 'io.micronaut:micronaut-inject-java'
@@ -56,9 +57,6 @@ dependencies {
     api 'com.arangodb:arangodb-java-driver:6.7.2'
 
     implementation 'io.micronaut:micronaut-management'
-
-    testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.3'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
     testAnnotationProcessor 'io.micronaut:micronaut-inject-java'
 
