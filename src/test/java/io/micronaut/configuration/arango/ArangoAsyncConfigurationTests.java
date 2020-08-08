@@ -18,7 +18,7 @@ import java.util.Map;
  * @since 28.2.2020
  */
 @Testcontainers
-class ArangoSyncConfigurationTests extends ArangoRunner {
+class ArangoAsyncConfigurationTests extends ArangoRunner {
 
     @Container
     private static final ArangoContainer container = new ArangoContainer().withoutAuth();
@@ -28,10 +28,10 @@ class ArangoSyncConfigurationTests extends ArangoRunner {
     void createConnectionWithCustomDatabaseAndDatabaseNotExistByDefault() {
         final ApplicationContext context = ApplicationContext.run(Collections.singletonMap("arangodb.database", "custom"));
 
-        final ArangoClientSync client = context.getBean(ArangoClientSync.class);
-        assertEquals("custom", client.getDatabase());
+        final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
+        assertEquals("custom", client.database());
 
-        final boolean databaseExists = client.db().exists();
+        final Boolean databaseExists = client.db().exists().join();
         assertFalse(databaseExists);
     }
 
@@ -44,10 +44,10 @@ class ArangoSyncConfigurationTests extends ArangoRunner {
 
         final ApplicationContext context = ApplicationContext.run(properties);
 
-        final ArangoClientSync client = context.getBean(ArangoClientSync.class);
-        assertEquals("custom", client.getDatabase());
+        final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
+        assertEquals("custom", client.database());
 
-        final boolean databaseCreated = client.db().exists();
+        final Boolean databaseCreated = client.db().exists().join();
         assertTrue(databaseCreated);
     }
 }

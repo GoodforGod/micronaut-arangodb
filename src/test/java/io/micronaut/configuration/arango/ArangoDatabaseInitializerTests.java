@@ -31,8 +31,8 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
 
         final ApplicationContext context = ApplicationContext.run(properties);
 
-        final ArangoClient client = context.getBean(ArangoClient.class);
-        assertEquals("custom", client.getDatabase());
+        final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
+        assertEquals("custom", client.database());
         assertTrue(client.db().exists().join());
     }
 
@@ -44,8 +44,8 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
 
         final ApplicationContext context = ApplicationContext.run(properties);
 
-        final ArangoClient client = context.getBean(ArangoClient.class);
-        assertEquals(ArangoSettings.DEFAULT_DATABASE, client.getDatabase());
+        final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
+        assertEquals(ArangoSettings.DEFAULT_DATABASE, client.database());
         assertTrue(client.db().exists().join());
     }
 }

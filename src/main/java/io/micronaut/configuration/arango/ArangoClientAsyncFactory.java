@@ -7,26 +7,26 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 /**
- * Default factory for creating ArangoDB client {@link ArangoClientSync}.
+ * Default factory for creating ArangoDB client {@link ArangoClientAsync}.
  *
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Requires(beans = ArangoSyncConfiguration.class)
+@Requires(beans = ArangoAsyncConfiguration.class)
 @Factory
-public class ArangoClientSyncFactory {
+public class ArangoClientAsyncFactory {
 
     /**
      * Factory method to return a client.
      *
      * @param configuration configuration pulled in
-     * @return {@link ArangoClientSync}
+     * @return {@link ArangoClientAsync}
      */
     @Refreshable(ArangoSettings.PREFIX)
     @Bean(preDestroy = "close")
     @Singleton
     @Primary
-    public ArangoClientSync getClient(ArangoSyncConfiguration configuration) {
+    public ArangoClientAsync getClient(ArangoAsyncConfiguration configuration) {
         return getClientPrototype(configuration);
     }
 
@@ -34,13 +34,13 @@ public class ArangoClientSyncFactory {
      * Factory method to return a client.
      *
      * @param configuration configuration pulled in
-     * @return {@link ArangoClientSync}
+     * @return {@link ArangoClientAsync}
      */
     @Refreshable(ArangoSettings.PREFIX)
     @Bean(preDestroy = "close")
     @Named("prototype")
     @Prototype
-    protected ArangoClientSync getClientPrototype(ArangoSyncConfiguration configuration) {
-        return new ArangoClientSync(configuration);
+    protected ArangoClientAsync getClientPrototype(ArangoAsyncConfiguration configuration) {
+        return new ArangoClientAsync(configuration);
     }
 }

@@ -24,14 +24,14 @@ class ArangoClientTests extends ArangoRunner {
     private static final ArangoContainer container = new ArangoContainer().withoutAuth();
 
     @Inject
-    private ArangoClient client;
+    private ArangoClientAsync client;
 
     @Inject
-    private ArangoClientSync syncClient;
+    private ArangoClient syncClient;
 
     @Test
     void createDatabaseSuccess() {
-        assertEquals("custom", client.getDatabase());
+        assertEquals("custom", client.database());
 
         final Boolean created = client.db().create().join();
         assertTrue(created);
@@ -39,7 +39,7 @@ class ArangoClientTests extends ArangoRunner {
 
     @Test
     void createDatabaseSyncSuccess() {
-        assertEquals("custom", syncClient.getDatabase());
+        assertEquals("custom", syncClient.database());
 
         final Boolean created = syncClient.accessor().db("sync-custom").create();
         assertTrue(created);

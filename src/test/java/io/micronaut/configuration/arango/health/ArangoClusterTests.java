@@ -3,7 +3,7 @@ package io.micronaut.configuration.arango.health;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.DocumentCreateEntity;
-import io.micronaut.configuration.arango.ArangoClient;
+import io.micronaut.configuration.arango.ArangoClientAsync;
 import io.micronaut.configuration.arango.ArangoRunner;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.health.HealthStatus;
@@ -57,7 +57,7 @@ class ArangoClusterTests extends ArangoRunner {
     @Inject
     private ArangoHealthIndicator healthIndicator;
     @Inject
-    private ArangoClient client;
+    private ArangoClientAsync client;
 
     @Test
     void simpleHealthUpWhenClusterUp() {

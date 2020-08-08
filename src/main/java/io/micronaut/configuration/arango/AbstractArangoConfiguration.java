@@ -68,4 +68,13 @@ public abstract class AbstractArangoConfiguration {
     public void setDatabase(String database) {
         this.database = database;
     }
+
+    @Override
+    public String toString() {
+        return "ArangoConfiguration {"
+                + "host='" + getHost()
+                + ", port='" + getPort()
+                + ", database='" + getDatabase()
+                + '}';
+    }
 }
