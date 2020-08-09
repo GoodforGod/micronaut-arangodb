@@ -10,8 +10,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import javax.inject.Inject;
 
 /**
- * Description in progress
- *
  * @author Anton Kurako (GoodforGod)
  * @since 28.2.2020
  */

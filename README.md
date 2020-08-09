@@ -147,11 +147,18 @@ There is an option to initialize database if it doesn't exist on startup via *cr
 
 Use this option if your service is lazy initialized, to set up database for [HealthCheck](#health-check).
 
-Usage:
+```yaml
+arangodb:
+  createDatabaseIfNotExist: true    # default - false
+```
+
+Default timeout for operation set to 10 seconds, if you want to specify timeout for database creation
+on startup you can set it via property.
 
 ```yaml
 arangodb:
   createDatabaseIfNotExist: true    # default - false
+    timeout: 30
 ```
 
 ### Health Check
@@ -271,7 +278,7 @@ check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Version History
 
-**2.0.0** - Micronaut 2 support.
+**2.0.0** - Micronaut 2 support, database init timeout property added, dependency updated.
 
 **1.2.1** - Minor HealthCheck improvements, dependencies updated.
 
