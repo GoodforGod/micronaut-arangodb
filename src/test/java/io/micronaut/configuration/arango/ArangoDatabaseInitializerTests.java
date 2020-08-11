@@ -1,7 +1,6 @@
 package io.micronaut.configuration.arango;
 
 import io.micronaut.context.ApplicationContext;
-import io.micronaut.context.exceptions.ConfigurationException;
 import io.testcontainers.arangodb.containers.ArangoContainer;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -93,8 +92,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
             ApplicationContext.run(properties);
             fail("Should not happen!");
         } catch (Exception e) {
-            assertTrue(e.getCause().getCause() instanceof ConfigurationException);
-            assertTrue(e.getCause().getCause().getMessage().startsWith("Arango Database creation failed due to timeout"));
+            assertTrue(e.getMessage().contains("Arango Database creation failed due to"));
         }
     }
 }

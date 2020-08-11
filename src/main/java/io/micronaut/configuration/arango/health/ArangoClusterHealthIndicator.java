@@ -33,7 +33,7 @@ import static io.micronaut.health.HealthStatus.*;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Requires(property = "arangodb.health.cluster.enabled", value = "true", defaultValue = "false")
+@Requires(property = ArangoSettings.PREFIX + ".health.cluster.enabled", value = "true", defaultValue = "false")
 @Requires(beans = ArangoDB.class, classes = HealthIndicator.class)
 @Singleton
 public class ArangoClusterHealthIndicator implements HealthIndicator {

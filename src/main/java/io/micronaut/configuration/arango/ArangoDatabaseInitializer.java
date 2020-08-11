@@ -25,7 +25,7 @@ import java.util.concurrent.TimeoutException;
  * @see ArangoAsyncConfiguration#isCreateDatabaseIfNotExist()
  * @since 16.3.2020
  */
-@Requires(property = "arangodb.createDatabaseIfNotExist", value = "true", defaultValue = "false")
+@Requires(property = ArangoSettings.PREFIX + ".createDatabaseIfNotExist", value = "true", defaultValue = "false")
 @Requires(beans = ArangoAsyncConfiguration.class)
 @Context
 @Internal
@@ -39,11 +39,6 @@ public class ArangoDatabaseInitializer {
     @PostConstruct
     @Inject
     protected void setupDatabase(ArangoAsyncConfiguration configuration) {
-        if (!configuration.isCreateDatabaseIfNotExist()) {
-            logger.debug("Arango Database creation is set to 'false'");
-            return;
-        }
-
         final String database = configuration.getDatabase();
         if (ArangoSettings.SYSTEM_DATABASE.equals(database)) {
             logger.debug("Arango is configured to use System Database");
@@ -59,14 +54,16 @@ public class ArangoDatabaseInitializer {
         } catch (ExecutionException e) {
             if (e.getCause() instanceof ArangoDBException) {
                 final ArangoDBException ex = (ArangoDBException) e.getCause();
-                if (ex.getResponseCode() == HttpStatus.CONFLICT.getCode() || ex.getResponseCode() == HttpStatus.BAD_REQUEST.getCode()) {
+                if (ex.getResponseCode() != null
+                        && (ex.getResponseCode() == HttpStatus.CONFLICT.getCode()
+                                || ex.getResponseCode() == HttpStatus.BAD_REQUEST.getCode())) {
                     logger.debug("Arango Database '{}' already exists", database);
                     return;
                 }
 
-                throw new ConfigurationException("Could not create Arango Database due to: " + e.getMessage());
+                throw new ConfigurationException("Arango Database creation failed due to: " + ex.getMessage());
             } else {
-                throw new ConfigurationException(e.getMessage());
+                throw new ConfigurationException("Arango Database creation failed due to: " + e.getMessage());
             }
         } catch (InterruptedException | TimeoutException e) {
             throw new ConfigurationException("Arango Database creation failed due to timeout");
