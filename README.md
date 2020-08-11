@@ -38,7 +38,7 @@ Just configure the host, port, credentials (if needed) of the ArangoDB accessor 
 arangodb:
   host: localhost     # default
   port: 8529          # default
-  database: _system   # default (is used for healthcheck)
+  database: _system   # default (is used for health check)
   user: root          # default
   password: 1234      # or no pass if auth is not required
 ```

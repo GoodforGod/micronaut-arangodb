@@ -22,24 +22,28 @@ class ArangoClientTests extends ArangoRunner {
     private static final ArangoContainer container = new ArangoContainer().withoutAuth();
 
     @Inject
-    private ArangoClientAsync client;
+    private ArangoClientAsync clientAsync;
 
     @Inject
-    private ArangoClient syncClient;
+    private ArangoClient client;
 
     @Test
     void createDatabaseSuccess() {
-        assertEquals("custom", client.database());
+        assertEquals("custom", clientAsync.database());
 
-        final Boolean created = client.db().create().join();
+        final Boolean created = clientAsync.db().create().join();
         assertTrue(created);
+
+        assertNotNull(clientAsync.toString());
     }
 
     @Test
     void createDatabaseSyncSuccess() {
-        assertEquals("custom", syncClient.database());
+        assertEquals("custom", client.database());
 
-        final Boolean created = syncClient.accessor().db("sync-custom").create();
+        final Boolean created = client.accessor().db("sync-custom").create();
         assertTrue(created);
+
+        assertNotNull(client.toString());
     }
 }

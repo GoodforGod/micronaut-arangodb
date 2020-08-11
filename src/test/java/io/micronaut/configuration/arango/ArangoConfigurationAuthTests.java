@@ -31,6 +31,8 @@ public class ArangoConfigurationAuthTests extends ArangoRunner {
         final ApplicationContext context = ApplicationContext.run(properties);
 
         final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
+        assertNotNull(configuration.toString());
+
         try {
             configuration.getConfig().build().db(ArangoSettings.DEFAULT_DATABASE).getInfo();
             fail("Should've failed with auth error");
