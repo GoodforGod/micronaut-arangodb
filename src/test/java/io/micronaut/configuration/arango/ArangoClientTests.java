@@ -30,20 +30,18 @@ class ArangoClientTests extends ArangoRunner {
     @Test
     void createDatabaseSuccess() {
         assertEquals("custom", clientAsync.database());
+        assertNotNull(clientAsync.toString());
 
         final Boolean created = clientAsync.db().create().join();
         assertTrue(created);
-
-        assertNotNull(clientAsync.toString());
     }
 
     @Test
     void createDatabaseSyncSuccess() {
         assertEquals("custom", client.database());
+        assertNotNull(client.toString());
 
         final Boolean created = client.accessor().db("sync-custom").create();
         assertTrue(created);
-
-        assertNotNull(client.toString());
     }
 }

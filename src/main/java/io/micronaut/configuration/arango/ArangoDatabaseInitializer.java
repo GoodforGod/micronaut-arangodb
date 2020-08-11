@@ -1,19 +1,21 @@
 package io.micronaut.configuration.arango;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.async.ArangoDBAsync;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.Internal;
+import io.micronaut.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * ArangoDB database initialized activated by
@@ -37,52 +39,37 @@ public class ArangoDatabaseInitializer {
     @PostConstruct
     @Inject
     protected void setupDatabase(ArangoAsyncConfiguration configuration) {
-        final String database = configuration.getDatabase();
-        try {
-            final long setupStart = System.nanoTime();
-            setupDatabaseIfConfiguredAsync(configuration).get(createTimeout, TimeUnit.SECONDS);
-            final long tookNanoTime = System.nanoTime() - setupStart;
-            logger.debug("Database '{}' initialization took '{}' millis", database, tookNanoTime / 1000000);
-        } catch (Exception e) {
-            final Throwable t = e instanceof CompletionException ? e.getCause() : e;
-            logger.error("Could not create '{}' database in {} seconds, failed with: {}", database, createTimeout, t.getMessage());
-            throw new ConfigurationException("Could not initialize database due to connection failure: " + t.getMessage());
-        }
-    }
-
-    /**
-     * Creates database
-     * {@link ArangoAsyncConfiguration#isCreateDatabaseIfNotExist()} if configured
-     * in {@link ArangoAsyncConfiguration}
-     *
-     * @param configuration to get settings from
-     * @return True if database was created or existed already, False otherwise
-     */
-    protected CompletableFuture<Boolean> setupDatabaseIfConfiguredAsync(ArangoAsyncConfiguration configuration) {
         if (!configuration.isCreateDatabaseIfNotExist()) {
-            logger.debug("Database creation is set to 'false'");
-            return CompletableFuture.completedFuture(true);
+            logger.debug("Arango Database creation is set to 'false'");
+            return;
         }
 
-        final ArangoDBAsync accessor = configuration.getAccessor();
         final String database = configuration.getDatabase();
-
-        if (ArangoSettings.DEFAULT_DATABASE.equals(database)) {
-            logger.debug("Database creation is set to 'true', for '{}' database, skipping database creation...",
-                    ArangoSettings.DEFAULT_DATABASE);
-            return CompletableFuture.completedFuture(true);
+        if (ArangoSettings.SYSTEM_DATABASE.equals(database)) {
+            logger.debug("Arango is configured to use System Database");
+            return;
         }
 
-        return accessor.db(database).exists().thenCompose(isExist -> {
-            if (isExist) {
-                logger.debug("Database '{}' is already initialized", database);
-                return CompletableFuture.completedFuture(true);
+        try {
+            final ArangoDBAsync accessor = configuration.getAccessor();
+            final long startTime = System.nanoTime();
+            accessor.db(database).create().get(createTimeout, TimeUnit.SECONDS);
+            final long tookTime = System.nanoTime() - startTime;
+            logger.debug("Arango Database '{}' creation took '{}' millis", database, tookTime / 1000000);
+        } catch (ExecutionException e) {
+            if (e.getCause() instanceof ArangoDBException) {
+                final ArangoDBException ex = (ArangoDBException) e.getCause();
+                if (ex.getResponseCode() == HttpStatus.CONFLICT.getCode() || ex.getResponseCode() == HttpStatus.BAD_REQUEST.getCode()) {
+                    logger.debug("Arango Database '{}' already exists", database);
+                    return;
+                }
+
+                throw new ConfigurationException("Could not create Arango Database due to: " + e.getMessage());
             } else {
-                logger.debug("Creating Arango database '{}' as specified per configuration, " +
-                        "you can turn off initial database creating by setting 'createDatabaseIfNotExist' property to 'false'",
-                        database);
-                return accessor.createDatabase(database);
+                throw new ConfigurationException(e.getMessage());
             }
-        });
+        } catch (InterruptedException | TimeoutException e) {
+            throw new ConfigurationException("Arango Database creation failed due to timeout");
+        }
     }
 }

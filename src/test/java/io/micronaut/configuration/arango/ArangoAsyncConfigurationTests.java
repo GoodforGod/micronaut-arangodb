@@ -1,8 +1,8 @@
 package io.micronaut.configuration.arango;
 
+import com.arangodb.async.ArangoDBAsync;
 import io.micronaut.context.ApplicationContext;
 import io.testcontainers.arangodb.containers.ArangoContainer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -21,7 +21,6 @@ class ArangoAsyncConfigurationTests extends ArangoRunner {
     @Container
     private static final ArangoContainer container = new ArangoContainer().withoutAuth();
 
-    @Order(1)
     @Test
     void createConnectionWithCustomDatabaseAndDatabaseNotExistByDefault() {
         final ApplicationContext context = ApplicationContext.run(Collections.singletonMap("arangodb.database", "custom"));
@@ -47,5 +46,16 @@ class ArangoAsyncConfigurationTests extends ArangoRunner {
 
         final Boolean databaseCreated = client.db().exists().join();
         assertTrue(databaseCreated);
+    }
+
+    @Test
+    void asyncAccessorIsAvailable() {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.database", "custom");
+
+        final ApplicationContext context = ApplicationContext.run(properties);
+
+        final ArangoDBAsync accessor = context.getBean(ArangoDBAsync.class);
+        assertNotNull(accessor);
     }
 }

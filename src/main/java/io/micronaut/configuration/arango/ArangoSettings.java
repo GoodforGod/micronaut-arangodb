@@ -16,5 +16,5 @@ public interface ArangoSettings {
     /**
      * ArangoDB default DATABASE
      */
-    String DEFAULT_DATABASE = "_system";
+    String SYSTEM_DATABASE = "_system";
 }

@@ -2,7 +2,7 @@ package io.micronaut.configuration.arango;
 
 import static com.arangodb.internal.ArangoDefaults.DEFAULT_HOST;
 import static com.arangodb.internal.ArangoDefaults.DEFAULT_PORT;
-import static io.micronaut.configuration.arango.ArangoSettings.DEFAULT_DATABASE;
+import static io.micronaut.configuration.arango.ArangoSettings.SYSTEM_DATABASE;
 
 /**
  * Abstract ArangoDB configuration class.
@@ -14,7 +14,7 @@ public abstract class AbstractArangoConfiguration {
 
     private String host = DEFAULT_HOST;
     private int port = DEFAULT_PORT;
-    private String database = DEFAULT_DATABASE;
+    private String database = SYSTEM_DATABASE;
 
     private boolean createDatabaseIfNotExist = false;
 
