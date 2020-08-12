@@ -1,11 +1,11 @@
 package io.micronaut.configuration.arango;
 
-import com.arangodb.async.ArangoDBAsync;
+import com.arangodb.ArangoDB;
 import io.micronaut.context.annotation.*;
 import io.micronaut.runtime.context.scope.Refreshable;
 
 /**
- * Default factory for creating ArangoDB Async Connection {@link ArangoDBAsync}.
+ * Default factory for creating ArangoDB Sync Connection {@link ArangoDB}.
  *
  * @author Anton Kurako (GoodforGod)
  * @since 11.3.2020
@@ -15,16 +15,16 @@ import io.micronaut.runtime.context.scope.Refreshable;
 public class ArangoAccessorFactory {
 
     /**
-     * Factory method to return a AranoDB async connection.
+     * Factory method to return a AranoDB sync connection.
      *
-     * @param configuration configuration pulled in for async accessor.
-     * @return {@link ArangoDBAsync}
+     * @param configuration configuration pulled in for sync accessor.
+     * @return {@link ArangoDB}
      */
     @Refreshable(ArangoSettings.PREFIX)
     @Bean(preDestroy = "shutdown")
     @Primary
     @Prototype
-    public ArangoDBAsync getAccessor(ArangoConfiguration configuration) {
+    public ArangoDB getAccessor(ArangoConfiguration configuration) {
         return configuration.getAccessor();
     }
 }

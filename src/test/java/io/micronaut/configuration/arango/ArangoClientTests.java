@@ -10,8 +10,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import javax.inject.Inject;
 
 /**
- * Description in progress
- *
  * @author Anton Kurako (GoodforGod)
  * @since 28.2.2020
  */
@@ -24,24 +22,26 @@ class ArangoClientTests extends ArangoRunner {
     private static final ArangoContainer container = new ArangoContainer().withoutAuth();
 
     @Inject
-    private ArangoClient client;
+    private ArangoClientAsync clientAsync;
 
     @Inject
-    private ArangoClientSync syncClient;
+    private ArangoClient client;
 
     @Test
     void createDatabaseSuccess() {
-        assertEquals("custom", client.getDatabase());
+        assertEquals("custom", clientAsync.database());
+        assertNotNull(clientAsync.toString());
 
-        final Boolean created = client.db().create().join();
+        final Boolean created = clientAsync.db().create().join();
         assertTrue(created);
     }
 
     @Test
     void createDatabaseSyncSuccess() {
-        assertEquals("custom", syncClient.getDatabase());
+        assertEquals("custom", client.database());
+        assertNotNull(client.toString());
 
-        final Boolean created = syncClient.accessor().db("sync-custom").create();
+        final Boolean created = client.accessor().db("sync-custom").create();
         assertTrue(created);
     }
 }

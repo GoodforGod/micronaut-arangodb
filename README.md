@@ -8,10 +8,15 @@
 This project includes integration between Micronaut and ArangoDB.
 
 ## Dependency :rocket:
+
+Starting from version *2.0.0* library ships for *Micronaut 2*.
+
+Last release for **Micronaut 1** is [version *1.2.1*](https://github.com/GoodforGod/micronaut-arangodb/releases/tag/v1.2.1).
+
 **Gradle**
 ```groovy
 dependencies {
-    compile 'com.github.goodforgod:micronaut-arangodb:1.2.1'
+    compile 'com.github.goodforgod:micronaut-arangodb:2.0.0'
 }
 ```
 
@@ -20,7 +25,7 @@ dependencies {
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>1.2.1</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -33,7 +38,7 @@ Just configure the host, port, credentials (if needed) of the ArangoDB accessor 
 arangodb:
   host: localhost     # default
   port: 8529          # default
-  database: _system   # default (is used for healthcheck)
+  database: _system   # default (is used for health check)
   user: root          # default
   password: 1234      # or no pass if auth is not required
 ```
@@ -142,11 +147,18 @@ There is an option to initialize database if it doesn't exist on startup via *cr
 
 Use this option if your service is lazy initialized, to set up database for [HealthCheck](#health-check).
 
-Usage:
+```yaml
+arangodb:
+  createDatabaseIfNotExist: true    # default - false
+```
+
+Default timeout for operation set to 10 seconds, if you want to specify timeout *in seconds* for database creation
+on startup you can set it via property.
 
 ```yaml
 arangodb:
   createDatabaseIfNotExist: true    # default - false
+    timeout: 30                     # time in seconds
 ```
 
 ### Health Check
@@ -265,6 +277,8 @@ TestContainers allows you to use integration tests with real database in all doc
 check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Version History
+
+**2.0.0** - Micronaut 2 support, database init timeout property added, dependency updated.
 
 **1.2.1** - Minor HealthCheck improvements, dependencies updated.
 

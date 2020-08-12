@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Description in progress
- *
  * @author Anton Kurako (GoodforGod)
  * @since 28.2.2020
  */
@@ -29,9 +27,9 @@ class ArangoConfigurationTests extends ArangoRunner {
         final ApplicationContext context = ApplicationContext.run(Collections.singletonMap("arangodb.database", "custom"));
 
         final ArangoClient client = context.getBean(ArangoClient.class);
-        assertEquals("custom", client.getDatabase());
+        assertEquals("custom", client.database());
 
-        final Boolean databaseExists = client.db().exists().join();
+        final boolean databaseExists = client.db().exists();
         assertFalse(databaseExists);
     }
 
@@ -45,9 +43,9 @@ class ArangoConfigurationTests extends ArangoRunner {
         final ApplicationContext context = ApplicationContext.run(properties);
 
         final ArangoClient client = context.getBean(ArangoClient.class);
-        assertEquals("custom", client.getDatabase());
+        assertEquals("custom", client.database());
 
-        final Boolean databaseCreated = client.db().exists().join();
+        final boolean databaseCreated = client.db().exists();
         assertTrue(databaseCreated);
     }
 }

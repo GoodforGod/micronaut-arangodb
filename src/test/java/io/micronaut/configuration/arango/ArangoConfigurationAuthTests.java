@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Description in progress
- *
  * @author Anton Kurako (GoodforGod)
  * @since 11.3.2020
  */
@@ -33,8 +31,10 @@ public class ArangoConfigurationAuthTests extends ArangoRunner {
         final ApplicationContext context = ApplicationContext.run(properties);
 
         final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
+        assertNotNull(configuration.toString());
+
         try {
-            configuration.getConfig().build().db(ArangoSettings.DEFAULT_DATABASE).getInfo().join();
+            configuration.getConfig().build().db(ArangoSettings.SYSTEM_DATABASE).getInfo();
             fail("Should've failed with auth error");
         } catch (Exception e) {
             assertNotNull(e);
@@ -50,8 +50,7 @@ public class ArangoConfigurationAuthTests extends ArangoRunner {
         final ApplicationContext context = ApplicationContext.run(properties);
 
         final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
-        final DatabaseEntity entity = configuration.getConfig().build().db(ArangoSettings.DEFAULT_DATABASE).getInfo()
-                .join();
+        final DatabaseEntity entity = configuration.getConfig().build().db(ArangoSettings.SYSTEM_DATABASE).getInfo();
         assertNotNull(entity);
     }
 }

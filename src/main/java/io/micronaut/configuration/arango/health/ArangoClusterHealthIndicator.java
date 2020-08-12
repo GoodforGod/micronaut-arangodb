@@ -33,7 +33,7 @@ import static io.micronaut.health.HealthStatus.*;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Requires(property = "arangodb.health.cluster.enabled", value = "true", defaultValue = "false")
+@Requires(property = ArangoSettings.PREFIX + ".health.cluster.enabled", value = "true", defaultValue = "false")
 @Requires(beans = ArangoDB.class, classes = HealthIndicator.class)
 @Singleton
 public class ArangoClusterHealthIndicator implements HealthIndicator {
@@ -55,7 +55,7 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
 
     @Override
     public Publisher<HealthResult> getResult() {
-        return Flowable.fromCallable(() -> accessor.db(ArangoSettings.DEFAULT_DATABASE).route("/_admin/cluster/health").get())
+        return Flowable.fromCallable(() -> accessor.db(ArangoSettings.SYSTEM_DATABASE).route("/_admin/cluster/health").get())
                 .timeout(10, TimeUnit.SECONDS)
                 .retry(3)
                 .map(this::buildReport)
