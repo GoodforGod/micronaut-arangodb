@@ -13,9 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * ArangoDB database initialized activated by
@@ -51,7 +49,7 @@ public class ArangoDatabaseInitializer {
             accessor.db(database).create().get(createTimeout, TimeUnit.SECONDS);
             final long tookTime = System.nanoTime() - startTime;
             logger.debug("Arango Database '{}' creation took '{}' millis", database, tookTime / 1000000);
-        } catch (ExecutionException e) {
+        } catch (Exception e) {
             if (e.getCause() instanceof ArangoDBException) {
                 final ArangoDBException ex = (ArangoDBException) e.getCause();
                 if (ex.getResponseCode() != null
@@ -65,8 +63,6 @@ public class ArangoDatabaseInitializer {
             } else {
                 throw new ConfigurationException("Arango Database creation failed due to: " + e.getMessage());
             }
-        } catch (InterruptedException | TimeoutException e) {
-            throw new ConfigurationException("Arango Database creation failed due to timeout");
         }
     }
 }

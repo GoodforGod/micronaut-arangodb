@@ -15,7 +15,7 @@ import java.util.Map;
  * @since 11.3.2020
  */
 @Testcontainers
-public class ArangoAsyncConfigurationAuthTests extends ArangoRunner {
+class ArangoAsyncConfigurationAuthTests extends ArangoRunner {
 
     private static final String PASS = "mypass";
 
