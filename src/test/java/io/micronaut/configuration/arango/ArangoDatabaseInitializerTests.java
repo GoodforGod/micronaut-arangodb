@@ -92,8 +92,9 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
             fail("Should not happen!");
         } catch (Exception e) {
             assertNotNull(e.getCause());
-            assertNotNull(e.getCause().getCause());
-            assertTrue(e.getCause().getCause().getMessage().startsWith("Arango Database initialization timed out"));
+            final Throwable cause = e.getCause().getCause();
+            assertNotNull(cause);
+            assertTrue(e.getMessage(), cause.getMessage().startsWith("Arango Database initialization timed out"));
         }
     }
 }
