@@ -1,7 +1,7 @@
 package io.micronaut.configuration.arango;
 
-import static com.arangodb.internal.ArangoDefaults.DEFAULT_HOST;
-import static com.arangodb.internal.ArangoDefaults.DEFAULT_PORT;
+import com.arangodb.internal.ArangoDefaults;
+
 import static io.micronaut.configuration.arango.ArangoSettings.SYSTEM_DATABASE;
 
 /**
@@ -12,8 +12,9 @@ import static io.micronaut.configuration.arango.ArangoSettings.SYSTEM_DATABASE;
  */
 public abstract class AbstractArangoConfiguration {
 
-    private String host = DEFAULT_HOST;
-    private int port = DEFAULT_PORT;
+    private String user = ArangoDefaults.DEFAULT_USER;
+    private String host = ArangoDefaults.DEFAULT_HOST;
+    private int port = ArangoDefaults.DEFAULT_PORT;
     private String database = SYSTEM_DATABASE;
 
     private boolean createDatabaseIfNotExist = false;
@@ -69,12 +70,25 @@ public abstract class AbstractArangoConfiguration {
         this.database = database;
     }
 
+    /**
+     * @return user configured
+     */
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
     @Override
     public String toString() {
-        return "ArangoConfiguration {"
-                + "host='" + getHost()
-                + ", port='" + getPort()
-                + ", database='" + getDatabase()
-                + '}';
+        return "AbstractArangoConfiguration{" +
+                "user='" + user + '\'' +
+                ", host='" + host + '\'' +
+                ", port=" + port +
+                ", database='" + database + '\'' +
+                ", createDatabaseIfNotExist=" + createDatabaseIfNotExist +
+                '}';
     }
 }

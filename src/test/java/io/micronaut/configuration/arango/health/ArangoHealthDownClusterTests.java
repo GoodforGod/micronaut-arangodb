@@ -23,7 +23,7 @@ import java.util.Map;
 @Property(name = "arangodb.health.cluster.enabled", value = "true")
 @MicronautTest
 @Testcontainers
-public class ArangoHealthUpTests extends ArangoRunner {
+class ArangoHealthDownClusterTests extends ArangoRunner {
 
     @Container
     private static final ArangoContainer container = new ArangoContainer().withoutAuth();

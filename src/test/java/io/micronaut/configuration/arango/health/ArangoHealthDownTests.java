@@ -23,7 +23,7 @@ import javax.inject.Inject;
 @Property(name = "arangodb.health.cluster.enabled", value = "true")
 @MicronautTest
 @Testcontainers
-public class ArangoHealthDownTests extends ArangoRunner {
+class ArangoHealthDownTests extends ArangoRunner {
 
     @Container
     private static final ArangoContainer container = new ArangoContainer().withoutAuth().withPort(8528);

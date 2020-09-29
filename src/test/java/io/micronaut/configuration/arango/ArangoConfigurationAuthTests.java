@@ -15,7 +15,7 @@ import java.util.Map;
  * @since 11.3.2020
  */
 @Testcontainers
-public class ArangoConfigurationAuthTests extends ArangoRunner {
+class ArangoConfigurationAuthTests extends ArangoRunner {
 
     private static final String PASS = "mypass";
 
@@ -28,12 +28,10 @@ public class ArangoConfigurationAuthTests extends ArangoRunner {
         properties.put("arangodb.user", "tom");
         properties.put("arangodb.password", "1234");
 
-        final ApplicationContext context = ApplicationContext.run(properties);
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
+            assertNotNull(configuration.toString());
 
-        final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
-        assertNotNull(configuration.toString());
-
-        try {
             configuration.getConfig().build().db(ArangoSettings.SYSTEM_DATABASE).getInfo();
             fail("Should've failed with auth error");
         } catch (Exception e) {
@@ -47,10 +45,10 @@ public class ArangoConfigurationAuthTests extends ArangoRunner {
         properties.put("arangodb.user", "root");
         properties.put("arangodb.password", PASS);
 
-        final ApplicationContext context = ApplicationContext.run(properties);
-
-        final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
-        final DatabaseEntity entity = configuration.getConfig().build().db(ArangoSettings.SYSTEM_DATABASE).getInfo();
-        assertNotNull(entity);
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
+            final DatabaseEntity entity = configuration.getConfig().build().db(ArangoSettings.SYSTEM_DATABASE).getInfo();
+            assertNotNull(entity);
+        }
     }
 }

@@ -30,11 +30,11 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.createDatabaseIfNotExist", true);
 
-        final ApplicationContext context = ApplicationContext.run(properties);
-
-        final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-        assertEquals("custom", client.database());
-        assertTrue(client.db().exists().join());
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
+            assertEquals("custom", client.database());
+            assertTrue(client.db().exists().join());
+        }
     }
 
     @Order(2)
@@ -44,11 +44,11 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.createDatabaseIfNotExist", true);
 
-        final ApplicationContext context = ApplicationContext.run(properties);
-
-        final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-        assertEquals("custom", client.database());
-        assertTrue(client.db().exists().join());
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
+            assertEquals("custom", client.database());
+            assertTrue(client.db().exists().join());
+        }
     }
 
     @Order(3)
@@ -58,11 +58,11 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
         properties.put("arangodb.database", ArangoSettings.SYSTEM_DATABASE);
         properties.put("arangodb.createDatabaseIfNotExist", true);
 
-        final ApplicationContext context = ApplicationContext.run(properties);
-
-        final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-        assertEquals(ArangoSettings.SYSTEM_DATABASE, client.database());
-        assertTrue(client.db().exists().join());
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
+            assertEquals(ArangoSettings.SYSTEM_DATABASE, client.database());
+            assertTrue(client.db().exists().join());
+        }
     }
 
     @Order(4)
@@ -72,11 +72,11 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
         properties.put("arangodb.database", "nodata");
         properties.put("arangodb.createDatabaseIfNotExist", false);
 
-        final ApplicationContext context = ApplicationContext.run(properties);
-
-        final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-        assertEquals("nodata", client.database());
-        assertFalse(client.db().exists().join());
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
+            assertEquals("nodata", client.database());
+            assertFalse(client.db().exists().join());
+        }
     }
 
     @Order(5)
@@ -88,11 +88,12 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
         properties.put("arangodb.createDatabaseIfNotExist", true);
         properties.put("arangodb.createDatabaseIfNotExist.timeout", 1);
 
-        try {
-            ApplicationContext.run(properties);
+        try (ApplicationContext context = ApplicationContext.run(properties)) {
             fail("Should not happen!");
         } catch (Exception e) {
-            assertTrue(e.getMessage().contains("Arango Database creation failed due to"));
+            assertNotNull(e.getCause());
+            assertNotNull(e.getCause().getCause());
+            assertTrue(e.getCause().getCause().getMessage().startsWith("Arango Database initialization timed out"));
         }
     }
 }

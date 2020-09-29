@@ -3,7 +3,7 @@ package io.micronaut.configuration.arango.health;
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.DatabaseEntity;
 import io.micronaut.configuration.arango.ArangoClientAsync;
-import io.micronaut.configuration.arango.ArangoClient;
+import io.micronaut.configuration.arango.ArangoConfiguration;
 import io.micronaut.configuration.arango.ArangoSettings;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.management.health.indicator.HealthIndicator;
@@ -40,15 +40,15 @@ public class ArangoHealthIndicator implements HealthIndicator {
     private final String database;
 
     @Inject
-    public ArangoHealthIndicator(ArangoDB accessor, ArangoClient client) {
+    public ArangoHealthIndicator(ArangoDB accessor, ArangoConfiguration config) {
         this.accessor = accessor;
-        this.database = client.database();
+        this.database = config.getDatabase();
     }
 
     @Override
     public Publisher<HealthResult> getResult() {
         return Flowable.fromCallable(() -> accessor.db(database).getInfo())
-                .timeout(10, TimeUnit.SECONDS)
+                .timeout(5, TimeUnit.SECONDS)
                 .retry(3)
                 .map(this::buildUpReport)
                 .onErrorReturn(this::buildDownReport);

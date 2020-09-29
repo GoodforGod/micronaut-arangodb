@@ -16,14 +16,14 @@ import io.micronaut.context.annotation.Requires;
 @ConfigurationProperties(ArangoSettings.PREFIX)
 public class ArangoAsyncConfiguration extends AbstractArangoConfiguration {
 
-    @ConfigurationBuilder(prefixes = "", excludes = { "host" })
+    @ConfigurationBuilder(prefixes = "", excludes = { "host", "user" })
     protected ArangoDBAsync.Builder config = new ArangoDBAsync.Builder();
 
     /**
      * @return client configuration builder
      */
-    ArangoDBAsync.Builder getConfig() {
-        return config.host(getHost(), getPort());
+    protected ArangoDBAsync.Builder getConfig() {
+        return config.host(getHost(), getPort()).user(getUser());
     }
 
     /**

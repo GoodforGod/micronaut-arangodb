@@ -3,6 +3,7 @@ package io.micronaut.configuration.arango.health;
 import com.arangodb.ArangoDB;
 import com.arangodb.velocystream.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micronaut.configuration.arango.ArangoConfiguration;
 import io.micronaut.configuration.arango.ArangoSettings;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.HttpStatus;
@@ -46,17 +47,19 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     private static final String NAME = "arangodb (cluster)";
     private final ArangoDB accessor;
     private final ObjectMapper mapper;
+    private final String database;
 
     @Inject
-    public ArangoClusterHealthIndicator(ArangoDB accessor, ObjectMapper mapper) {
+    public ArangoClusterHealthIndicator(ArangoDB accessor, ArangoConfiguration configuration, ObjectMapper mapper) {
         this.accessor = accessor;
         this.mapper = mapper;
+        this.database = configuration.getDatabase();
     }
 
     @Override
     public Publisher<HealthResult> getResult() {
-        return Flowable.fromCallable(() -> accessor.db(ArangoSettings.SYSTEM_DATABASE).route("/_admin/cluster/health").get())
-                .timeout(10, TimeUnit.SECONDS)
+        return Flowable.fromCallable(() -> accessor.db(database).route("/_admin/cluster/health").get())
+                .timeout(5, TimeUnit.SECONDS)
                 .retry(3)
                 .map(this::buildReport)
                 .onErrorReturn(this::buildErrorReport);

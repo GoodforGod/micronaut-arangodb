@@ -24,13 +24,13 @@ class ArangoConfigurationTests extends ArangoRunner {
     @Order(1)
     @Test
     void createConnectionWithCustomDatabaseAndDatabaseNotExistByDefault() {
-        final ApplicationContext context = ApplicationContext.run(Collections.singletonMap("arangodb.database", "custom"));
+        try (final ApplicationContext context = ApplicationContext.run(Collections.singletonMap("arangodb.database", "custom"))) {
+            final ArangoClient client = context.getBean(ArangoClient.class);
+            assertEquals("custom", client.database());
 
-        final ArangoClient client = context.getBean(ArangoClient.class);
-        assertEquals("custom", client.database());
-
-        final boolean databaseExists = client.db().exists();
-        assertFalse(databaseExists);
+            final boolean databaseExists = client.db().exists();
+            assertFalse(databaseExists);
+        }
     }
 
     @Test
@@ -40,12 +40,12 @@ class ArangoConfigurationTests extends ArangoRunner {
         properties.put("arangodb.createDatabaseIfNotExist", true);
         properties.put("arangodb.loadBalancingStrategy", "ONE_RANDOM");
 
-        final ApplicationContext context = ApplicationContext.run(properties);
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoClient client = context.getBean(ArangoClient.class);
+            assertEquals("custom", client.database());
 
-        final ArangoClient client = context.getBean(ArangoClient.class);
-        assertEquals("custom", client.database());
-
-        final boolean databaseCreated = client.db().exists();
-        assertTrue(databaseCreated);
+            final boolean databaseCreated = client.db().exists();
+            assertTrue(databaseCreated);
+        }
     }
 }

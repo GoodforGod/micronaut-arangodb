@@ -49,12 +49,12 @@ repositories {
 }
 
 dependencies {
-    micronautBom platform('io.micronaut:micronaut-bom:2.0.1')
+    micronautBom platform('io.micronaut:micronaut-bom:2.0.3')
 
     annotationProcessor 'io.micronaut:micronaut-inject-java'
     compileOnly 'io.micronaut:micronaut-inject-java'
 
-    api 'com.arangodb:arangodb-java-driver:6.7.2'
+    api 'com.arangodb:arangodb-java-driver:6.7.4'
 
     implementation 'io.micronaut:micronaut-management'
 
