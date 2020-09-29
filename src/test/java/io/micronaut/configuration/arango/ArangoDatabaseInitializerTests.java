@@ -1,6 +1,7 @@
 package io.micronaut.configuration.arango;
 
 import io.micronaut.context.ApplicationContext;
+import io.micronaut.runtime.exceptions.ApplicationStartupException;
 import io.testcontainers.arangodb.containers.ArangoContainer;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -92,9 +93,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
             fail("Should not happen!");
         } catch (Exception e) {
             assertNotNull(e.getCause());
-            final Throwable cause = e.getCause().getCause();
-            assertNotNull(cause);
-            assertTrue(e.getMessage(), cause.getMessage().startsWith("Arango Database initialization timed out"));
+            assertTrue(e.getMessage(), e.getCause().getCause() instanceof ApplicationStartupException);
         }
     }
 }
