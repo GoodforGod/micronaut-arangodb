@@ -76,10 +76,10 @@ beans remember that while using them.
 
 ```java
 @Inject
-private ArangoClient asyncClient;
+private ArangoClientAsync asyncClient;
 
 @Inject
-private ArangoClientSync syncClient;
+private ArangoClient syncClient;
 ```
 
 Both clients provide as sync and async implementation and are same [accessors](#Accessors) 
@@ -91,10 +91,10 @@ So you can use connection with knowledge about database your app is working with
 class ArangoClientTests {
 
     @Inject
-    private ArangoClient asyncClient;    
+    private ArangoClientAsync asyncClient;    
 
     @Inject
-    private ArangoClientSync syncClient;    
+    private ArangoClient syncClient;    
 
     void checkConfiguredDatabase() {
         final String databaseAsync = asyncClient.getDatabase(); // Database as per config
@@ -113,11 +113,11 @@ you can use *named* bean injection.
 ```java
 @Named("prototype")
 @Inject
-private ArangoClient asyncClient;    
+private ArangoClientAsync asyncClient;    
 
 @Named("prototype")
 @Inject
-private ArangoClientSync syncClient;    
+private ArangoClient syncClient;    
 ```
 
 ### Configuring ArangoDB Driver
@@ -277,6 +277,8 @@ TestContainers allows you to use integration tests with real database in all doc
 check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Version History
+
+**2.0.1** - Micronaut updated to 2.1.0, Micronaut plugin added.
 
 **2.0.0** - Improved database handling exceptions, improved ArangoClusterHealth.
 
