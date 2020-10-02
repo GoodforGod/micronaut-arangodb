@@ -49,7 +49,7 @@ micronaut {
         incremental true
         module project.name
         group project.group
-        annotations 'micronaut.swagger.*'
+        annotations 'io.micronaut.configuration.arango.*'
     }
 }
 
