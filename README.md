@@ -278,7 +278,7 @@ check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Version History
 
-**2.0.1** - Micronaut updated to 2.1.0, Micronaut plugin added.
+**2.0.1** - Java updated to 11, Micronaut updated to 2.1.0, Micronaut plugin added.
 
 **2.0.0** - Improved database handling exceptions, improved ArangoClusterHealth.
 
