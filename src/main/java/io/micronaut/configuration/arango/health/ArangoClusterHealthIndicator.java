@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -91,24 +90,17 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     }
 
     private Map<String, Object> buildDetails(HealthCluster healthCluster) {
-        final List<Map<Object, Object>> formattedNodesHealth = streamCriticalNodes(healthCluster)
-                .map(h -> {
-                    final int reportSize = h.isLeading() ? 3 : 2;
-                    final Map<Object, Object> report = new HashMap<>(reportSize);
-                    final String name = isEmpty(h.getShortName()) ? h.getRoleWithNodeId() : h.getShortName();
-                    report.put("name", name);
-                    report.put("status", h.getStatus());
-                    if (h.isLeading())
-                        report.put("leading", true);
-
-                    return report;
+        final List<Map<String, ?>> formattedNodesHealth = streamCriticalNodes(healthCluster)
+                .map(n -> {
+                    final String name = isEmpty(n.getShortName()) ? n.getRoleWithNodeId() : n.getShortName();
+                    return n.isLeading()
+                            ? Map.of("leading", true, "name", name, "status", n.getStatus())
+                            : Map.of("name", name, "status", n.getStatus());
                 })
                 .collect(Collectors.toList());
 
-        final Map<String, Object> details = new HashMap<>(2);
-        details.put("clusterId", healthCluster.getClusterId());
-        details.put("nodes", formattedNodesHealth);
-        return details;
+        return Map.of("clusterId", healthCluster.getClusterId(),
+                "nodes", formattedNodesHealth);
     }
 
     private Stream<HealthNode> streamCriticalNodes(HealthCluster healthCluster) {

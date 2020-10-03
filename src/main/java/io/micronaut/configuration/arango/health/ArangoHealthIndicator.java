@@ -13,8 +13,6 @@ import org.reactivestreams.Publisher;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -55,10 +53,7 @@ public class ArangoHealthIndicator implements HealthIndicator {
     }
 
     private Map<String, Object> buildDetails(DatabaseEntity db) {
-        final Map<String, Object> details = new HashMap<>(2);
-        details.put("database", db.getName());
-        details.put("id", db.getId());
-        return details;
+        return Map.of("database", db.getName(), "id", db.getId());
     }
 
     private HealthResult buildUpReport(DatabaseEntity db) {
@@ -71,7 +66,7 @@ public class ArangoHealthIndicator implements HealthIndicator {
     private HealthResult buildDownReport(Throwable t) {
         return getBuilder()
                 .status(DOWN)
-                .details(Collections.singletonMap("database", database))
+                .details(Map.of("database", database))
                 .exception(t)
                 .build();
     }
