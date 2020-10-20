@@ -2,7 +2,6 @@ package io.micronaut.configuration.arango.health;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.DatabaseEntity;
-import io.micronaut.configuration.arango.ArangoClientAsync;
 import io.micronaut.configuration.arango.ArangoConfiguration;
 import io.micronaut.configuration.arango.ArangoSettings;
 import io.micronaut.context.annotation.Requires;
@@ -26,7 +25,7 @@ import static io.micronaut.health.HealthStatus.UP;
  * @since 29.2.2020
  */
 @Requires(property = ArangoSettings.PREFIX + ".health.enabled", value = "true", defaultValue = "true")
-@Requires(beans = ArangoClientAsync.class, classes = HealthIndicator.class)
+@Requires(beans = ArangoDB.class, classes = HealthIndicator.class)
 @Singleton
 public class ArangoHealthIndicator implements HealthIndicator {
 

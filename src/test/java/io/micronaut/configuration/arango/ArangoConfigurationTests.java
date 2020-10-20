@@ -19,7 +19,7 @@ import java.util.Map;
 class ArangoConfigurationTests extends ArangoRunner {
 
     @Container
-    private static final ArangoContainer container = new ArangoContainer().withoutAuth();
+    private static final ArangoContainer container = getContainer();
 
     @Order(1)
     @Test

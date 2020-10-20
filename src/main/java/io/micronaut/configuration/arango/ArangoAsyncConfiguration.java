@@ -12,7 +12,6 @@ import io.micronaut.context.annotation.Requires;
  * @since 29.2.2020
  */
 @Requires(property = ArangoSettings.PREFIX)
-@Requires(classes = ArangoDBAsync.class)
 @ConfigurationProperties(ArangoSettings.PREFIX)
 public class ArangoAsyncConfiguration extends AbstractArangoConfiguration {
 

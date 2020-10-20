@@ -25,22 +25,22 @@ import java.util.concurrent.TimeUnit;
 @Testcontainers
 class ArangoHealthUpClusterTests extends ArangoRunner {
 
-    private static ArangoClusterDefault clusterDefault = ArangoClusterDefault.build();
+    private static final ArangoClusterDefault CLUSTER_DEFAULT = ArangoClusterDefault.build();
 
     @Container
-    private static final ArangoContainer agent1 = clusterDefault.getAgent1();
+    private static final ArangoContainer agent1 = CLUSTER_DEFAULT.getAgent1();
     @Container
-    private static final ArangoContainer agent2 = clusterDefault.getAgent2();
+    private static final ArangoContainer agent2 = CLUSTER_DEFAULT.getAgent2();
     @Container
-    private static final ArangoContainer agent3 = clusterDefault.getAgent3();
+    private static final ArangoContainer agent3 = CLUSTER_DEFAULT.getAgent3();
     @Container
-    private static final ArangoContainer db1 = clusterDefault.getDatabase1();
+    private static final ArangoContainer db1 = CLUSTER_DEFAULT.getDatabase1();
     @Container
-    private static final ArangoContainer db2 = clusterDefault.getDatabase2();
+    private static final ArangoContainer db2 = CLUSTER_DEFAULT.getDatabase2();
     @Container
-    private static final ArangoContainer coordinator1 = clusterDefault.getCoordinator1();
+    private static final ArangoContainer coordinator1 = CLUSTER_DEFAULT.getCoordinator1();
     @Container
-    private static final ArangoContainer coordinator2 = clusterDefault.getCoordinator2();
+    private static final ArangoContainer coordinator2 = CLUSTER_DEFAULT.getCoordinator2();
 
     @Test
     void healthSingleUpForSystemDatabase() {

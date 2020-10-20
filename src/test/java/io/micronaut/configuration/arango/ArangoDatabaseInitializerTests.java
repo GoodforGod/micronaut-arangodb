@@ -22,7 +22,7 @@ import java.util.Map;
 class ArangoDatabaseInitializerTests extends ArangoRunner {
 
     @Container
-    private static final ArangoContainer container = new ArangoContainer().withoutAuth();
+    private static final ArangoContainer container = getContainer();
 
     @Order(1)
     @Test

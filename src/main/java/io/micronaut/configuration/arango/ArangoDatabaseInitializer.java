@@ -5,7 +5,6 @@ import com.arangodb.async.ArangoDBAsync;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.annotation.Value;
-import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.runtime.exceptions.ApplicationStartupException;
 import org.slf4j.Logger;
@@ -62,7 +61,7 @@ public class ArangoDatabaseInitializer {
                     logger.debug("Arango Database '{}' already exists", database);
                     return;
                 default:
-                    throw new ConfigurationException(
+                    throw new ApplicationStartupException(
                             "Arango Database initialization failed with code '" + code + "' and error: " + e.getMessage());
             }
         } catch (InterruptedException | TimeoutException e) {
