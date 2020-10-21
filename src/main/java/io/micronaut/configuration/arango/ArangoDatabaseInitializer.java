@@ -14,7 +14,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * ArangoDB database context Initialization
@@ -64,7 +63,7 @@ public class ArangoDatabaseInitializer {
                     throw new ApplicationStartupException(
                             "Arango Database initialization failed with code '" + code + "' and error: " + e.getMessage());
             }
-        } catch (InterruptedException | TimeoutException e) {
+        } catch (Exception e) {
             throw new ApplicationStartupException("Arango Database initialization timed out in '" + createTimeout + "' millis");
         }
     }
