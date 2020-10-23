@@ -11,14 +11,14 @@ This project includes integration between Micronaut and ArangoDB.
 
 Starting from version *2.0.0* library ships for *Micronaut 2*.
 
-Starting from version *2.0.1* Java 11+ is required (previous version 1.8+ compatible).
+Starting from version *2.1.0* Java 11+ is required (previous version 1.8+ compatible).
 
 Last release for **Micronaut 1** is [version *1.2.1*](https://github.com/GoodforGod/micronaut-arangodb/releases/tag/v1.2.1).
 
 **Gradle**
 ```groovy
 dependencies {
-    compile 'com.github.goodforgod:micronaut-arangodb:2.0.1'
+    compile 'com.github.goodforgod:micronaut-arangodb:2.1.0'
 }
 ```
 
@@ -27,7 +27,7 @@ dependencies {
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>2.0.1</version>
+    <version>2.1.0</version>
 </dependency>
 ```
 
@@ -151,16 +151,15 @@ Use this option if your service is lazy initialized, to set up database for [Hea
 
 ```yaml
 arangodb:
-  createDatabaseIfNotExist: true    # default - false
+  create-database-if-not-exist: true    # default - false
 ```
 
-Default timeout for operation set to 10 seconds, if you want to specify timeout *in seconds* for database creation
+Default timeout for operation set to 10000 millis, if you want to specify timeout *in seconds* for database creation
 on startup you can set it via property.
 
 ```yaml
 arangodb:
-  createDatabaseIfNotExist: true    # default - false
-    timeout: 30                     # time in seconds
+  create-database-timeout-in-millis: 500 # default - 10000
 ```
 
 ### Health Check
@@ -265,9 +264,8 @@ You can turn on Cluster Health Check via configuration:
 
 ```yaml
 arangodb:
-  health:
-    cluster:
-      enabled: true      # default - false
+  health-cluster:
+    enabled: true      # default - false
 ```
 
 ## Testing
@@ -280,7 +278,7 @@ check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Version History
 
-**2.0.1** - Java updated to 11, Micronaut updated to 2.1.0, Micronaut plugin added.
+**2.1.0** - Java updated to 11, Micronaut updated to 2.1.1, improved config autocompletion.
 
 **2.0.0** - Improved database handling exceptions, improved ArangoClusterHealth.
 

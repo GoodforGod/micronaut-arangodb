@@ -29,7 +29,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
     void createConnectionWithCreateDatabaseIfNotExistOnStartup() {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
-        properties.put("arangodb.createDatabaseIfNotExist", true);
+        properties.put("arangodb.create-database-if-not-exist", true);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
@@ -43,7 +43,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
     void createdDatabaseInitIsSkipped() {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
-        properties.put("arangodb.createDatabaseIfNotExist", true);
+        properties.put("arangodb.create-database-if-not-exist", true);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
@@ -57,7 +57,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
     void defaultDatabaseInitializationIsSkipped() {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", ArangoSettings.SYSTEM_DATABASE);
-        properties.put("arangodb.createDatabaseIfNotExist", true);
+        properties.put("arangodb.create-database-if-not-exist", true);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
@@ -71,7 +71,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
     void databaseCreationIsOff() {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "nodata");
-        properties.put("arangodb.createDatabaseIfNotExist", false);
+        properties.put("arangodb.create-database-if-not-exist", false);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
@@ -86,8 +86,8 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.port", 8566);
-        properties.put("arangodb.createDatabaseIfNotExist", true);
-        properties.put("arangodb.createDatabaseIfNotExist.timeout", 1);
+        properties.put("arangodb.create-database-if-not-exist", true);
+        properties.put("arangodb.create-database-timeout-in-millis", 1);
 
         try (ApplicationContext context = ApplicationContext.run(properties)) {
             fail("Should not happen!");

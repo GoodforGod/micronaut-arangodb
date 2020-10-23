@@ -1,6 +1,7 @@
 package io.micronaut.configuration.arango;
 
 import com.arangodb.internal.ArangoDefaults;
+import io.micronaut.context.annotation.ConfigurationBuilder;
 
 import static io.micronaut.configuration.arango.ArangoSettings.SYSTEM_DATABASE;
 
@@ -12,12 +13,18 @@ import static io.micronaut.configuration.arango.ArangoSettings.SYSTEM_DATABASE;
  */
 public abstract class AbstractArangoConfiguration {
 
+    @ConfigurationBuilder("health")
+    protected EnableConfiguration health = new EnableConfiguration(true);
+    @ConfigurationBuilder("health-cluster")
+    protected EnableConfiguration healthCluster = new EnableConfiguration(false);
+
     private String user = ArangoDefaults.DEFAULT_USER;
     private String host = ArangoDefaults.DEFAULT_HOST;
     private int port = ArangoDefaults.DEFAULT_PORT;
     private String database = SYSTEM_DATABASE;
 
     private boolean createDatabaseIfNotExist = false;
+    private int createDatabaseTimeoutInMillis = 10000;
 
     /**
      * @return whenever to create database on context initialization
@@ -32,6 +39,20 @@ public abstract class AbstractArangoConfiguration {
      */
     public void setCreateDatabaseIfNotExist(boolean createDatabaseIfNotExist) {
         this.createDatabaseIfNotExist = createDatabaseIfNotExist;
+    }
+
+    /**
+     * @return database create timeout in millis
+     */
+    public int getCreateDatabaseTimeoutInMillis() {
+        return createDatabaseTimeoutInMillis;
+    }
+
+    /**
+     * @param createDatabaseTimeoutInMillis database create timeout in millis
+     */
+    public void setCreateDatabaseTimeoutInMillis(int createDatabaseTimeoutInMillis) {
+        this.createDatabaseTimeoutInMillis = createDatabaseTimeoutInMillis;
     }
 
     public String getHost() {
@@ -79,6 +100,20 @@ public abstract class AbstractArangoConfiguration {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    /**
+     * @return health indicator configuration
+     */
+    public EnableConfiguration getHealth() {
+        return health;
+    }
+
+    /**
+     * @return cluster health indicator configuration
+     */
+    public EnableConfiguration getHealthCluster() {
+        return healthCluster;
     }
 
     @Override

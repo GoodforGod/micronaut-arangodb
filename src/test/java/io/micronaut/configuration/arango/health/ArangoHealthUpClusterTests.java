@@ -45,7 +45,7 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
     @Test
     void healthSingleUpForSystemDatabase() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.createDatabaseIfNotExist", true);
+        properties.put("arangodb.create-database-if-not-exist", true);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoHealthIndicator healthIndicator = context.getBean(ArangoHealthIndicator.class);
@@ -65,8 +65,8 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
     void healthSingleUpForCustomDatabase() {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
-        properties.put("arangodb.createDatabaseIfNotExist", true);
-        properties.put("arangodb.createDatabaseIfNotExist.timeout", 50);
+        properties.put("arangodb.create-database-if-not-exist", true);
+        properties.put("arangodb.create-database-timeout-in-millis", 50000);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoHealthIndicator healthIndicator = context.getBean(ArangoHealthIndicator.class);
@@ -85,7 +85,7 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
     @Test
     void healthClusterUpForSystemDatabase() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.health.cluster.enabled", true);
+        properties.put("arangodb.health-cluster.enabled", true);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClusterHealthIndicator clusterHealthIndicator = context.getBean(ArangoClusterHealthIndicator.class);
@@ -107,9 +107,9 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
     void healthClusterUpForCustomDatabase() {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
-        properties.put("arangodb.createDatabaseIfNotExist", true);
-        properties.put("arangodb.createDatabaseIfNotExist.timeout", 50);
-        properties.put("arangodb.health.cluster.enabled", true);
+        properties.put("arangodb.create-database-if-not-exist", true);
+        properties.put("arangodb.create-database-timeout-in-millis", 50000);
+        properties.put("arangodb.health-cluster.enabled", true);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClusterHealthIndicator clusterHealthIndicator = context.getBean(ArangoClusterHealthIndicator.class);

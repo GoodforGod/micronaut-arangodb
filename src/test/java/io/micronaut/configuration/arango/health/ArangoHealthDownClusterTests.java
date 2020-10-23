@@ -20,7 +20,7 @@ import java.util.Map;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Property(name = "arangodb.health.cluster.enabled", value = "true")
+@Property(name = "arangodb.health-cluster.enabled", value = "true")
 @MicronautTest
 @Testcontainers
 class ArangoHealthDownClusterTests extends ArangoRunner {

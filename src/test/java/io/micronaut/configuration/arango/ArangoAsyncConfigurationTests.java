@@ -36,7 +36,7 @@ class ArangoAsyncConfigurationTests extends ArangoRunner {
     void createConnectionWithCreateDatabaseIfNotExistOnStartup() {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
-        properties.put("arangodb.createDatabaseIfNotExist", true);
+        properties.put("arangodb.create-database-if-not-exist", true);
         properties.put("arangodb.loadBalancingStrategy", "ONE_RANDOM");
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
