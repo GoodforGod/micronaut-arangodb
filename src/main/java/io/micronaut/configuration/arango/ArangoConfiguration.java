@@ -12,18 +12,17 @@ import io.micronaut.context.annotation.Requires;
  * @since 29.2.2020
  */
 @Requires(property = ArangoSettings.PREFIX)
-@Requires(classes = ArangoDB.class)
 @ConfigurationProperties(ArangoSettings.PREFIX)
 public class ArangoConfiguration extends AbstractArangoConfiguration {
 
-    @ConfigurationBuilder(prefixes = "", excludes = { "host" })
+    @ConfigurationBuilder(prefixes = "", excludes = { "host", "user" })
     protected ArangoDB.Builder config = new ArangoDB.Builder();
 
     /**
      * @return client configuration builder
      */
-    public ArangoDB.Builder getConfig() {
-        return config.host(getHost(), getPort());
+    protected ArangoDB.Builder getConfig() {
+        return config.host(getHost(), getPort()).user(getUser());
     }
 
     /**

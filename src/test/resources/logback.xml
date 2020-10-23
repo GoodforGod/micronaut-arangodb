@@ -1,7 +1,8 @@
 <configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+            <pattern>%cyan(%d{HH:mm:ss.SSS}) [%cn] %highlight(%-5level) %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -14,4 +15,5 @@
     </root>
 
     <logger name="io.micronaut.context" level="INFO"/>
+    <logger name="io.micronaut.context.condition" level="INFO"/>
 </configuration>

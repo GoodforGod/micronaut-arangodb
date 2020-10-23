@@ -2,19 +2,18 @@ package io.micronaut.configuration.arango.health;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.DatabaseEntity;
-import io.micronaut.configuration.arango.ArangoClientAsync;
-import io.micronaut.configuration.arango.ArangoClient;
+import io.micronaut.configuration.arango.ArangoConfiguration;
 import io.micronaut.configuration.arango.ArangoSettings;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
 import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -28,9 +27,11 @@ import static io.micronaut.health.HealthStatus.UP;
  * @since 29.2.2020
  */
 @Requires(property = ArangoSettings.PREFIX + ".health.enabled", value = "true", defaultValue = "true")
-@Requires(beans = ArangoClientAsync.class, classes = HealthIndicator.class)
+@Requires(beans = ArangoDB.class, classes = HealthIndicator.class)
 @Singleton
 public class ArangoHealthIndicator implements HealthIndicator {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * The name to expose details with.
@@ -40,39 +41,40 @@ public class ArangoHealthIndicator implements HealthIndicator {
     private final String database;
 
     @Inject
-    public ArangoHealthIndicator(ArangoDB accessor, ArangoClient client) {
+    public ArangoHealthIndicator(ArangoDB accessor, ArangoConfiguration config) {
         this.accessor = accessor;
-        this.database = client.database();
+        this.database = config.getDatabase();
     }
 
     @Override
     public Publisher<HealthResult> getResult() {
         return Flowable.fromCallable(() -> accessor.db(database).getInfo())
-                .timeout(10, TimeUnit.SECONDS)
+                .timeout(5, TimeUnit.SECONDS)
                 .retry(3)
                 .map(this::buildUpReport)
                 .onErrorReturn(this::buildDownReport);
     }
 
     private Map<String, Object> buildDetails(DatabaseEntity db) {
-        final Map<String, Object> details = new HashMap<>(2);
-        details.put("database", db.getName());
-        details.put("id", db.getId());
-        return details;
+        return Map.of("database", db.getName(), "id", db.getId());
     }
 
     private HealthResult buildUpReport(DatabaseEntity db) {
+        final Map<String, Object> details = buildDetails(db);
+        logger.debug("Heath '{}' reported UP with details: {}", NAME, details);
         return getBuilder()
                 .status(UP)
-                .details(buildDetails(db))
+                .details(details)
                 .build();
     }
 
-    private HealthResult buildDownReport(Throwable t) {
+    private HealthResult buildDownReport(Throwable e) {
+        final Map<String, String> details = Map.of("database", this.database);
+        logger.debug("Heath '{}' reported DOWN with error: {}", NAME, e.getMessage());
         return getBuilder()
                 .status(DOWN)
-                .details(Collections.singletonMap("database", database))
-                .exception(t)
+                .details(details)
+                .exception(e)
                 .build();
     }
 

@@ -15,7 +15,7 @@ import io.micronaut.runtime.context.scope.Refreshable;
 public class ArangoAccessorFactory {
 
     /**
-     * Factory method to return a AranoDB sync connection.
+     * Factory method to return a ArangoDB sync connection.
      *
      * @param configuration configuration pulled in for sync accessor.
      * @return {@link ArangoDB}

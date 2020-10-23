@@ -3,6 +3,7 @@ package io.micronaut.configuration.arango.health;
 import com.arangodb.ArangoDB;
 import com.arangodb.velocystream.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micronaut.configuration.arango.ArangoConfiguration;
 import io.micronaut.configuration.arango.ArangoSettings;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.HttpStatus;
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,7 +33,7 @@ import static io.micronaut.health.HealthStatus.*;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Requires(property = ArangoSettings.PREFIX + ".health.cluster.enabled", value = "true", defaultValue = "false")
+@Requires(property = ArangoSettings.PREFIX + ".health-cluster.enabled", value = "true", defaultValue = "false")
 @Requires(beans = ArangoDB.class, classes = HealthIndicator.class)
 @Singleton
 public class ArangoClusterHealthIndicator implements HealthIndicator {
@@ -46,17 +46,19 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     private static final String NAME = "arangodb (cluster)";
     private final ArangoDB accessor;
     private final ObjectMapper mapper;
+    private final String database;
 
     @Inject
-    public ArangoClusterHealthIndicator(ArangoDB accessor, ObjectMapper mapper) {
+    public ArangoClusterHealthIndicator(ArangoDB accessor, ArangoConfiguration configuration, ObjectMapper mapper) {
         this.accessor = accessor;
         this.mapper = mapper;
+        this.database = configuration.getDatabase();
     }
 
     @Override
     public Publisher<HealthResult> getResult() {
-        return Flowable.fromCallable(() -> accessor.db(ArangoSettings.SYSTEM_DATABASE).route("/_admin/cluster/health").get())
-                .timeout(10, TimeUnit.SECONDS)
+        return Flowable.fromCallable(() -> accessor.db(database).route("/_admin/cluster/health").get())
+                .timeout(5, TimeUnit.SECONDS)
                 .retry(3)
                 .map(this::buildReport)
                 .onErrorReturn(this::buildErrorReport);
@@ -77,35 +79,30 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
                     .collect(Collectors.toList());
 
             if (!down.isEmpty()) {
-                logger.error("Cluster nodes named '{}' reported with status DOWN", down);
+                logger.debug("Health '{}' reported DOWN for cause nodes named '{}' were DOWN", NAME, down);
                 return getBuilder().status(DOWN).details(details).build();
             } else if (streamCriticalNodes(health).allMatch(n -> UP.equals(n.getHealthStatus()))) {
+                logger.debug("Health '{}' reported UP with details: {}", NAME, details);
                 return getBuilder().status(UP).details(details).build();
             } else {
+                logger.debug("Health '{}' reported UNKNOWN with details: {}", NAME, details);
                 return getBuilder().status(UNKNOWN).details(details).build();
             }
         }).orElseGet(() -> buildUnknownReport(response));
     }
 
     private Map<String, Object> buildDetails(HealthCluster healthCluster) {
-        final List<Map<Object, Object>> formattedNodesHealth = streamCriticalNodes(healthCluster)
-                .map(h -> {
-                    final int reportSize = h.isLeading() ? 3 : 2;
-                    final Map<Object, Object> report = new HashMap<>(reportSize);
-                    final String name = isEmpty(h.getShortName()) ? h.getRoleWithNodeId() : h.getShortName();
-                    report.put("name", name);
-                    report.put("status", h.getStatus());
-                    if (h.isLeading())
-                        report.put("leading", true);
-
-                    return report;
+        final List<Map<String, ?>> formattedNodesHealth = streamCriticalNodes(healthCluster)
+                .map(n -> {
+                    final String name = isEmpty(n.getShortName()) ? n.getRoleWithNodeId() : n.getShortName();
+                    return n.isLeading()
+                            ? Map.of("leading", true, "name", name, "status", n.getStatus())
+                            : Map.of("name", name, "status", n.getStatus());
                 })
                 .collect(Collectors.toList());
 
-        final Map<String, Object> details = new HashMap<>(2);
-        details.put("clusterId", healthCluster.getClusterId());
-        details.put("nodes", formattedNodesHealth);
-        return details;
+        return Map.of("clusterId", healthCluster.getClusterId(),
+                "nodes", formattedNodesHealth);
     }
 
     private Stream<HealthNode> streamCriticalNodes(HealthCluster healthCluster) {
@@ -113,13 +110,16 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     }
 
     private HealthResult buildUnknownReport(Response response) {
+        final String details = response.getBody().toString();
+        logger.debug("Health '{}' reported UNKNOWN with details: {}", NAME, details);
         return getBuilder()
                 .status(UNKNOWN)
-                .details(response.getBody().toString())
+                .details(details)
                 .build();
     }
 
     private HealthResult buildErrorReport(Throwable e) {
+        logger.debug("Health '{}' reported DOWN with error: {}", NAME, e.getMessage());
         return getBuilder()
                 .status(DOWN)
                 .exception(e)

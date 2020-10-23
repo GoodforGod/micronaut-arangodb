@@ -28,14 +28,10 @@ class ArangoAsyncConfigurationAuthTests extends ArangoRunner {
         properties.put("arangodb.user", "tom");
         properties.put("arangodb.password", "1234");
 
-        final ApplicationContext context = ApplicationContext.run(properties);
-
-        final ArangoAsyncConfiguration configuration = context.getBean(ArangoAsyncConfiguration.class);
-        assertNotNull(configuration.toString());
-
-        try {
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoAsyncConfiguration configuration = context.getBean(ArangoAsyncConfiguration.class);
+            assertNotNull(configuration.toString());
             configuration.getAccessor().db(ArangoSettings.SYSTEM_DATABASE).getInfo().join();
-            fail("Should've failed with auth error");
         } catch (Exception e) {
             assertNotNull(e);
         }
@@ -47,11 +43,15 @@ class ArangoAsyncConfigurationAuthTests extends ArangoRunner {
         properties.put("arangodb.user", "root");
         properties.put("arangodb.password", PASS);
 
-        final ApplicationContext context = ApplicationContext.run(properties);
-
-        final ArangoAsyncConfiguration configuration = context.getBean(ArangoAsyncConfiguration.class);
-        final DatabaseEntity entity = configuration.getAccessor().db(ArangoSettings.SYSTEM_DATABASE).getInfo()
-                .join();
-        assertNotNull(entity);
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoAsyncConfiguration configuration = context.getBean(ArangoAsyncConfiguration.class);
+            assertNotNull(configuration.getHealth());
+            assertTrue(configuration.getHealth().isEnabled());
+            assertNotNull(configuration.getHealthCluster());
+            assertFalse(configuration.getHealthCluster().isEnabled());
+            final DatabaseEntity entity = configuration.getAccessor().db(ArangoSettings.SYSTEM_DATABASE).getInfo()
+                    .join();
+            assertNotNull(entity);
+        }
     }
 }

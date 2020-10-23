@@ -19,33 +19,33 @@ import java.util.Map;
 class ArangoAsyncConfigurationTests extends ArangoRunner {
 
     @Container
-    private static final ArangoContainer container = new ArangoContainer().withoutAuth();
+    private static final ArangoContainer container = getContainer();
 
     @Test
     void createConnectionWithCustomDatabaseAndDatabaseNotExistByDefault() {
-        final ApplicationContext context = ApplicationContext.run(Collections.singletonMap("arangodb.database", "custom"));
+        try (final ApplicationContext context = ApplicationContext.run(Collections.singletonMap("arangodb.database", "custom"))) {
+            final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
+            assertEquals("custom", client.database());
 
-        final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-        assertEquals("custom", client.database());
-
-        final Boolean databaseExists = client.db().exists().join();
-        assertFalse(databaseExists);
+            final Boolean databaseExists = client.db().exists().join();
+            assertFalse(databaseExists);
+        }
     }
 
     @Test
     void createConnectionWithCreateDatabaseIfNotExistOnStartup() {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
-        properties.put("arangodb.createDatabaseIfNotExist", true);
+        properties.put("arangodb.create-database-if-not-exist", true);
         properties.put("arangodb.loadBalancingStrategy", "ONE_RANDOM");
 
-        final ApplicationContext context = ApplicationContext.run(properties);
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
+            assertEquals("custom", client.database());
 
-        final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-        assertEquals("custom", client.database());
-
-        final Boolean databaseCreated = client.db().exists().join();
-        assertTrue(databaseCreated);
+            final Boolean databaseCreated = client.db().exists().join();
+            assertTrue(databaseCreated);
+        }
     }
 
     @Test
@@ -53,9 +53,9 @@ class ArangoAsyncConfigurationTests extends ArangoRunner {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
 
-        final ApplicationContext context = ApplicationContext.run(properties);
-
-        final ArangoDBAsync accessor = context.getBean(ArangoDBAsync.class);
-        assertNotNull(accessor);
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoDBAsync accessor = context.getBean(ArangoDBAsync.class);
+            assertNotNull(accessor);
+        }
     }
 }

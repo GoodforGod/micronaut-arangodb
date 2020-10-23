@@ -11,12 +11,14 @@ This project includes integration between Micronaut and ArangoDB.
 
 Starting from version *2.0.0* library ships for *Micronaut 2*.
 
+Starting from version *2.1.0* Java 11+ is required (previous version 1.8+ compatible).
+
 Last release for **Micronaut 1** is [version *1.2.1*](https://github.com/GoodforGod/micronaut-arangodb/releases/tag/v1.2.1).
 
 **Gradle**
 ```groovy
 dependencies {
-    compile 'com.github.goodforgod:micronaut-arangodb:2.0.0'
+    compile 'com.github.goodforgod:micronaut-arangodb:2.1.0'
 }
 ```
 
@@ -25,7 +27,7 @@ dependencies {
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
 </dependency>
 ```
 
@@ -76,10 +78,10 @@ beans remember that while using them.
 
 ```java
 @Inject
-private ArangoClient asyncClient;
+private ArangoClientAsync asyncClient;
 
 @Inject
-private ArangoClientSync syncClient;
+private ArangoClient syncClient;
 ```
 
 Both clients provide as sync and async implementation and are same [accessors](#Accessors) 
@@ -91,10 +93,10 @@ So you can use connection with knowledge about database your app is working with
 class ArangoClientTests {
 
     @Inject
-    private ArangoClient asyncClient;    
+    private ArangoClientAsync asyncClient;    
 
     @Inject
-    private ArangoClientSync syncClient;    
+    private ArangoClient syncClient;    
 
     void checkConfiguredDatabase() {
         final String databaseAsync = asyncClient.getDatabase(); // Database as per config
@@ -113,11 +115,11 @@ you can use *named* bean injection.
 ```java
 @Named("prototype")
 @Inject
-private ArangoClient asyncClient;    
+private ArangoClientAsync asyncClient;    
 
 @Named("prototype")
 @Inject
-private ArangoClientSync syncClient;    
+private ArangoClient syncClient;    
 ```
 
 ### Configuring ArangoDB Driver
@@ -149,16 +151,15 @@ Use this option if your service is lazy initialized, to set up database for [Hea
 
 ```yaml
 arangodb:
-  createDatabaseIfNotExist: true    # default - false
+  create-database-if-not-exist: true    # default - false
 ```
 
-Default timeout for operation set to 10 seconds, if you want to specify timeout *in seconds* for database creation
+Default timeout for operation set to 10000 millis, if you want to specify timeout *in seconds* for database creation
 on startup you can set it via property.
 
 ```yaml
 arangodb:
-  createDatabaseIfNotExist: true    # default - false
-    timeout: 30                     # time in seconds
+  create-database-timeout-in-millis: 500 # default - 10000
 ```
 
 ### Health Check
@@ -263,9 +264,8 @@ You can turn on Cluster Health Check via configuration:
 
 ```yaml
 arangodb:
-  health:
-    cluster:
-      enabled: true      # default - false
+  health-cluster:
+    enabled: true      # default - false
 ```
 
 ## Testing
@@ -273,10 +273,14 @@ arangodb:
 For testing purposes it is recommended to use [ArangoDB TestContainer library](https://github.com/GoodforGod/arangodb-testcontainer) 
 (this project tested via that library). 
 
-TestContainers allows you to use integration tests with real database in all docker friendly environments, 
+TestContainers allows you to use integration tests against real database in all docker friendly environments, 
 check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Version History
+
+**2.1.0** - Java updated to 11, Micronaut updated to 2.1.1, improved config autocompletion.
+
+**2.0.0** - Improved database handling exceptions, improved ArangoClusterHealth.
 
 **2.0.0** - Micronaut 2 support, database init timeout property added, dependency updated.
 

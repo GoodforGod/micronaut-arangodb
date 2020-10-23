@@ -1,6 +1,5 @@
 package io.micronaut.configuration.arango.condition;
 
-import io.micronaut.configuration.arango.ArangoClientAsync;
 import io.micronaut.configuration.arango.ArangoSettings;
 import io.micronaut.context.annotation.Requires;
 
@@ -12,7 +11,6 @@ import java.lang.annotation.*;
  * @author Anton Kurako (GoodforGod)
  * @since 2.3.2020
  */
-@Requires(classes = ArangoClientAsync.class)
 @Requires(property = ArangoSettings.PREFIX)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

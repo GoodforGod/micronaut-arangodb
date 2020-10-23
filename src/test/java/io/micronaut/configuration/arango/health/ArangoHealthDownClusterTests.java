@@ -4,7 +4,7 @@ import io.micronaut.configuration.arango.ArangoRunner;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.health.HealthStatus;
 import io.micronaut.management.health.indicator.HealthResult;
-import io.micronaut.test.annotation.MicronautTest;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.reactivex.Single;
 import io.testcontainers.arangodb.containers.ArangoContainer;
 import org.junit.jupiter.api.Test;
@@ -20,10 +20,10 @@ import java.util.Map;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Property(name = "arangodb.health.cluster.enabled", value = "true")
+@Property(name = "arangodb.health-cluster.enabled", value = "true")
 @MicronautTest
 @Testcontainers
-public class ArangoHealthUpTests extends ArangoRunner {
+class ArangoHealthDownClusterTests extends ArangoRunner {
 
     @Container
     private static final ArangoContainer container = new ArangoContainer().withoutAuth();
