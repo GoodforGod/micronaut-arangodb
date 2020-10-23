@@ -9,6 +9,8 @@ import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
 import io.reactivex.Flowable;
 import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,6 +30,8 @@ import static io.micronaut.health.HealthStatus.UP;
 @Requires(beans = ArangoDB.class, classes = HealthIndicator.class)
 @Singleton
 public class ArangoHealthIndicator implements HealthIndicator {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * The name to expose details with.
@@ -56,17 +60,21 @@ public class ArangoHealthIndicator implements HealthIndicator {
     }
 
     private HealthResult buildUpReport(DatabaseEntity db) {
+        final Map<String, Object> details = buildDetails(db);
+        logger.debug("Heath '{}' reported UP with details: {}", NAME, details);
         return getBuilder()
                 .status(UP)
-                .details(buildDetails(db))
+                .details(details)
                 .build();
     }
 
-    private HealthResult buildDownReport(Throwable t) {
+    private HealthResult buildDownReport(Throwable e) {
+        final Map<String, String> details = Map.of("database", this.database);
+        logger.debug("Heath '{}' reported DOWN with error: {}", NAME, e.getMessage());
         return getBuilder()
                 .status(DOWN)
-                .details(Map.of("database", database))
-                .exception(t)
+                .details(details)
+                .exception(e)
                 .build();
     }
 

@@ -79,11 +79,13 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
                     .collect(Collectors.toList());
 
             if (!down.isEmpty()) {
-                logger.error("Cluster nodes named '{}' reported with status DOWN", down);
+                logger.debug("Health '{}' reported DOWN for cause nodes named '{}' were DOWN", NAME, down);
                 return getBuilder().status(DOWN).details(details).build();
             } else if (streamCriticalNodes(health).allMatch(n -> UP.equals(n.getHealthStatus()))) {
+                logger.debug("Health '{}' reported UP with details: {}", NAME, details);
                 return getBuilder().status(UP).details(details).build();
             } else {
+                logger.debug("Health '{}' reported UNKNOWN with details: {}", NAME, details);
                 return getBuilder().status(UNKNOWN).details(details).build();
             }
         }).orElseGet(() -> buildUnknownReport(response));
@@ -108,13 +110,16 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     }
 
     private HealthResult buildUnknownReport(Response response) {
+        final String details = response.getBody().toString();
+        logger.debug("Health '{}' reported UNKNOWN with details: {}", NAME, details);
         return getBuilder()
                 .status(UNKNOWN)
-                .details(response.getBody().toString())
+                .details(details)
                 .build();
     }
 
     private HealthResult buildErrorReport(Throwable e) {
+        logger.debug("Health '{}' reported DOWN with error: {}", NAME, e.getMessage());
         return getBuilder()
                 .status(DOWN)
                 .exception(e)
