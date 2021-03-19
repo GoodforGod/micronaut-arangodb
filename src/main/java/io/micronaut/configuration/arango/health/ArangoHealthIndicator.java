@@ -49,8 +49,8 @@ public class ArangoHealthIndicator implements HealthIndicator {
     @Override
     public Publisher<HealthResult> getResult() {
         return Flowable.fromCallable(() -> accessor.db(database).getInfo())
-                .timeout(5, TimeUnit.SECONDS)
-                .retry(3)
+                .timeout(20000, TimeUnit.MILLISECONDS)
+                .retry(2)
                 .map(this::buildUpReport)
                 .onErrorReturn(this::buildDownReport);
     }
@@ -69,11 +69,9 @@ public class ArangoHealthIndicator implements HealthIndicator {
     }
 
     private HealthResult buildDownReport(Throwable e) {
-        final Map<String, String> details = Map.of("database", this.database);
         logger.debug("Heath '{}' reported DOWN with error: {}", NAME, e.getMessage());
         return getBuilder()
                 .status(DOWN)
-                .details(details)
                 .exception(e)
                 .build();
     }

@@ -93,7 +93,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
             fail("Should not happen!");
         } catch (Exception e) {
             assertNotNull(e.getCause());
-            assertTrue(e.getMessage(), e.getCause().getCause() instanceof ApplicationStartupException);
+            assertTrue(e.getCause().getCause() instanceof ApplicationStartupException);
         }
     }
 }

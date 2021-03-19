@@ -1,15 +1,17 @@
 package io.micronaut.configuration.arango;
 
 import io.testcontainers.arangodb.containers.ArangoContainer;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 /**
  * @author Anton Kurako (GoodforGod)
  * @since 11.3.2020
  */
-public abstract class ArangoRunner extends Assert {
+public abstract class ArangoRunner extends Assertions {
 
     protected static ArangoContainer getContainer() {
-        return new ArangoContainer().withoutAuth();
+        return new ArangoContainer(ArangoContainer.LATEST)
+                .withoutAuth()
+                .withFixedPort(ArangoContainer.PORT_DEFAULT);
     }
 }

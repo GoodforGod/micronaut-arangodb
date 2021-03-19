@@ -5,7 +5,7 @@ import io.micronaut.context.annotation.Property;
 import io.micronaut.health.HealthStatus;
 import io.micronaut.management.health.indicator.HealthResult;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.reactivex.Single;
+import io.reactivex.Flowable;
 import io.testcontainers.arangodb.containers.ArangoContainer;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
@@ -26,7 +26,7 @@ import java.util.Map;
 class ArangoHealthDownClusterTests extends ArangoRunner {
 
     @Container
-    private static final ArangoContainer container = new ArangoContainer().withoutAuth();
+    private static final ArangoContainer ARANGO_CONTAINER = getContainer();
 
     @Inject
     private ArangoHealthIndicator healthIndicator;
@@ -36,7 +36,7 @@ class ArangoHealthDownClusterTests extends ArangoRunner {
 
     @Test
     void healthUpWhenDatabaseUp() {
-        final HealthResult result = Single.fromPublisher(healthIndicator.getResult()).blockingGet();
+        final HealthResult result = Flowable.fromPublisher(healthIndicator.getResult()).firstElement().blockingGet();
         assertNotNull(result);
 
         assertEquals(HealthStatus.UP, result.getStatus());
@@ -47,7 +47,7 @@ class ArangoHealthDownClusterTests extends ArangoRunner {
 
     @Test
     void healthClusterDownWhenDatabaseIsSingle() {
-        final HealthResult result = Single.fromPublisher(clusterHealthIndicator.getResult()).blockingGet();
+        final HealthResult result = Flowable.fromPublisher(clusterHealthIndicator.getResult()).firstElement().blockingGet();
         assertNotNull(result);
 
         assertEquals(HealthStatus.DOWN, result.getStatus());

@@ -20,7 +20,9 @@ class ArangoConfigurationAuthTests extends ArangoRunner {
     private static final String PASS = "mypass";
 
     @Container
-    private static final ArangoContainer container = new ArangoContainer().withPassword(PASS);
+    private static final ArangoContainer ARANGO_CONTAINER = new ArangoContainer(ArangoContainer.LATEST)
+            .withFixedPort(ArangoContainer.PORT_DEFAULT)
+            .withPassword(PASS);
 
     @Test
     void createConnectionWithUserAndPassword() {

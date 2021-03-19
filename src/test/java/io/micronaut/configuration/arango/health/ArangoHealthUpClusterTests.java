@@ -4,6 +4,7 @@ import io.micronaut.configuration.arango.ArangoRunner;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.health.HealthStatus;
 import io.micronaut.management.health.indicator.HealthResult;
+import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.testcontainers.arangodb.cluster.ArangoClusterDefault;
 import io.testcontainers.arangodb.containers.ArangoContainer;
@@ -25,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 @Testcontainers
 class ArangoHealthUpClusterTests extends ArangoRunner {
 
-    private static final ArangoClusterDefault CLUSTER_DEFAULT = ArangoClusterDefault.build();
+    private static final ArangoClusterDefault CLUSTER_DEFAULT = ArangoClusterDefault.build(ArangoContainer.LATEST);
 
     @Container
     private static final ArangoContainer agent1 = CLUSTER_DEFAULT.getAgent1();
@@ -71,8 +72,8 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoHealthIndicator healthIndicator = context.getBean(ArangoHealthIndicator.class);
 
-            final HealthResult result = Single.fromPublisher(healthIndicator.getResult())
-                    .timeout(10, TimeUnit.SECONDS).blockingGet();
+            final HealthResult result = Flowable.fromPublisher(healthIndicator.getResult())
+                    .firstElement().blockingGet();
             assertNotNull(result);
 
             assertEquals(HealthStatus.UP, result.getStatus());

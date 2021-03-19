@@ -18,7 +18,7 @@ Last release for **Micronaut 1** is [version *1.2.1*](https://github.com/Goodfor
 **Gradle**
 ```groovy
 dependencies {
-    compile 'com.github.goodforgod:micronaut-arangodb:2.1.0'
+    compile 'com.github.goodforgod:micronaut-arangodb:2.1.1'
 }
 ```
 
@@ -27,7 +27,7 @@ dependencies {
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
 </dependency>
 ```
 
@@ -134,7 +134,7 @@ Check [ArangoDB official](https://www.arangodb.com/docs/stable/drivers/java-refe
 
 ```yaml
 arangodb:
-  timeout: 3000                         # default - 0 in milliseconds
+  timeout: 3000                         # default - 10000 in milliseconds
   chunksize: 3000                       # default - 30000
   useSsl: true                          # default - false
   maxConnections: 30                    # default - 1
@@ -277,6 +277,8 @@ TestContainers allows you to use integration tests against real database in all 
 check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Version History
+
+**2.1.1** - Micronaut updated to 2.4.0, ArangoDB Client updated to 6.9.0, default timeout 10000ms set, dependencies updated.
 
 **2.1.0** - Java updated to 11, Micronaut updated to 2.1.1, improved config autocompletion.
 
