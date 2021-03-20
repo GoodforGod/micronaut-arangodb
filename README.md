@@ -162,6 +162,12 @@ arangodb:
   create-database-timeout-in-millis: 500 # default - 10000
 ```
 
+In case you want to create database asynchronously you can specify that via this property:
+```yaml
+arangodb:
+  create-database-async: true    # default - false
+```
+
 ### Health Check
 
 Health check for ArangoDB is provided and is *turned on* by default.

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeoutException;
  * ArangoDB database context Initialization
  *
  * @author Anton Kurako (GoodforGod)
- * @see ArangoAsyncConfiguration#isCreateDatabaseIfNotExist()
+ * @see AbstractArangoConfiguration#isCreateDatabaseIfNotExist()
  * @since 16.3.2020
  */
 @Requires(property = ArangoSettings.PREFIX + ".create-database-if-not-exist", value = "true", defaultValue = "false")
@@ -30,6 +31,18 @@ public class ArangoDatabaseInitializer {
 
     @PostConstruct
     protected void setupDatabase(ArangoAsyncConfiguration configuration) {
+        if (configuration.isCreateDatabaseAsync()) {
+            CompletableFuture.runAsync(() -> initializeDatabaseSynchronously(configuration))
+                    .exceptionally(e -> {
+                        logger.error(e.getMessage());
+                        return null;
+                    });
+        } else {
+            initializeDatabaseSynchronously(configuration);
+        }
+    }
+
+    private void initializeDatabaseSynchronously(ArangoAsyncConfiguration configuration) {
         final String database = configuration.getDatabase();
         final int timeout = configuration.getCreateDatabaseTimeoutInMillis();
         if (ArangoSettings.SYSTEM_DATABASE.equals(database)) {

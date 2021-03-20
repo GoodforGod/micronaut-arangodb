@@ -16,4 +16,5 @@
 
     <logger name="io.micronaut.context" level="INFO"/>
     <logger name="io.micronaut.context.condition" level="INFO"/>
+    <logger name="io.micronaut.configuration.arango" level="DEBUG"/>
 </configuration>

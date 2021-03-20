@@ -96,4 +96,25 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
             assertTrue(e.getCause().getCause() instanceof ApplicationStartupException);
         }
     }
+
+    @Order(6)
+    @Test
+    void databaseCreateAsync() {
+        final Map<String, Object> properties = new HashMap<>();
+        final String database = "asyncdb";
+        properties.put("arangodb.database", database);
+        properties.put("arangodb.create-database-if-not-exist", true);
+        properties.put("arangodb.create-database-async", true);
+        properties.put("arangodb.create-database-timeout-in-millis", 10000);
+
+        try (ApplicationContext context = ApplicationContext.run(properties)) {
+            Thread.sleep(2000);
+
+            final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
+            assertEquals(database, client.database());
+            assertTrue(client.db().exists().join());
+        } catch (InterruptedException e) {
+            fail(e);
+        }
+    }
 }
