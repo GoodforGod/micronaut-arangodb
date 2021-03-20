@@ -24,6 +24,7 @@ public abstract class AbstractArangoConfiguration {
     private String database = SYSTEM_DATABASE;
 
     private boolean createDatabaseIfNotExist = false;
+    private boolean createDatabaseAsync = false;
     private int createDatabaseTimeoutInMillis = 10000;
 
     /**
@@ -39,6 +40,17 @@ public abstract class AbstractArangoConfiguration {
      */
     public void setCreateDatabaseIfNotExist(boolean createDatabaseIfNotExist) {
         this.createDatabaseIfNotExist = createDatabaseIfNotExist;
+    }
+
+    /**
+     * @return true if database should be created asynchronously
+     */
+    public boolean isCreateDatabaseAsync() {
+        return createDatabaseAsync;
+    }
+
+    public void setCreateDatabaseAsync(boolean createDatabaseAsync) {
+        this.createDatabaseAsync = createDatabaseAsync;
     }
 
     /**

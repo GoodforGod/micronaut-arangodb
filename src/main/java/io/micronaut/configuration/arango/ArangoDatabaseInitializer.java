@@ -10,15 +10,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * ArangoDB database context Initialization
  *
  * @author Anton Kurako (GoodforGod)
- * @see ArangoAsyncConfiguration#isCreateDatabaseIfNotExist()
+ * @see AbstractArangoConfiguration#isCreateDatabaseIfNotExist()
  * @since 16.3.2020
  */
 @Requires(property = ArangoSettings.PREFIX + ".create-database-if-not-exist", value = "true", defaultValue = "false")
@@ -30,8 +30,19 @@ public class ArangoDatabaseInitializer {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @PostConstruct
-    @Inject
     protected void setupDatabase(ArangoAsyncConfiguration configuration) {
+        if (configuration.isCreateDatabaseAsync()) {
+            CompletableFuture.runAsync(() -> initializeDatabaseSynchronously(configuration))
+                    .exceptionally(e -> {
+                        logger.error(e.getMessage());
+                        return null;
+                    });
+        } else {
+            initializeDatabaseSynchronously(configuration);
+        }
+    }
+
+    private void initializeDatabaseSynchronously(ArangoAsyncConfiguration configuration) {
         final String database = configuration.getDatabase();
         final int timeout = configuration.getCreateDatabaseTimeoutInMillis();
         if (ArangoSettings.SYSTEM_DATABASE.equals(database)) {
@@ -46,7 +57,9 @@ public class ArangoDatabaseInitializer {
             accessor.createDatabase(database).get(timeout, TimeUnit.MILLISECONDS);
             final long tookTime = System.nanoTime() - startTime;
             logger.debug("Arango Database '{}' creation took '{}' millis", database, tookTime / 1000000);
-        } catch (ExecutionException e) {
+        } catch (TimeoutException e) {
+            throw new ApplicationStartupException("Arango Database initialization timed out in '" + timeout + "' millis");
+        } catch (Exception e) {
             final Integer code = (e.getCause() instanceof ArangoDBException) ? ((ArangoDBException) e.getCause()).getResponseCode() : null;
             if (code == null)
                 throw new ApplicationStartupException("Arango Database initialization failed without code due to: " + e.getMessage());
@@ -60,8 +73,6 @@ public class ArangoDatabaseInitializer {
                     throw new ApplicationStartupException(
                             "Arango Database initialization failed with code '" + code + "' and error: " + e.getMessage());
             }
-        } catch (Exception e) {
-            throw new ApplicationStartupException("Arango Database initialization timed out in '" + timeout + "' millis");
         }
     }
 }

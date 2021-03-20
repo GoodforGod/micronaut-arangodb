@@ -16,7 +16,7 @@ import io.micronaut.context.annotation.Requires;
 public class ArangoConfiguration extends AbstractArangoConfiguration {
 
     @ConfigurationBuilder(prefixes = "", excludes = { "host", "user" })
-    protected ArangoDB.Builder config = new ArangoDB.Builder();
+    protected ArangoDB.Builder config = new ArangoDB.Builder().timeout(10000);
 
     /**
      * @return client configuration builder

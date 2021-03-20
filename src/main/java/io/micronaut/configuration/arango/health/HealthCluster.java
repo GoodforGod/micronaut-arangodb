@@ -1,5 +1,6 @@
 package io.micronaut.configuration.arango.health;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
@@ -24,6 +25,7 @@ public class HealthCluster {
         return nodes;
     }
 
+    @JsonIgnore
     public Stream<HealthNode> streamNodes() {
         return nodes.entrySet().stream().map(e -> e.getValue().setNodeId(e.getKey()));
     }
