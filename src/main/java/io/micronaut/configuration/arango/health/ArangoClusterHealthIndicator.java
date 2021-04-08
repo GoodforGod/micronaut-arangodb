@@ -56,7 +56,7 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     }
 
     @Override
-    public Publisher<HealthResult> getResult() {
+    public Flowable<HealthResult> getResult() {
         return Flowable.fromCallable(() -> accessor.db(database).route("/_admin/cluster/health").get())
                 .timeout(20000, TimeUnit.MILLISECONDS)
                 .retry(2)

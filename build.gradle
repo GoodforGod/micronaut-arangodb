@@ -36,7 +36,7 @@ sonarqube {
 }
 
 micronaut {
-    version '2.4.0'
+    version '2.4.2'
     processing {
         incremental true
         module project.name
@@ -49,7 +49,7 @@ dependencies {
     annotationProcessor 'io.micronaut:micronaut-inject-java'
     compileOnly 'io.micronaut:micronaut-inject-java'
 
-    api 'com.arangodb:arangodb-java-driver:6.9.0'
+    api 'com.arangodb:arangodb-java-driver:6.10.0'
 
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     implementation 'io.micronaut:micronaut-management'

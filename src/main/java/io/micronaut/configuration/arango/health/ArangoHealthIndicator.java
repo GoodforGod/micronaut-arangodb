@@ -47,7 +47,7 @@ public class ArangoHealthIndicator implements HealthIndicator {
     }
 
     @Override
-    public Publisher<HealthResult> getResult() {
+    public Flowable<HealthResult> getResult() {
         return Flowable.fromCallable(() -> accessor.db(database).getInfo())
                 .timeout(20000, TimeUnit.MILLISECONDS)
                 .retry(2)
