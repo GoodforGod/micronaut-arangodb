@@ -10,7 +10,6 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
 import io.reactivex.Flowable;
-import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +55,7 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     }
 
     @Override
-    public Publisher<HealthResult> getResult() {
+    public Flowable<HealthResult> getResult() {
         return Flowable.fromCallable(() -> accessor.db(database).route("/_admin/cluster/health").get())
                 .timeout(20000, TimeUnit.MILLISECONDS)
                 .retry(2)
