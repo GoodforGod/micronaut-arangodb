@@ -1,6 +1,8 @@
 package io.micronaut.configuration.arango;
 
 import com.arangodb.internal.ArangoDefaults;
+import io.micronaut.context.annotation.ConfigurationProperties;
+import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.exceptions.ConfigurationException;
 
 import javax.net.ssl.SSLContext;
@@ -12,6 +14,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.util.Base64;
 
+@Requires(property = ArangoSettings.PREFIX)
+@ConfigurationProperties(ArangoSettings.PREFIX + ".ssl")
 public class ArangoSSLConfiguration {
 
     /**
@@ -19,7 +23,7 @@ public class ArangoSSLConfiguration {
      * 
      * @see com.arangodb.ArangoDB.Builder#useSsl(Boolean)
      */
-    private boolean useSsl = ArangoDefaults.DEFAULT_USE_SSL;
+    private boolean enabled = ArangoDefaults.DEFAULT_USE_SSL;
 
     /**
      * The name of the requested certificate type.
@@ -74,12 +78,12 @@ public class ArangoSSLConfiguration {
         }
     }
 
-    public boolean getUseSsl() {
-        return useSsl;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setUseSsl(Boolean useSsl) {
-        this.useSsl = useSsl;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     public String getCertificateType() {

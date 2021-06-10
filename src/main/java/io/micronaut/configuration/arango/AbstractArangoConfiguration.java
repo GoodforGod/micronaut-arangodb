@@ -29,8 +29,7 @@ public abstract class AbstractArangoConfiguration {
     @ConfigurationBuilder("health-cluster")
     protected EnableConfiguration healthCluster = new EnableConfiguration(false);
 
-    @ConfigurationBuilder("ssl")
-    protected ArangoSSLConfiguration sslConfiguration = new ArangoSSLConfiguration();
+    protected final ArangoSSLConfiguration sslConfiguration;
 
     private String user = ArangoDefaults.DEFAULT_USER;
     private String password;
@@ -51,6 +50,10 @@ public abstract class AbstractArangoConfiguration {
     private boolean createDatabaseAsync = false;
     private int createDatabaseTimeoutInMillis = 10000;
 
+    public AbstractArangoConfiguration(ArangoSSLConfiguration sslConfiguration) {
+        this.sslConfiguration = sslConfiguration;
+    }
+
     /**
      * @return client configuration builder
      */
@@ -67,7 +70,7 @@ public abstract class AbstractArangoConfiguration {
             properties.setProperty(ArangoProperties.PASSWORD, getPassword());
         }
         properties.setProperty(ArangoProperties.TIMEOUT, String.valueOf(getTimeout()));
-        properties.setProperty(ArangoProperties.USE_SSL, String.valueOf(getSslConfiguration().getUseSsl()));
+        properties.setProperty(ArangoProperties.USE_SSL, String.valueOf(getSslConfiguration().isEnabled()));
         properties.setProperty(ArangoProperties.CHUNK_SIZE, String.valueOf(getChunksize()));
         properties.setProperty(ArangoProperties.MAX_CONNECTIONS, String.valueOf(getMaxConnections()));
         if (getConnectionTtl() != null) {

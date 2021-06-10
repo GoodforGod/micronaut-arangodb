@@ -29,11 +29,13 @@ public class ArangoAccessorAsyncFactory {
     @Primary
     @Prototype
     public ArangoDBAsync getAccessor(ArangoAsyncConfiguration configuration) {
+        final ArangoSSLConfiguration sslConfiguration = configuration.getSslConfiguration();
+
         final ArangoDBAsync.Builder builder = new ArangoDBAsync.Builder();
         try (final InputStream properties = configuration.getPropertiesAsInputStream()) {
             builder.loadProperties(properties);
-            if (configuration.getSslConfiguration().getUseSsl()) {
-                builder.sslContext(configuration.getSslConfiguration().getSSLContext());
+            if (sslConfiguration.isEnabled()) {
+                builder.sslContext(sslConfiguration.getSSLContext());
             }
 
             return builder.build();

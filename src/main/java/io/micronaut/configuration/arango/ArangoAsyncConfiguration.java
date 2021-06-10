@@ -3,6 +3,8 @@ package io.micronaut.configuration.arango;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 
+import javax.inject.Inject;
+
 /**
  * ArangoDB Async configuration class.
  *
@@ -13,4 +15,8 @@ import io.micronaut.context.annotation.Requires;
 @ConfigurationProperties(ArangoSettings.PREFIX)
 public class ArangoAsyncConfiguration extends AbstractArangoConfiguration {
 
+    @Inject
+    public ArangoAsyncConfiguration(ArangoSSLConfiguration sslConfiguration) {
+        super(sslConfiguration);
+    }
 }

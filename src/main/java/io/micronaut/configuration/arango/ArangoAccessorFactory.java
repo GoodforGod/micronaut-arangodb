@@ -29,11 +29,13 @@ public class ArangoAccessorFactory {
     @Primary
     @Prototype
     public ArangoDB getAccessor(ArangoConfiguration configuration) {
+        final ArangoSSLConfiguration sslConfiguration = configuration.getSslConfiguration();
+
         final ArangoDB.Builder builder = new ArangoDB.Builder();
         try (final InputStream properties = configuration.getPropertiesAsInputStream()) {
             builder.loadProperties(properties);
-            if (configuration.getSslConfiguration().getUseSsl()) {
-                builder.sslContext(configuration.getSslConfiguration().getSSLContext());
+            if (sslConfiguration.isEnabled()) {
+                builder.sslContext(sslConfiguration.getSSLContext());
             }
 
             return builder.build();

@@ -4,6 +4,7 @@ import com.arangodb.Protocol;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 
+import javax.inject.Inject;
 import java.util.Properties;
 
 /**
@@ -17,6 +18,11 @@ import java.util.Properties;
 public class ArangoConfiguration extends AbstractArangoConfiguration {
 
     private Protocol protocol;
+
+    @Inject
+    public ArangoConfiguration(ArangoSSLConfiguration sslConfiguration) {
+        super(sslConfiguration);
+    }
 
     /**
      * @see com.arangodb.ArangoDB.Builder#useProtocol(Protocol)
