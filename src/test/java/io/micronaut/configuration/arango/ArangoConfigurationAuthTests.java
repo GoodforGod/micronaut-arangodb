@@ -1,5 +1,6 @@
 package io.micronaut.configuration.arango;
 
+import com.arangodb.ArangoDB;
 import com.arangodb.entity.DatabaseEntity;
 import io.micronaut.context.ApplicationContext;
 import io.testcontainers.arangodb.containers.ArangoContainer;
@@ -31,10 +32,9 @@ class ArangoConfigurationAuthTests extends ArangoRunner {
         properties.put("arangodb.password", "1234");
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
-            final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
-            assertNotNull(configuration.toString());
-
-            configuration.getConfig().build().db(ArangoSettings.SYSTEM_DATABASE).getInfo();
+            final ArangoDB accessor = context.getBean(ArangoDB.class);
+            assertNotNull(accessor.toString());
+            accessor.db(ArangoSettings.SYSTEM_DATABASE).getInfo();
             fail("Should've failed with auth error");
         } catch (Exception e) {
             assertNotNull(e);
@@ -49,11 +49,12 @@ class ArangoConfigurationAuthTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
+            final ArangoDB accessor = context.getBean(ArangoDB.class);
             assertNotNull(configuration.getHealth());
             assertTrue(configuration.getHealth().isEnabled());
             assertNotNull(configuration.getHealthCluster());
             assertFalse(configuration.getHealthCluster().isEnabled());
-            final DatabaseEntity entity = configuration.getConfig().build().db(ArangoSettings.SYSTEM_DATABASE).getInfo();
+            final DatabaseEntity entity = accessor.db(ArangoSettings.SYSTEM_DATABASE).getInfo();
             assertNotNull(entity);
         }
     }

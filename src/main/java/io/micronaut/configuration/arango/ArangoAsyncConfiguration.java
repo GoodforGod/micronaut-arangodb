@@ -4,6 +4,12 @@ import com.arangodb.async.ArangoDBAsync;
 import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.context.exceptions.ConfigurationException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * ArangoDB Async configuration class.
@@ -15,20 +21,4 @@ import io.micronaut.context.annotation.Requires;
 @ConfigurationProperties(ArangoSettings.PREFIX)
 public class ArangoAsyncConfiguration extends AbstractArangoConfiguration {
 
-    @ConfigurationBuilder(prefixes = "", excludes = { "host", "user" })
-    protected ArangoDBAsync.Builder config = new ArangoDBAsync.Builder().timeout(10000);
-
-    /**
-     * @return client configuration builder
-     */
-    protected ArangoDBAsync.Builder getConfig() {
-        return config.host(getHost(), getPort()).user(getUser());
-    }
-
-    /**
-     * @return client configuration
-     */
-    public ArangoDBAsync getAccessor() {
-        return getConfig().build();
-    }
 }

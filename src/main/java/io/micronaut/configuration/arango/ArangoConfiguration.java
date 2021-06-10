@@ -1,9 +1,12 @@
 package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.Protocol;
 import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
+
+import java.util.Properties;
 
 /**
  * ArangoDB Sync configuration class.
@@ -15,20 +18,25 @@ import io.micronaut.context.annotation.Requires;
 @ConfigurationProperties(ArangoSettings.PREFIX)
 public class ArangoConfiguration extends AbstractArangoConfiguration {
 
-    @ConfigurationBuilder(prefixes = "", excludes = { "host", "user" })
-    protected ArangoDB.Builder config = new ArangoDB.Builder().timeout(10000);
+    private Protocol protocol;
 
     /**
-     * @return client configuration builder
+     * @see com.arangodb.ArangoDB.Builder#useProtocol(Protocol)
      */
-    protected ArangoDB.Builder getConfig() {
-        return config.host(getHost(), getPort()).user(getUser());
+    public Protocol getProtocol() {
+        return protocol;
     }
 
-    /**
-     * @return client configuration
-     */
-    public ArangoDB getAccessor() {
-        return getConfig().host(getHost(), getPort()).build();
+    public void setProtocol(Protocol protocol) {
+        this.protocol = protocol;
+    }
+
+    @Override
+    public Properties getProperties() {
+        final Properties properties = super.getProperties();
+        if(protocol != null) {
+            properties.setProperty(ArangoProperties.PROTOCOL, String.valueOf(getProtocol()));
+        }
+        return properties;
     }
 }

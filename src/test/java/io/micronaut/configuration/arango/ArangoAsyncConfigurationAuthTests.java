@@ -1,5 +1,6 @@
 package io.micronaut.configuration.arango;
 
+import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.entity.DatabaseEntity;
 import io.micronaut.context.ApplicationContext;
 import io.testcontainers.arangodb.containers.ArangoContainer;
@@ -31,9 +32,9 @@ class ArangoAsyncConfigurationAuthTests extends ArangoRunner {
         properties.put("arangodb.password", "1234");
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
-            final ArangoAsyncConfiguration configuration = context.getBean(ArangoAsyncConfiguration.class);
-            assertNotNull(configuration.toString());
-            configuration.getAccessor().db(ArangoSettings.SYSTEM_DATABASE).getInfo().join();
+            final ArangoDBAsync accessor = context.getBean(ArangoDBAsync.class);
+            assertNotNull(accessor.toString());
+            accessor.db(ArangoSettings.SYSTEM_DATABASE).getInfo().join();
         } catch (Exception e) {
             assertNotNull(e);
         }
@@ -47,12 +48,12 @@ class ArangoAsyncConfigurationAuthTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoAsyncConfiguration configuration = context.getBean(ArangoAsyncConfiguration.class);
+            final ArangoDBAsync accessor = context.getBean(ArangoDBAsync.class);
             assertNotNull(configuration.getHealth());
             assertTrue(configuration.getHealth().isEnabled());
             assertNotNull(configuration.getHealthCluster());
             assertFalse(configuration.getHealthCluster().isEnabled());
-            final DatabaseEntity entity = configuration.getAccessor().db(ArangoSettings.SYSTEM_DATABASE).getInfo()
-                    .join();
+            final DatabaseEntity entity = accessor.db(ArangoSettings.SYSTEM_DATABASE).getInfo().join();
             assertNotNull(entity);
         }
     }

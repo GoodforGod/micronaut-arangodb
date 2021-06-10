@@ -1,5 +1,6 @@
 package io.micronaut.configuration.arango;
 
+import com.arangodb.internal.ArangoDefaults;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.exceptions.ConfigurationException;
@@ -19,7 +20,7 @@ public class ArangoSSLConfiguration {
      * If set to true SSL will be used when connecting to an ArangoDB server.
      * @see com.arangodb.ArangoDB.Builder#useSsl(Boolean)
      */
-    private Boolean useSsl = false;
+    private boolean useSsl = ArangoDefaults.DEFAULT_USE_SSL;
 
     /**
      * The name of the requested certificate type.
@@ -71,7 +72,7 @@ public class ArangoSSLConfiguration {
         }
     }
 
-    public Boolean getUseSsl() {
+    public boolean getUseSsl() {
         return useSsl;
     }
 
