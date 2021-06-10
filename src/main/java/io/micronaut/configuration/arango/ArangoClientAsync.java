@@ -21,11 +21,11 @@ public class ArangoClientAsync implements AutoCloseable {
     /**
      * ArangoDB accessor {@link ArangoDBAsync}.
      */
-    private final ArangoDBAsync arangodb;
+    private final ArangoDBAsync accessor;
 
-    public ArangoClientAsync(ArangoAsyncConfiguration configuration) {
+    public ArangoClientAsync(ArangoDBAsync accessor, ArangoAsyncConfiguration configuration) {
         this.database = configuration.getDatabase();
-        this.arangodb = configuration.getAccessor();
+        this.accessor = accessor;
     }
 
     public String database() {
@@ -36,26 +36,24 @@ public class ArangoClientAsync implements AutoCloseable {
      * @return Accessor to specified ArangoDB database.
      */
     public ArangoDatabaseAsync db() {
-        return arangodb.db(database);
+        return accessor.db(database);
     }
 
     /**
      * @return Configured ArangoDB accessor {@link ArangoDBAsync}.
      */
     public ArangoDBAsync accessor() {
-        return arangodb;
+        return accessor;
     }
 
     @Override
     public void close() {
-        if (arangodb != null)
-            arangodb.shutdown();
+        if (accessor != null)
+            accessor.shutdown();
     }
 
     @Override
     public String toString() {
-        return "ArangoClientAsync {"
-                + ", database='" + database()
-                + '}';
+        return "[database='" + database() + ']';
     }
 }

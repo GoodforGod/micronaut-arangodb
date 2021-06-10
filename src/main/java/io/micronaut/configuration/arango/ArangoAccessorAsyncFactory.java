@@ -2,7 +2,11 @@ package io.micronaut.configuration.arango;
 
 import com.arangodb.async.ArangoDBAsync;
 import io.micronaut.context.annotation.*;
+import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.runtime.context.scope.Refreshable;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Default factory for creating ArangoDB Async Connection {@link ArangoDBAsync}.
@@ -15,7 +19,7 @@ import io.micronaut.runtime.context.scope.Refreshable;
 public class ArangoAccessorAsyncFactory {
 
     /**
-     * Factory method to return a AranoDB async connection.
+     * Factory method to return a ArangoDB async connection.
      *
      * @param configuration configuration pulled in for async accessor.
      * @return {@link ArangoDBAsync}
@@ -25,6 +29,16 @@ public class ArangoAccessorAsyncFactory {
     @Primary
     @Prototype
     public ArangoDBAsync getAccessor(ArangoAsyncConfiguration configuration) {
-        return configuration.getAccessor();
+        final ArangoDBAsync.Builder builder = new ArangoDBAsync.Builder();
+        try (final InputStream properties = configuration.getPropertiesAsInputStream()) {
+            builder.loadProperties(properties);
+            if (configuration.getSslConfiguration().getUseSsl()) {
+                builder.sslContext(configuration.getSslConfiguration().getSSLContext());
+            }
+
+            return builder.build();
+        } catch (IOException e) {
+            throw new ConfigurationException(e.getMessage());
+        }
     }
 }

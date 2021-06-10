@@ -1,8 +1,13 @@
 package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.async.ArangoDBAsync;
 import io.micronaut.context.annotation.*;
+import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.runtime.context.scope.Refreshable;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Default factory for creating ArangoDB Sync Connection {@link ArangoDB}.
@@ -25,6 +30,16 @@ public class ArangoAccessorFactory {
     @Primary
     @Prototype
     public ArangoDB getAccessor(ArangoConfiguration configuration) {
-        return configuration.getAccessor();
+        final ArangoDB.Builder builder = new ArangoDB.Builder();
+        try (final InputStream properties = configuration.getPropertiesAsInputStream()) {
+            builder.loadProperties(properties);
+            if (configuration.getSslConfiguration().getUseSsl()) {
+                builder.sslContext(configuration.getSslConfiguration().getSSLContext());
+            }
+
+            return builder.build();
+        } catch (IOException e) {
+            throw new ConfigurationException(e.getMessage());
+        }
     }
 }
