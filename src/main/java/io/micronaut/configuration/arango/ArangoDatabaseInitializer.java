@@ -1,7 +1,6 @@
 package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDBException;
-import com.arangodb.async.ArangoDBAsync;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
@@ -30,19 +29,19 @@ public class ArangoDatabaseInitializer {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @PostConstruct
-    protected void setupDatabase(ArangoAsyncConfiguration configuration) {
+    protected void setupDatabase(ArangoClientAsync clientAsync, ArangoAsyncConfiguration configuration) {
         if (configuration.isCreateDatabaseAsync()) {
-            CompletableFuture.runAsync(() -> initializeDatabaseSynchronously(configuration))
+            CompletableFuture.runAsync(() -> initializeDatabaseSynchronously(clientAsync, configuration))
                     .exceptionally(e -> {
                         logger.error(e.getMessage());
                         return null;
                     });
         } else {
-            initializeDatabaseSynchronously(configuration);
+            initializeDatabaseSynchronously(clientAsync, configuration);
         }
     }
 
-    private void initializeDatabaseSynchronously(ArangoAsyncConfiguration configuration) {
+    private void initializeDatabaseSynchronously(ArangoClientAsync clientAsync, ArangoAsyncConfiguration configuration) {
         final String database = configuration.getDatabase();
         final int timeout = configuration.getCreateDatabaseTimeoutInMillis();
         if (ArangoSettings.SYSTEM_DATABASE.equals(database)) {
@@ -52,9 +51,8 @@ public class ArangoDatabaseInitializer {
 
         try {
             logger.debug("Arango Database '{}' initialization starting...", database);
-            final ArangoDBAsync accessor = configuration.getAccessor();
             final long startTime = System.nanoTime();
-            accessor.createDatabase(database).get(timeout, TimeUnit.MILLISECONDS);
+            clientAsync.accessor().createDatabase(database).get(timeout, TimeUnit.MILLISECONDS);
             final long tookTime = System.nanoTime() - startTime;
             logger.debug("Arango Database '{}' creation took '{}' millis", database, tookTime / 1000000);
         } catch (TimeoutException e) {

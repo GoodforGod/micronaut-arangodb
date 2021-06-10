@@ -1,7 +1,6 @@
 package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDB;
-import com.arangodb.async.ArangoDBAsync;
 import io.micronaut.context.annotation.*;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.runtime.context.scope.Refreshable;

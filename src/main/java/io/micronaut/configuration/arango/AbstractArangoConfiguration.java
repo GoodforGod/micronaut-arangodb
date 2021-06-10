@@ -12,9 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import static io.micronaut.configuration.arango.ArangoSettings.SYSTEM_DATABASE;
 
@@ -58,29 +56,29 @@ public abstract class AbstractArangoConfiguration {
      */
     public Properties getProperties() {
         final Properties properties = new Properties();
-        if(CollectionUtils.isNotEmpty(getHosts())) {
+        if (CollectionUtils.isNotEmpty(getHosts())) {
             final String hostAsProperty = String.join(",", getHosts());
             properties.setProperty(ArangoProperties.HOSTS, hostAsProperty);
         }
         properties.setProperty(ArangoProperties.HOST, getHost());
         properties.setProperty(ArangoProperties.PORT, String.valueOf(getPort()));
         properties.setProperty(ArangoProperties.USER, getUser());
-        if(StringUtils.isNotEmpty(getPassword())) {
+        if (StringUtils.isNotEmpty(getPassword())) {
             properties.setProperty(ArangoProperties.PASSWORD, getPassword());
         }
         properties.setProperty(ArangoProperties.TIMEOUT, String.valueOf(getTimeout()));
         properties.setProperty(ArangoProperties.USE_SSL, String.valueOf(getSslConfiguration().getUseSsl()));
-        properties.setProperty(ArangoProperties.CHUNK_SIZE,  String.valueOf(getChunksize()));
-        properties.setProperty(ArangoProperties.MAX_CONNECTIONS,  String.valueOf(getMaxConnections()));
-        if(getConnectionTtl() != null) {
+        properties.setProperty(ArangoProperties.CHUNK_SIZE, String.valueOf(getChunksize()));
+        properties.setProperty(ArangoProperties.MAX_CONNECTIONS, String.valueOf(getMaxConnections()));
+        if (getConnectionTtl() != null) {
             properties.setProperty(ArangoProperties.CONNECTION_TTL, String.valueOf(getConnectionTtl()));
         }
-        if(getKeepAliveInterval() != null) {
+        if (getKeepAliveInterval() != null) {
             properties.setProperty(ArangoProperties.KEEP_ALIVE_INTERVAL, String.valueOf(getKeepAliveInterval()));
         }
-        properties.setProperty(ArangoProperties.ACQUIRE_HOST_LIST, String.valueOf( getAcquireHostList()));
+        properties.setProperty(ArangoProperties.ACQUIRE_HOST_LIST, String.valueOf(getAcquireHostList()));
         properties.setProperty(ArangoProperties.ACQUIRE_HOST_LIST_INTERVAL, String.valueOf(getAcquireHostListInterval()));
-        properties.setProperty(ArangoProperties.LOAD_BALANCING_STRATEGY,  String.valueOf(getLoadBalancingStrategy()));
+        properties.setProperty(ArangoProperties.LOAD_BALANCING_STRATEGY, String.valueOf(getLoadBalancingStrategy()));
         return properties;
     }
 
@@ -151,6 +149,7 @@ public abstract class AbstractArangoConfiguration {
 
     /**
      * Multiple hosts to set
+     * 
      * @see com.arangodb.ArangoDB.Builder#host(String, int)
      * @return value
      */

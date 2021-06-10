@@ -20,7 +20,7 @@ public class ArangoClientAsyncFactory {
     /**
      * Factory method to return a client.
      *
-     * @param accessor that will be used in client
+     * @param accessor      that will be used in client
      * @param configuration configuration pulled in
      * @return {@link ArangoClientAsync}
      */
@@ -35,7 +35,7 @@ public class ArangoClientAsyncFactory {
     /**
      * Factory method to return a client.
      *
-     * @param accessor that will be used in client
+     * @param accessor      that will be used in client
      * @param configuration configuration pulled in
      * @return {@link ArangoClientAsync}
      */

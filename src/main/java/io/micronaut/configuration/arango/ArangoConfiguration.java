@@ -1,8 +1,6 @@
 package io.micronaut.configuration.arango;
 
-import com.arangodb.ArangoDB;
 import com.arangodb.Protocol;
-import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 
@@ -34,7 +32,7 @@ public class ArangoConfiguration extends AbstractArangoConfiguration {
     @Override
     public Properties getProperties() {
         final Properties properties = super.getProperties();
-        if(protocol != null) {
+        if (protocol != null) {
             properties.setProperty(ArangoProperties.PROTOCOL, String.valueOf(getProtocol()));
         }
         return properties;

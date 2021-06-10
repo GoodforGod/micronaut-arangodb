@@ -1,8 +1,6 @@
 package io.micronaut.configuration.arango;
 
 import com.arangodb.internal.ArangoDefaults;
-import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.exceptions.ConfigurationException;
 
 import javax.net.ssl.SSLContext;
@@ -18,17 +16,20 @@ public class ArangoSSLConfiguration {
 
     /**
      * If set to true SSL will be used when connecting to an ArangoDB server.
+     * 
      * @see com.arangodb.ArangoDB.Builder#useSsl(Boolean)
      */
     private boolean useSsl = ArangoDefaults.DEFAULT_USE_SSL;
 
     /**
      * The name of the requested certificate type.
+     * 
      * @see CertificateFactory#getInstance(String)
      */
     private String certificateType = "X.509";
     /**
      * The standard name of the requested trust management algorithm.
+     * 
      * @see TrustManagerFactory#getInstance(String)
      */
     private String algorithmName = TrustManagerFactory.getDefaultAlgorithm();
@@ -45,6 +46,7 @@ public class ArangoSSLConfiguration {
 
     /**
      * The standard name of the requested protocol.
+     * 
      * @see javax.net.ssl.SSLContext#getInstance(String)
      */
     private String protocol = "TLS";
