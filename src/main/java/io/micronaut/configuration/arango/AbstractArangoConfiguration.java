@@ -2,6 +2,7 @@ package io.micronaut.configuration.arango;
 
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.ArangoDefaults;
+import io.micronaut.configuration.arango.ssl.ArangoSSLConfiguration;
 import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.util.CollectionUtils;

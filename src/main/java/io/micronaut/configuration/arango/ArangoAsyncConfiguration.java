@@ -1,5 +1,6 @@
 package io.micronaut.configuration.arango;
 
+import io.micronaut.configuration.arango.ssl.ArangoSSLConfiguration;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 
