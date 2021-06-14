@@ -13,6 +13,11 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.util.Base64;
 
+/**
+ * Builds {@link SSLContext} for
+ * {@link com.arangodb.ArangoDB.Builder#sslContext(SSLContext)} using
+ * {@link ArangoSSLCertificateConfiguration}
+ */
 @Secondary
 @Singleton
 public class DefaultSSLContextProvider implements SSLContextProvider {

@@ -23,6 +23,7 @@ public class ArangoSSLCertificateConfiguration {
      * @see CertificateFactory#getInstance(String)
      */
     private String type = "X.509";
+
     /**
      * The standard name of the requested trust management algorithm.
      *
