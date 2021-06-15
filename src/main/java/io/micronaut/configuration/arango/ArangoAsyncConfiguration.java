@@ -1,9 +1,10 @@
 package io.micronaut.configuration.arango;
 
-import com.arangodb.async.ArangoDBAsync;
-import io.micronaut.context.annotation.ConfigurationBuilder;
+import io.micronaut.configuration.arango.ssl.ArangoSSLConfiguration;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
+
+import javax.inject.Inject;
 
 /**
  * ArangoDB Async configuration class.
@@ -15,20 +16,8 @@ import io.micronaut.context.annotation.Requires;
 @ConfigurationProperties(ArangoSettings.PREFIX)
 public class ArangoAsyncConfiguration extends AbstractArangoConfiguration {
 
-    @ConfigurationBuilder(prefixes = "", excludes = { "host", "user" })
-    protected ArangoDBAsync.Builder config = new ArangoDBAsync.Builder().timeout(10000);
-
-    /**
-     * @return client configuration builder
-     */
-    protected ArangoDBAsync.Builder getConfig() {
-        return config.host(getHost(), getPort()).user(getUser());
-    }
-
-    /**
-     * @return client configuration
-     */
-    public ArangoDBAsync getAccessor() {
-        return getConfig().build();
+    @Inject
+    public ArangoAsyncConfiguration(ArangoSSLConfiguration sslConfiguration) {
+        super(sslConfiguration);
     }
 }

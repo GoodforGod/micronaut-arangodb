@@ -18,7 +18,7 @@ Last release for **Micronaut 1** is [version *1.2.1*](https://github.com/Goodfor
 **Gradle**
 ```groovy
 dependencies {
-    compile 'com.github.goodforgod:micronaut-arangodb:2.1.2'
+    compile 'com.github.goodforgod:micronaut-arangodb:2.2.0'
 }
 ```
 
@@ -27,7 +27,7 @@ dependencies {
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>2.1.2</version>
+    <version>2.2.0</version>
 </dependency>
 ```
 
@@ -136,11 +136,30 @@ Check [ArangoDB official](https://www.arangodb.com/docs/stable/drivers/java-refe
 arangodb:
   timeout: 3000                         # default - 10000 in milliseconds
   chunksize: 3000                       # default - 30000
-  useSsl: true                          # default - false
-  maxConnections: 30                    # default - 1
-  connectionTtl: 200                    # default - null
-  acquireHostList: true                 # default - false
-  loadBalancingStrategy: ONE_RANDOM     # default - NONE (check LoadBalancingStrategy for more)
+  max-connections: 30                    # default - 1
+  connection-ttl: 200                    # default - null
+  acquire-host-list: true                 # default - false
+  load-balancing-strategy: ONE_RANDOM     # default - NONE (check LoadBalancingStrategy for more)
+```
+
+#### Configuring SSL
+
+Configured SSLContext for ArangoDB driver.
+
+Check for [more info](https://www.arangodb.com/docs/stable/programs-arangod-ssl.html).
+
+```yaml
+arangodb:
+  ssl: 
+    enabled: true                       # default - false
+    certifiacte:
+      enabled: true
+      value:                            # certificate as base64
+      alias: arangodb
+      type: X.509
+      algorithm: PKIX
+      key-store: jks
+      protocol: TLS
 ```
 
 #### Database Initialization
@@ -284,7 +303,9 @@ check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Version History
 
-**2.1.2** - Micronaut updated to 2.5.4, ArangoDB Client updated to 6.12.2
+**2.2.0** - SSLContext for accessors support added, Micronaut updated to 2.5.5.
+
+**2.1.2** - Micronaut updated to 2.5.4, ArangoDB Client updated to 6.12.2.
 
 **2.1.1** - Micronaut updated to 2.4.0, ArangoDB Client updated to 6.9.0, default timeout 10000ms set, dependencies updated.
 

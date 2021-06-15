@@ -1,5 +1,6 @@
 package io.micronaut.configuration.arango;
 
+import com.arangodb.ArangoDB;
 import io.micronaut.context.annotation.*;
 import io.micronaut.runtime.context.scope.Refreshable;
 
@@ -19,6 +20,7 @@ public class ArangoClientFactory {
     /**
      * Factory method to return a client.
      *
+     * @param accessor      that will be used in client
      * @param configuration configuration pulled in
      * @return {@link ArangoClient}
      */
@@ -26,13 +28,14 @@ public class ArangoClientFactory {
     @Bean(preDestroy = "close")
     @Singleton
     @Primary
-    public ArangoClient getClient(ArangoConfiguration configuration) {
-        return getClientPrototype(configuration);
+    public ArangoClient getClient(ArangoDB accessor, ArangoConfiguration configuration) {
+        return getClientPrototype(accessor, configuration);
     }
 
     /**
      * Factory method to return a client.
      *
+     * @param accessor      that will be used in client
      * @param configuration configuration pulled in
      * @return {@link ArangoClient}
      */
@@ -40,7 +43,7 @@ public class ArangoClientFactory {
     @Bean(preDestroy = "close")
     @Named("prototype")
     @Prototype
-    protected ArangoClient getClientPrototype(ArangoConfiguration configuration) {
-        return new ArangoClient(configuration);
+    protected ArangoClient getClientPrototype(ArangoDB accessor, ArangoConfiguration configuration) {
+        return new ArangoClient(accessor, configuration);
     }
 }

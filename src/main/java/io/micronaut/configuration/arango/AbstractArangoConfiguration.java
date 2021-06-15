@@ -1,7 +1,19 @@
 package io.micronaut.configuration.arango;
 
+import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.ArangoDefaults;
+import io.micronaut.configuration.arango.ssl.ArangoSSLConfiguration;
 import io.micronaut.context.annotation.ConfigurationBuilder;
+import io.micronaut.context.exceptions.ConfigurationException;
+import io.micronaut.core.util.CollectionUtils;
+import io.micronaut.core.util.StringUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Properties;
 
 import static io.micronaut.configuration.arango.ArangoSettings.SYSTEM_DATABASE;
 
@@ -18,14 +30,75 @@ public abstract class AbstractArangoConfiguration {
     @ConfigurationBuilder("health-cluster")
     protected EnableConfiguration healthCluster = new EnableConfiguration(false);
 
+    protected final ArangoSSLConfiguration sslConfiguration;
+
     private String user = ArangoDefaults.DEFAULT_USER;
+    private String password;
+    private List<String> hosts;
     private String host = ArangoDefaults.DEFAULT_HOST;
     private int port = ArangoDefaults.DEFAULT_PORT;
     private String database = SYSTEM_DATABASE;
+    private int timeout = 10000;
+    private int chunksize = ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE;
+    private int maxConnections = ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
+    private Long connectionTtl;
+    private Integer keepAliveInterval;
+    private boolean acquireHostList = ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST;
+    private int acquireHostListInterval = ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL;
+    private LoadBalancingStrategy loadBalancingStrategy = ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY;
 
     private boolean createDatabaseIfNotExist = false;
     private boolean createDatabaseAsync = false;
     private int createDatabaseTimeoutInMillis = 10000;
+
+    public AbstractArangoConfiguration(ArangoSSLConfiguration sslConfiguration) {
+        this.sslConfiguration = sslConfiguration;
+    }
+
+    /**
+     * @return client configuration builder
+     */
+    public Properties getProperties() {
+        final Properties properties = new Properties();
+        if (CollectionUtils.isNotEmpty(getHosts())) {
+            final String hostAsProperty = String.join(",", getHosts());
+            properties.setProperty(ArangoProperties.HOSTS, hostAsProperty);
+        }
+        properties.setProperty(ArangoProperties.HOST, getHost());
+        properties.setProperty(ArangoProperties.PORT, String.valueOf(getPort()));
+        properties.setProperty(ArangoProperties.USER, getUser());
+        if (StringUtils.isNotEmpty(getPassword())) {
+            properties.setProperty(ArangoProperties.PASSWORD, getPassword());
+        }
+        properties.setProperty(ArangoProperties.TIMEOUT, String.valueOf(getTimeout()));
+        properties.setProperty(ArangoProperties.USE_SSL, String.valueOf(getSslConfiguration().isEnabled()));
+        properties.setProperty(ArangoProperties.CHUNK_SIZE, String.valueOf(getChunksize()));
+        properties.setProperty(ArangoProperties.MAX_CONNECTIONS, String.valueOf(getMaxConnections()));
+        if (getConnectionTtl() != null) {
+            properties.setProperty(ArangoProperties.CONNECTION_TTL, String.valueOf(getConnectionTtl()));
+        }
+        if (getKeepAliveInterval() != null) {
+            properties.setProperty(ArangoProperties.KEEP_ALIVE_INTERVAL, String.valueOf(getKeepAliveInterval()));
+        }
+        properties.setProperty(ArangoProperties.ACQUIRE_HOST_LIST, String.valueOf(getAcquireHostList()));
+        properties.setProperty(ArangoProperties.ACQUIRE_HOST_LIST_INTERVAL, String.valueOf(getAcquireHostListInterval()));
+        properties.setProperty(ArangoProperties.LOAD_BALANCING_STRATEGY, String.valueOf(getLoadBalancingStrategy()));
+        return properties;
+    }
+
+    /**
+     * @see #getProperties()
+     * @return properties as input stream
+     */
+    public InputStream getPropertiesAsInputStream() {
+        final Properties properties = getProperties();
+        try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            properties.store(outputStream, "arangodb");
+            return new ByteArrayInputStream(outputStream.toByteArray());
+        } catch (IOException e) {
+            throw new ConfigurationException(e.getMessage());
+        }
+    }
 
     /**
      * @return whenever to create database on context initialization
@@ -78,6 +151,20 @@ public abstract class AbstractArangoConfiguration {
         this.host = host;
     }
 
+    /**
+     * Multiple hosts to set
+     * 
+     * @see com.arangodb.ArangoDB.Builder#host(String, int)
+     * @return value
+     */
+    public List<String> getHosts() {
+        return hosts;
+    }
+
+    public void setHosts(List<String> hosts) {
+        this.hosts = hosts;
+    }
+
     public int getPort() {
         return port;
     }
@@ -115,6 +202,114 @@ public abstract class AbstractArangoConfiguration {
     }
 
     /**
+     * @see com.arangodb.ArangoDB.Builder#password(String)
+     * @return value
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * @see com.arangodb.ArangoDB.Builder#timeout(Integer)
+     * @return value
+     */
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
+
+    /**
+     * @see com.arangodb.ArangoDB.Builder#chunksize(Integer)
+     * @return value
+     */
+    public int getChunksize() {
+        return chunksize;
+    }
+
+    public void setChunksize(int chunksize) {
+        this.chunksize = chunksize;
+    }
+
+    /**
+     * @see com.arangodb.ArangoDB.Builder#maxConnections(Integer)
+     * @return value
+     */
+    public int getMaxConnections() {
+        return maxConnections;
+    }
+
+    public void setMaxConnections(int maxConnections) {
+        this.maxConnections = maxConnections;
+    }
+
+    /**
+     * @see com.arangodb.ArangoDB.Builder#connectionTtl(Long)
+     * @return value
+     */
+    public Long getConnectionTtl() {
+        return connectionTtl;
+    }
+
+    public void setConnectionTtl(Long connectionTtl) {
+        this.connectionTtl = connectionTtl;
+    }
+
+    /**
+     * @see com.arangodb.ArangoDB.Builder#keepAliveInterval(Integer)
+     * @return value
+     */
+    public Integer getKeepAliveInterval() {
+        return keepAliveInterval;
+    }
+
+    public void setKeepAliveInterval(Integer keepAliveInterval) {
+        this.keepAliveInterval = keepAliveInterval;
+    }
+
+    /**
+     * @see com.arangodb.ArangoDB.Builder#acquireHostList(Boolean)
+     * @return value
+     */
+    public boolean getAcquireHostList() {
+        return acquireHostList;
+    }
+
+    public void setAcquireHostList(boolean acquireHostList) {
+        this.acquireHostList = acquireHostList;
+    }
+
+    /**
+     * @see com.arangodb.ArangoDB.Builder#acquireHostListInterval(Integer)
+     * @return value
+     */
+    public int getAcquireHostListInterval() {
+        return acquireHostListInterval;
+    }
+
+    public void setAcquireHostListInterval(int acquireHostListInterval) {
+        this.acquireHostListInterval = acquireHostListInterval;
+    }
+
+    /**
+     * @see com.arangodb.ArangoDB.Builder#loadBalancingStrategy(LoadBalancingStrategy)
+     * @return value
+     */
+    public LoadBalancingStrategy getLoadBalancingStrategy() {
+        return loadBalancingStrategy;
+    }
+
+    public void setLoadBalancingStrategy(LoadBalancingStrategy loadBalancingStrategy) {
+        this.loadBalancingStrategy = loadBalancingStrategy;
+    }
+
+    /**
      * @return health indicator configuration
      */
     public EnableConfiguration getHealth() {
@@ -126,6 +321,10 @@ public abstract class AbstractArangoConfiguration {
      */
     public EnableConfiguration getHealthCluster() {
         return healthCluster;
+    }
+
+    public ArangoSSLConfiguration getSslConfiguration() {
+        return sslConfiguration;
     }
 
     @Override

@@ -40,9 +40,9 @@ public class ArangoHealthIndicator implements HealthIndicator {
     private final String database;
 
     @Inject
-    public ArangoHealthIndicator(ArangoDB accessor, ArangoConfiguration config) {
+    public ArangoHealthIndicator(ArangoDB accessor, ArangoConfiguration configuration) {
         this.accessor = accessor;
-        this.database = config.getDatabase();
+        this.database = configuration.getDatabase();
     }
 
     @Override

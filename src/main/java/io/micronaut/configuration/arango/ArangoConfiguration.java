@@ -1,9 +1,12 @@
 package io.micronaut.configuration.arango;
 
-import com.arangodb.ArangoDB;
-import io.micronaut.context.annotation.ConfigurationBuilder;
+import com.arangodb.Protocol;
+import io.micronaut.configuration.arango.ssl.ArangoSSLConfiguration;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
+
+import javax.inject.Inject;
+import java.util.Properties;
 
 /**
  * ArangoDB Sync configuration class.
@@ -15,20 +18,31 @@ import io.micronaut.context.annotation.Requires;
 @ConfigurationProperties(ArangoSettings.PREFIX)
 public class ArangoConfiguration extends AbstractArangoConfiguration {
 
-    @ConfigurationBuilder(prefixes = "", excludes = { "host", "user" })
-    protected ArangoDB.Builder config = new ArangoDB.Builder().timeout(10000);
+    private Protocol protocol;
 
-    /**
-     * @return client configuration builder
-     */
-    protected ArangoDB.Builder getConfig() {
-        return config.host(getHost(), getPort()).user(getUser());
+    @Inject
+    public ArangoConfiguration(ArangoSSLConfiguration sslConfiguration) {
+        super(sslConfiguration);
     }
 
     /**
-     * @return client configuration
+     * @see com.arangodb.ArangoDB.Builder#useProtocol(Protocol)
+     * @return protocol value
      */
-    public ArangoDB getAccessor() {
-        return getConfig().host(getHost(), getPort()).build();
+    public Protocol getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(Protocol protocol) {
+        this.protocol = protocol;
+    }
+
+    @Override
+    public Properties getProperties() {
+        final Properties properties = super.getProperties();
+        if (protocol != null) {
+            properties.setProperty(ArangoProperties.PROTOCOL, String.valueOf(getProtocol()));
+        }
+        return properties;
     }
 }
