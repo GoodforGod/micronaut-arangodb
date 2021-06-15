@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +23,7 @@ class ArangoConfigurationTests extends ArangoRunner {
     @Order(1)
     @Test
     void createConnectionWithCustomDatabaseAndDatabaseNotExistByDefault() {
-        try (final ApplicationContext context = ApplicationContext.run(Collections.singletonMap("arangodb.database", "custom"))) {
+        try (final ApplicationContext context = ApplicationContext.run(Map.of("arangodb.database", "custom"))) {
             final ArangoClient client = context.getBean(ArangoClient.class);
             assertEquals("custom", client.database());
 
