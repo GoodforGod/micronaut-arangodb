@@ -7,6 +7,7 @@ import io.micronaut.context.annotation.*;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.runtime.context.scope.Refreshable;
 
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -23,7 +24,8 @@ public class ArangoAccessorAsyncFactory {
     /**
      * Factory method to return a ArangoDB async connection.
      *
-     * @param configuration configuration pulled in for async accessor.
+     * @param sslContextProvider provides ssl context for accessor
+     * @param configuration      configuration pulled in for async accessor.
      * @return {@link ArangoDBAsync}
      */
     @Refreshable(ArangoSettings.PREFIX)
@@ -37,7 +39,8 @@ public class ArangoAccessorAsyncFactory {
         try (final InputStream properties = configuration.getPropertiesAsInputStream()) {
             builder.loadProperties(properties);
             if (sslConfiguration.isEnabled()) {
-                builder.sslContext(sslContextProvider.get(sslConfiguration));
+                final SSLContext sslContext = sslContextProvider.get(sslConfiguration);
+                builder.useSsl(true).sslContext(sslContext);
             }
 
             return builder.build();
