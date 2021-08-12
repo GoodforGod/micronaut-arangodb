@@ -61,7 +61,8 @@ public class ArangoDatabaseInitializer {
             clientAsync.db().exists()
                     .thenCompose(exist -> exist
                             ? CompletableFuture.completedFuture(true)
-                            : clientAsync.db().create()).get(timeout, TimeUnit.MILLISECONDS);
+                            : clientAsync.db().create())
+                    .get(timeout, TimeUnit.MILLISECONDS);
             final long tookTime = System.currentTimeMillis() - startTime;
             logger.debug("Arango Database '{}' creation took '{}' millis", database, tookTime);
         } catch (TimeoutException e) {

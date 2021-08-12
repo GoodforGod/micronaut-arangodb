@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - master
+    - dev
   pull_request:
     branches:
     - master
@@ -25,10 +26,13 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
 
-    - name: Build with Gradle
-      run: ./gradlew build jacocoTestReport
+    - name: Build
+      run: ./gradlew classes
 
-    - name: Analyze with SonarQube
+    - name: Test
+      run: ./gradlew test jacocoTestReport
+
+    - name: SonarQube
       run: ./gradlew sonarqube
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
