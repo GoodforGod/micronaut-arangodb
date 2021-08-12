@@ -69,15 +69,8 @@ public class ArangoDatabaseInitializer {
             throw new ApplicationStartupException("Arango Database initialization timed out in '" + timeout + "' millis");
         } catch (ArangoDBException e) {
             final Integer code = e.getResponseCode();
-            switch (code) {
-                case 400:
-                case 409:
-                    logger.debug("Arango Database '{}' already exists", database);
-                    return;
-                default:
-                    throw new ApplicationStartupException(
-                            "Arango Database initialization failed with code '" + code + "' and error: " + e.getMessage());
-            }
+            throw new ApplicationStartupException(
+                    "Arango Database initialization failed with code '" + code + "' and error: " + e.getMessage());
         } catch (Exception e) {
             throw new ApplicationStartupException("Arango Database initialization failed without code due to: " + e.getMessage());
         }
