@@ -29,48 +29,48 @@ public class ArangoDatabaseInitializer {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @PostConstruct
-    protected void setupDatabase(ArangoClientAsync clientAsync, ArangoAsyncConfiguration configuration) {
-        if (configuration.isCreateDatabaseAsync()) {
-            CompletableFuture.runAsync(() -> initializeDatabaseSynchronously(clientAsync, configuration))
-                    .exceptionally(e -> {
-                        logger.error(e.getMessage());
-                        return null;
-                    });
-        } else {
-            initializeDatabaseSynchronously(clientAsync, configuration);
-        }
-    }
-
-    private void initializeDatabaseSynchronously(ArangoClientAsync clientAsync, ArangoAsyncConfiguration configuration) {
+    public void setupDatabase(ArangoClientAsync clientAsync,
+                              ArangoAsyncConfiguration configuration) {
         final String database = configuration.getDatabase();
-        final int timeout = configuration.getCreateDatabaseTimeoutInMillis();
         if (ArangoSettings.SYSTEM_DATABASE.equals(database)) {
             logger.debug("Arango is configured to use System Database, skipping initialization");
             return;
         }
 
+        if (configuration.isCreateDatabaseAsync()) {
+            CompletableFuture.runAsync(() -> {
+                try {
+                    initializeDatabaseSynchronously(clientAsync, configuration);
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                }
+            });
+        } else {
+            initializeDatabaseSynchronously(clientAsync, configuration);
+        }
+    }
+
+    protected void initializeDatabaseSynchronously(ArangoClientAsync clientAsync,
+                                                   ArangoAsyncConfiguration configuration) {
+        final String database = configuration.getDatabase();
+        final int timeout = configuration.getCreateDatabaseTimeoutInMillis();
+
         try {
             logger.debug("Arango Database '{}' initialization starting...", database);
-            final long startTime = System.nanoTime();
-            clientAsync.accessor().createDatabase(database).get(timeout, TimeUnit.MILLISECONDS);
-            final long tookTime = System.nanoTime() - startTime;
-            logger.debug("Arango Database '{}' creation took '{}' millis", database, tookTime / 1000000);
+            final long startTime = System.currentTimeMillis();
+            clientAsync.db().exists()
+                    .thenCompose(exist -> exist
+                            ? CompletableFuture.completedFuture(true)
+                            : clientAsync.db().create())
+                    .get(timeout, TimeUnit.MILLISECONDS);
+            final long tookTime = System.currentTimeMillis() - startTime;
+            logger.debug("Arango Database '{}' creation took '{}' millis", database, tookTime);
         } catch (TimeoutException e) {
             throw new ApplicationStartupException("Arango Database initialization timed out in '" + timeout + "' millis");
+        } catch (ArangoDBException e) {
+            throw e;
         } catch (Exception e) {
-            final Integer code = (e.getCause() instanceof ArangoDBException) ? ((ArangoDBException) e.getCause()).getResponseCode() : null;
-            if (code == null)
-                throw new ApplicationStartupException("Arango Database initialization failed without code due to: " + e.getMessage());
-
-            switch (code) {
-                case 400:
-                case 409:
-                    logger.debug("Arango Database '{}' already exists", database);
-                    return;
-                default:
-                    throw new ApplicationStartupException(
-                            "Arango Database initialization failed with code '" + code + "' and error: " + e.getMessage());
-            }
+            throw new ApplicationStartupException("Arango Database initialization failed due to: " + e.getMessage(), e);
         }
     }
 }

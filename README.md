@@ -18,7 +18,7 @@ Last release for **Micronaut 1** is [version *1.2.1*](https://github.com/Goodfor
 **Gradle**
 ```groovy
 dependencies {
-    compile 'com.github.goodforgod:micronaut-arangodb:2.2.0'
+    compile 'com.github.goodforgod:micronaut-arangodb:2.2.1'
 }
 ```
 
@@ -27,7 +27,7 @@ dependencies {
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>2.2.0</version>
+    <version>2.2.1</version>
 </dependency>
 ```
 
@@ -300,28 +300,6 @@ For testing purposes it is recommended to use [ArangoDB TestContainer library](h
 
 TestContainers allows you to use integration tests against real database in all docker friendly environments, 
 check here for [TestContainers](https://www.testcontainers.org/).
-
-## Version History
-
-**2.2.0** - SSLContext for accessors support added, Micronaut updated to 2.5.5.
-
-**2.1.2** - Micronaut updated to 2.5.4, ArangoDB Client updated to 6.12.2.
-
-**2.1.1** - Micronaut updated to 2.4.0, ArangoDB Client updated to 6.9.0, default timeout 10000ms set, dependencies updated.
-
-**2.1.0** - Java updated to 11, Micronaut updated to 2.1.1, improved config autocompletion.
-
-**2.0.0** - Improved database handling exceptions, improved ArangoClusterHealth.
-
-**2.0.0** - Micronaut 2 support, database init timeout property added, dependency updated.
-
-**1.2.1** - Minor HealthCheck improvements, dependencies updated.
-
-**1.2.0** - Improved ArangoDB Health Check (more accurate db state check).
-
-**1.1.0** - Client as prototype injection added, health indicators accessors instead of clients, sync client renamed.
-
-**1.0.0** - Initial version, sync and async clients and drivers injection, database initialization, health check, cluster health check.
 
 ## License
 
