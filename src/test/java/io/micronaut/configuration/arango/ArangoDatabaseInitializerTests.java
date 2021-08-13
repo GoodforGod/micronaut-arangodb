@@ -99,6 +99,24 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
 
     @Order(6)
     @Test
+    void startUpForContextFailsOnConnectionError() {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.database", "custom");
+        properties.put("arangodb.port", 8566);
+        properties.put("arangodb.timeout", 1000);
+        properties.put("arangodb.create-database-if-not-exist", true);
+        properties.put("arangodb.create-database-timeout-in-millis", 10000);
+
+        try (ApplicationContext context = ApplicationContext.run(properties)) {
+            fail("Should not happen!");
+        } catch (Exception e) {
+            assertNotNull(e.getCause());
+            assertTrue(e.getCause().getCause() instanceof ApplicationStartupException);
+        }
+    }
+
+    @Order(7)
+    @Test
     void databaseCreateAsync() {
         final Map<String, Object> properties = new HashMap<>();
         final String database = "asyncdb";

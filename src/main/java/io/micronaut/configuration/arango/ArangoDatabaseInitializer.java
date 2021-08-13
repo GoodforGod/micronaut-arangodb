@@ -68,11 +68,9 @@ public class ArangoDatabaseInitializer {
         } catch (TimeoutException e) {
             throw new ApplicationStartupException("Arango Database initialization timed out in '" + timeout + "' millis");
         } catch (ArangoDBException e) {
-            final Integer code = e.getResponseCode();
-            throw new ApplicationStartupException(
-                    "Arango Database initialization failed with code '" + code + "' and error: " + e.getMessage());
+            throw e;
         } catch (Exception e) {
-            throw new ApplicationStartupException("Arango Database initialization failed without code due to: " + e.getMessage());
+            throw new ApplicationStartupException("Arango Database initialization failed due to: " + e.getMessage(), e);
         }
     }
 }
