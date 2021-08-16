@@ -116,7 +116,7 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
             final ArangoClusterHealthConfiguration healthConfiguration = context.getBean(ArangoClusterHealthConfiguration.class);
             assertNotNull(healthConfiguration);
             assertNotNull(healthConfiguration.toString());
-            assertEquals(10000, healthConfiguration.getTimeoutInMillis());
+            assertEquals(5000, healthConfiguration.getTimeoutInMillis());
             assertEquals(2, healthConfiguration.getRetry());
             assertTrue(healthConfiguration.isEnabled());
 
