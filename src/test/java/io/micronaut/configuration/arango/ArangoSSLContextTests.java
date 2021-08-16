@@ -33,9 +33,16 @@ class ArangoSSLContextTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoSSLConfiguration sslConfiguration = context.getBean(ArangoSSLConfiguration.class);
+            assertNotNull(sslConfiguration);
+            assertNotNull(sslConfiguration.toString());
+
+            assertNotNull(sslConfiguration.getCertificateConfiguration());
+            assertNotNull(sslConfiguration.getCertificateConfiguration().toString());
+
             final DefaultSSLContextProvider sslContextProvider = context.getBean(DefaultSSLContextProvider.class);
             final SSLContext sslContext = sslContextProvider.get(sslConfiguration);
             assertNotNull(sslContext);
+            assertNotNull(sslContext.toString());
         }
     }
 

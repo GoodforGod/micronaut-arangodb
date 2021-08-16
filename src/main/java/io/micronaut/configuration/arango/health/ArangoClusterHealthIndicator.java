@@ -46,19 +46,24 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     private final ArangoDB accessor;
     private final ObjectMapper mapper;
     private final String database;
+    private final ArangoClusterHealthConfiguration healthConfiguration;
 
     @Inject
-    public ArangoClusterHealthIndicator(ArangoDB accessor, ArangoConfiguration configuration, ObjectMapper mapper) {
+    public ArangoClusterHealthIndicator(ArangoDB accessor,
+                                        ArangoConfiguration configuration,
+                                        ObjectMapper mapper,
+                                        ArangoClusterHealthConfiguration healthConfiguration) {
         this.accessor = accessor;
         this.mapper = mapper;
         this.database = configuration.getDatabase();
+        this.healthConfiguration = healthConfiguration;
     }
 
     @Override
     public Flowable<HealthResult> getResult() {
         return Flowable.fromCallable(() -> accessor.db(database).route("/_admin/cluster/health").get())
-                .timeout(20000, TimeUnit.MILLISECONDS)
-                .retry(2)
+                .timeout(healthConfiguration.getTimeoutInMillis(), TimeUnit.MILLISECONDS)
+                .retry(healthConfiguration.getRetry())
                 .map(this::buildReport)
                 .onErrorReturn(this::buildErrorReport);
     }

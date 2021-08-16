@@ -110,4 +110,15 @@ public class ArangoSSLCertificateConfiguration {
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
+
+    @Override
+    public String toString() {
+        return "[enabled=" + enabled +
+                ", type=" + type +
+                ", algorithm=" + algorithm +
+                ", keyStore=" + keyStore +
+                ", value=" + value +
+                ", alias=" + alias +
+                ", protocol=" + protocol + ']';
+    }
 }
