@@ -220,7 +220,9 @@ You can explicitly *turn off* health check.
 ```yaml
 arangodb:
   health:
-    enabled: false      # default - true 
+    enabled: false            # default - true 
+    timeout-in-millis: 5000   # default - 5000
+    retry: 2                  # default - 2
 ```
 
 #### Cluster Health Check
@@ -290,7 +292,9 @@ You can turn on Cluster Health Check via configuration:
 ```yaml
 arangodb:
   health-cluster:
-    enabled: true      # default - false
+    enabled: true             # default - false
+    timeout-in-millis: 5000   # default - 5000
+    retry: 2                  # default - 2
 ```
 
 ## Testing
