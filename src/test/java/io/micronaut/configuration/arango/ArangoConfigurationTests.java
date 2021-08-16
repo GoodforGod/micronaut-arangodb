@@ -2,6 +2,7 @@ package io.micronaut.configuration.arango;
 
 import io.micronaut.configuration.arango.health.ArangoHealthConfiguration;
 import io.micronaut.context.ApplicationContext;
+import io.micronaut.context.exceptions.ConfigurationException;
 import io.testcontainers.arangodb.containers.ArangoContainer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -53,6 +54,37 @@ class ArangoConfigurationTests extends ArangoRunner {
 
             final boolean databaseCreated = client.db().exists();
             assertTrue(databaseCreated);
+        }
+    }
+
+    @Test
+    void healthConfigurationBuilded() {
+        final ArangoHealthConfiguration healthConfiguration = new ArangoHealthConfiguration();
+        healthConfiguration.setRetry(2);
+        healthConfiguration.setTimeoutInMillis(1000);
+        assertEquals(2, healthConfiguration.getRetry());
+        assertEquals(1000, healthConfiguration.getTimeoutInMillis());
+    }
+
+    @Test
+    void healthConfigurationRetryFail() {
+        try {
+            final ArangoHealthConfiguration healthConfiguration = new ArangoHealthConfiguration();
+            healthConfiguration.setRetry(-1);
+            fail("Should not happen!");
+        } catch (Exception e) {
+            assertTrue(e instanceof ConfigurationException);
+        }
+    }
+
+    @Test
+    void healthConfigurationTimeoutFail() {
+        try {
+            final ArangoHealthConfiguration healthConfiguration = new ArangoHealthConfiguration();
+            healthConfiguration.setTimeoutInMillis(-1);
+            fail("Should not happen!");
+        } catch (Exception e) {
+            assertTrue(e instanceof ConfigurationException);
         }
     }
 }
