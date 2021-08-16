@@ -47,12 +47,7 @@ class ArangoAsyncConfigurationAuthTests extends ArangoRunner {
         properties.put("arangodb.password", PASS);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
-            final ArangoAsyncConfiguration configuration = context.getBean(ArangoAsyncConfiguration.class);
             final ArangoDBAsync accessor = context.getBean(ArangoDBAsync.class);
-            assertNotNull(configuration.getHealth());
-            assertTrue(configuration.getHealth().isEnabled());
-            assertNotNull(configuration.getHealthCluster());
-            assertFalse(configuration.getHealthCluster().isEnabled());
             final DatabaseEntity entity = accessor.db(ArangoSettings.SYSTEM_DATABASE).getInfo().join();
             assertNotNull(entity);
         }

@@ -113,6 +113,13 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
         properties.put("arangodb.health-cluster.enabled", true);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoClusterHealthConfiguration healthConfiguration = context.getBean(ArangoClusterHealthConfiguration.class);
+            assertNotNull(healthConfiguration);
+            assertNotNull(healthConfiguration.toString());
+            assertEquals(10000, healthConfiguration.getTimeoutInMillis());
+            assertEquals(2, healthConfiguration.getRetry());
+            assertTrue(healthConfiguration.isEnabled());
+
             final ArangoClusterHealthIndicator clusterHealthIndicator = context.getBean(ArangoClusterHealthIndicator.class);
 
             final HealthResult result = Single.fromPublisher(clusterHealthIndicator.getResult())

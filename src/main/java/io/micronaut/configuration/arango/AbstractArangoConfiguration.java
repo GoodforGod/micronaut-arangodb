@@ -3,7 +3,6 @@ package io.micronaut.configuration.arango;
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.ArangoDefaults;
 import io.micronaut.configuration.arango.ssl.ArangoSSLConfiguration;
-import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.core.util.StringUtils;
@@ -24,11 +23,6 @@ import static io.micronaut.configuration.arango.ArangoSettings.SYSTEM_DATABASE;
  * @since 29.2.2020
  */
 public abstract class AbstractArangoConfiguration {
-
-    @ConfigurationBuilder("health")
-    protected EnableConfiguration health = new EnableConfiguration(true);
-    @ConfigurationBuilder("health-cluster")
-    protected EnableConfiguration healthCluster = new EnableConfiguration(false);
 
     protected final ArangoSSLConfiguration sslConfiguration;
 
@@ -51,7 +45,7 @@ public abstract class AbstractArangoConfiguration {
     private boolean createDatabaseAsync = false;
     private int createDatabaseTimeoutInMillis = 10000;
 
-    public AbstractArangoConfiguration(ArangoSSLConfiguration sslConfiguration) {
+    protected AbstractArangoConfiguration(ArangoSSLConfiguration sslConfiguration) {
         this.sslConfiguration = sslConfiguration;
     }
 
@@ -309,32 +303,12 @@ public abstract class AbstractArangoConfiguration {
         this.loadBalancingStrategy = loadBalancingStrategy;
     }
 
-    /**
-     * @return health indicator configuration
-     */
-    public EnableConfiguration getHealth() {
-        return health;
-    }
-
-    /**
-     * @return cluster health indicator configuration
-     */
-    public EnableConfiguration getHealthCluster() {
-        return healthCluster;
-    }
-
     public ArangoSSLConfiguration getSslConfiguration() {
         return sslConfiguration;
     }
 
     @Override
     public String toString() {
-        return "AbstractArangoConfiguration{" +
-                "user='" + user + '\'' +
-                ", host='" + host + '\'' +
-                ", port=" + port +
-                ", database='" + database + '\'' +
-                ", createDatabaseIfNotExist=" + createDatabaseIfNotExist +
-                '}';
+        return getProperties().toString();
     }
 }

@@ -38,18 +38,22 @@ public class ArangoHealthIndicator implements HealthIndicator {
     private static final String NAME = "arangodb";
     private final ArangoDB accessor;
     private final String database;
+    private final ArangoHealthConfiguration healthConfiguration;
 
     @Inject
-    public ArangoHealthIndicator(ArangoDB accessor, ArangoConfiguration configuration) {
+    public ArangoHealthIndicator(ArangoDB accessor,
+                                 ArangoConfiguration configuration,
+                                 ArangoHealthConfiguration healthConfiguration) {
         this.accessor = accessor;
         this.database = configuration.getDatabase();
+        this.healthConfiguration = healthConfiguration;
     }
 
     @Override
     public Flowable<HealthResult> getResult() {
         return Flowable.fromCallable(() -> accessor.db(database).getInfo())
-                .timeout(20000, TimeUnit.MILLISECONDS)
-                .retry(2)
+                .timeout(healthConfiguration.getTimeoutInMillis(), TimeUnit.MILLISECONDS)
+                .retry(healthConfiguration.getRetry())
                 .map(this::buildUpReport)
                 .onErrorReturn(this::buildDownReport);
     }

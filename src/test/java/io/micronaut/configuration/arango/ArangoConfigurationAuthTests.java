@@ -54,11 +54,6 @@ class ArangoConfigurationAuthTests extends ArangoRunner {
             final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
 
             final ArangoDB accessor = context.getBean(ArangoDB.class);
-            assertNotNull(configuration.getHealth());
-            assertTrue(configuration.getHealth().isEnabled());
-            assertNotNull(configuration.getHealthCluster());
-            assertFalse(configuration.getHealthCluster().isEnabled());
-
             final DatabaseEntity entity = accessor.db(ArangoSettings.SYSTEM_DATABASE).getInfo();
             assertNotNull(entity);
 
@@ -69,6 +64,7 @@ class ArangoConfigurationAuthTests extends ArangoRunner {
             configuration.setConnectionTtl(10000L);
             configuration.setHosts(List.of("localhost:8080", "localhost:8081"));
             configuration.setHost("localhost");
+
             final Properties configurationProperties = configuration.getProperties();
             assertNotNull(configurationProperties.getProperty(ArangoProperties.HOSTS));
             assertNotNull(configuration.toString());

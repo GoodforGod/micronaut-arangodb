@@ -1,5 +1,6 @@
 package io.micronaut.configuration.arango;
 
+import io.micronaut.configuration.arango.health.ArangoHealthConfiguration;
 import io.micronaut.context.ApplicationContext;
 import io.testcontainers.arangodb.containers.ArangoContainer;
 import org.junit.jupiter.api.Order;
@@ -42,6 +43,13 @@ class ArangoConfigurationTests extends ArangoRunner {
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClient client = context.getBean(ArangoClient.class);
             assertEquals("custom", client.database());
+
+            final ArangoHealthConfiguration healthConfiguration = context.getBean(ArangoHealthConfiguration.class);
+            assertNotNull(healthConfiguration);
+            assertNotNull(healthConfiguration.toString());
+            assertEquals(10000, healthConfiguration.getTimeoutInMillis());
+            assertEquals(2, healthConfiguration.getRetry());
+            assertTrue(healthConfiguration.isEnabled());
 
             final boolean databaseCreated = client.db().exists();
             assertTrue(databaseCreated);
