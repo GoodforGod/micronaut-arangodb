@@ -12,7 +12,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.inject.Inject;
-import java.util.Map;
 
 /**
  * Tests when health is UP
@@ -20,30 +19,16 @@ import java.util.Map;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Property(name = "arangodb.health.cluster.enabled", value = "true")
+@Property(name = "arangodb.health-cluster.enabled", value = "true")
 @MicronautTest
 @Testcontainers
-class ArangoHealthDownClusterTests extends ArangoRunner {
+class LegacyArangoHealthDownClusterTests extends ArangoRunner {
 
     @Container
     private static final ArangoContainer ARANGO_CONTAINER = getContainer();
 
     @Inject
-    private ArangoHealthIndicator healthIndicator;
-
-    @Inject
-    private ArangoClusterHealthIndicator clusterHealthIndicator;
-
-    @Test
-    void healthUpWhenDatabaseUp() {
-        final HealthResult result = Flowable.fromPublisher(healthIndicator.getResult()).firstElement().blockingGet();
-        assertNotNull(result);
-
-        assertEquals(HealthStatus.UP, result.getStatus());
-        assertEquals("arangodb", result.getName());
-        assertTrue(result.getDetails() instanceof Map);
-        assertFalse(((Map) result.getDetails()).isEmpty());
-    }
+    private LegacyArangoClusterHealthIndicator clusterHealthIndicator;
 
     @Test
     void healthClusterDownWhenDatabaseIsSingle() {

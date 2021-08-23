@@ -2,6 +2,7 @@ package io.micronaut.configuration.arango;
 
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.ArangoDefaults;
+import com.arangodb.internal.InternalArangoDBBuilder;
 import io.micronaut.configuration.arango.ssl.ArangoSSLConfiguration;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.util.CollectionUtils;
@@ -19,6 +20,7 @@ import static io.micronaut.configuration.arango.ArangoSettings.SYSTEM_DATABASE;
 /**
  * Abstract ArangoDB configuration class.
  *
+ * @see ArangoProperties
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
@@ -50,7 +52,9 @@ public abstract class AbstractArangoConfiguration {
     }
 
     /**
-     * @return client configuration builder
+     * @see ArangoProperties
+     * @see InternalArangoDBBuilder
+     * @return client configuration properties
      */
     public Properties getProperties() {
         final Properties properties = new Properties();
