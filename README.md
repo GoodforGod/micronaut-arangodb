@@ -286,10 +286,11 @@ You can turn on Cluster Health Check via configuration:
 
 ```yaml
 arangodb:
-  health-cluster:
-    enabled: true             # default - false
-    timeout-in-millis: 5000   # default - 5000
-    retry: 2                  # default - 2
+  health:
+    cluster:
+      enabled: true             # default - false
+      timeout-in-millis: 5000   # default - 5000
+      retry: 2                  # default - 2
 ```
 
 ## Testing
