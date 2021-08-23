@@ -137,6 +137,22 @@ arangodb:
   load-balancing-strategy: ONE_RANDOM     # default - NONE (check LoadBalancingStrategy for more)
 ```
 
+Hosts can be passed to configuration as Strings (useful when passed via environment):
+
+```yaml
+arangodb:
+  hosts: localhost:8080,localhost:8081    # default to host - localhost:8081
+```
+
+Or can be passed as list (useful for manual configuring):
+
+```yaml
+arangodb:
+  hosts:
+    - localhost:8080
+    - localhost:8081
+```
+
 #### Configuring SSL
 
 Configured SSLContext for ArangoDB driver.
