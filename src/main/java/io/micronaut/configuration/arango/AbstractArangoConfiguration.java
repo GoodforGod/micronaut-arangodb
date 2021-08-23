@@ -11,8 +11,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static io.micronaut.configuration.arango.ArangoSettings.SYSTEM_DATABASE;
 
@@ -28,8 +28,8 @@ public abstract class AbstractArangoConfiguration {
 
     private String user = ArangoDefaults.DEFAULT_USER;
     private String password;
-    private List<String> hosts;
     private String host = ArangoDefaults.DEFAULT_HOST;
+    private List<String> hosts;
     private int port = ArangoDefaults.DEFAULT_PORT;
     private String database = SYSTEM_DATABASE;
     private int timeout = 10000;
@@ -156,7 +156,15 @@ public abstract class AbstractArangoConfiguration {
     }
 
     public void setHosts(List<String> hosts) {
-        this.hosts = hosts;
+        this.hosts = List.copyOf(hosts);
+    }
+
+    public void setHosts(String hosts) {
+        if (StringUtils.isNotEmpty(hosts)) {
+            this.hosts = Arrays.stream(hosts.split(",")).sequential()
+                    .distinct()
+                    .collect(Collectors.toUnmodifiableList());
+        }
     }
 
     public int getPort() {

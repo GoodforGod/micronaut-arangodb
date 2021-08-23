@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,14 +15,17 @@ import java.util.Map;
  * @since 28.2.2020
  */
 @Testcontainers
-class ArangoAsyncConfigurationTests extends ArangoRunner {
+class ArangoClientAsyncTests extends ArangoRunner {
 
     @Container
     private static final ArangoContainer container = getContainer();
 
     @Test
     void createConnectionWithCustomDatabaseAndDatabaseNotExistByDefault() {
-        try (final ApplicationContext context = ApplicationContext.run(Collections.singletonMap("arangodb.database", "custom"))) {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.database", "custom");
+
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
             assertEquals("custom", client.database());
 
@@ -37,7 +39,7 @@ class ArangoAsyncConfigurationTests extends ArangoRunner {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.create-database-if-not-exist", true);
-        properties.put("arangodb.loadBalancingStrategy", "ONE_RANDOM");
+        properties.put("arangodb.load-balancing-strategy", "ONE_RANDOM");
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
@@ -56,6 +58,7 @@ class ArangoAsyncConfigurationTests extends ArangoRunner {
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoDBAsync accessor = context.getBean(ArangoDBAsync.class);
             assertNotNull(accessor);
+            assertTrue(accessor.db().exists().join());
         }
     }
 }

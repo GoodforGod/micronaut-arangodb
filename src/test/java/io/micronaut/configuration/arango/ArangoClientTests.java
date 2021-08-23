@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Anton Kurako (GoodforGod)
@@ -16,11 +18,31 @@ import java.util.Collections;
 class ArangoClientTests extends ArangoRunner {
 
     @Container
-    private static final ArangoContainer container = getContainer();
+    private static final ArangoContainer container = getContainer()
+            .withFixedPort(8528);
+
+    @Test
+    void createConnectionWithCustomDatabaseAndDatabaseNotExistByDefault() {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.port", 8528);
+        properties.put("arangodb.database", "custom");
+
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoClient client = context.getBean(ArangoClient.class);
+            assertEquals("custom", client.database());
+
+            final boolean databaseExists = client.db().exists();
+            assertFalse(databaseExists);
+        }
+    }
 
     @Test
     void createDatabaseSuccess() {
-        try (final ApplicationContext context = ApplicationContext.run(Collections.singletonMap("arangodb.database", "async-custom"))) {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.port", 8528);
+        properties.put("arangodb.database", "async-custom");
+
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync clientAsync = context.getBean(ArangoClientAsync.class);
             assertEquals("async-custom", clientAsync.database());
             assertNotNull(clientAsync.toString());
@@ -32,13 +54,39 @@ class ArangoClientTests extends ArangoRunner {
 
     @Test
     void createDatabaseSyncSuccess() {
-        try (final ApplicationContext context = ApplicationContext.run(Collections.singletonMap("arangodb.database", "sync-custom"))) {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.port", 8528);
+        properties.put("arangodb.database", "sync-custom");
+
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClient client = context.getBean(ArangoClient.class);
             assertEquals("sync-custom", client.database());
             assertNotNull(client.toString());
 
             final Boolean created = client.db().create();
             assertTrue(created);
+        }
+    }
+
+    @Test
+    void createConfigurationForHostsAsListValidClient() {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.hosts", List.of("localhost:8528"));
+
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoClient client = context.getBean(ArangoClient.class);
+            assertTrue(client.db().exists());
+        }
+    }
+
+    @Test
+    void createConfigurationForHostsAsStringValidClient() {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.hosts", "localhost:8528,localhost:8528");
+
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoClient client = context.getBean(ArangoClient.class);
+            assertTrue(client.db().exists());
         }
     }
 }

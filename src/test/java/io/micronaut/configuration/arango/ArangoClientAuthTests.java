@@ -19,7 +19,7 @@ import java.util.Properties;
  * @since 11.3.2020
  */
 @Testcontainers
-class ArangoConfigurationAuthTests extends ArangoRunner {
+class ArangoClientAuthTests extends ArangoRunner {
 
     private static final String PASS = "mypass";
 
