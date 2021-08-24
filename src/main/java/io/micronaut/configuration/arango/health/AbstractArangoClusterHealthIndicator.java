@@ -4,6 +4,7 @@ import com.arangodb.ArangoDB;
 import com.arangodb.velocystream.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.configuration.arango.ArangoConfiguration;
+import io.micronaut.health.HealthStatus;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
@@ -53,14 +54,8 @@ abstract class AbstractArangoClusterHealthIndicator implements HealthIndicator {
         return Flowable.fromCallable(() -> accessor.db(database).route("/_admin/cluster/health").get())
                 .timeout(healthConfiguration.getTimeoutInMillis(), TimeUnit.MILLISECONDS)
                 .retry(healthConfiguration.getRetry())
-                .map(this::buildReport)
+                .map(this::buildHealthResponse)
                 .onErrorReturn(this::buildErrorReport);
-    }
-
-    private HealthResult buildReport(Response response) {
-        return HttpStatus.OK.getCode() == response.getResponseCode()
-                ? buildHealthResponse(response)
-                : buildUnknownReport(response);
     }
 
     private HealthResult buildHealthResponse(Response response) {
@@ -73,14 +68,13 @@ abstract class AbstractArangoClusterHealthIndicator implements HealthIndicator {
 
             if (!down.isEmpty()) {
                 logger.debug("Health '{}' reported DOWN for cause nodes named '{}' were DOWN", NAME, down);
-                return getBuilder().status(DOWN).details(details).build();
+                return buildReport(DOWN, details);
             } else if (streamCriticalNodes(health).allMatch(n -> UP.equals(n.getHealthStatus()))) {
-                logger.debug("Health '{}' reported UP with details: {}", NAME, details);
-                return getBuilder().status(UP).details(details).build();
+                return buildReport(UP, details);
             } else {
-                return buildUnknownReport(details);
+                return buildReport(UNKNOWN, details);
             }
-        }).orElseGet(() -> buildUnknownReport(response.getBody().toString()));
+        }).orElseGet(() -> buildReport(UNKNOWN, response.getBody().toString()));
     }
 
     private Map<String, Object> buildDetails(HealthCluster healthCluster) {
@@ -101,9 +95,12 @@ abstract class AbstractArangoClusterHealthIndicator implements HealthIndicator {
         return healthCluster.streamNodes().filter(node -> !node.isCanBeDeleted());
     }
 
-    private HealthResult buildUnknownReport(Object details) {
-        logger.debug("Health '{}' reported UNKNOWN with details: {}", NAME, details);
-        return getBuilder().status(UNKNOWN).details(details).build();
+    private HealthResult buildReport(HealthStatus status, Object details) {
+        logger.debug("Health '{}' reported {} with details: {}", NAME, status, details);
+        return getBuilder()
+                .status(status)
+                .details(details)
+                .build();
     }
 
     private HealthResult buildErrorReport(Throwable e) {
@@ -119,6 +116,9 @@ abstract class AbstractArangoClusterHealthIndicator implements HealthIndicator {
     }
 
     private Optional<HealthCluster> convertToClusterHealth(Response response) {
+        if (HttpStatus.OK.getCode() != response.getResponseCode())
+            return Optional.empty();
+
         try {
             return Optional.ofNullable(mapper.readValue(response.getBody().toString(), HealthCluster.class));
         } catch (Exception e) {
