@@ -78,10 +78,9 @@ abstract class AbstractArangoClusterHealthIndicator implements HealthIndicator {
                 logger.debug("Health '{}' reported UP with details: {}", NAME, details);
                 return getBuilder().status(UP).details(details).build();
             } else {
-                logger.debug("Health '{}' reported UNKNOWN with details: {}", NAME, details);
-                return getBuilder().status(UNKNOWN).details(details).build();
+                return buildUnknownReport(details);
             }
-        }).orElseGet(() -> buildUnknownReport(response));
+        }).orElseGet(() -> buildUnknownReport(response.getBody().toString()));
     }
 
     private Map<String, Object> buildDetails(HealthCluster healthCluster) {
@@ -102,13 +101,9 @@ abstract class AbstractArangoClusterHealthIndicator implements HealthIndicator {
         return healthCluster.streamNodes().filter(node -> !node.isCanBeDeleted());
     }
 
-    private HealthResult buildUnknownReport(Response response) {
-        final String details = response.getBody().toString();
+    private HealthResult buildUnknownReport(Object details) {
         logger.debug("Health '{}' reported UNKNOWN with details: {}", NAME, details);
-        return getBuilder()
-                .status(UNKNOWN)
-                .details(details)
-                .build();
+        return getBuilder().status(UNKNOWN).details(details).build();
     }
 
     private HealthResult buildErrorReport(Throwable e) {
