@@ -22,6 +22,8 @@ class ArangoConfigurationTests extends ArangoRunner {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.port", 8528);
         properties.put("arangodb.database", "custom");
+        properties.put("arangodb.max-connections", 111);
+        properties.put("arangodb.acquire-host-list", true);
         properties.put("arangodb.load-balancing-strategy", "ONE_RANDOM");
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
@@ -29,6 +31,8 @@ class ArangoConfigurationTests extends ArangoRunner {
             assertEquals(8528, configuration.getPort());
             assertEquals("custom", configuration.getDatabase());
             assertEquals("ONE_RANDOM", configuration.getLoadBalancingStrategy().name());
+            assertEquals(111, configuration.getMaxConnections());
+            assertTrue(configuration.getAcquireHostList());
 
             final ArangoHealthConfiguration healthConfiguration = context.getBean(ArangoHealthConfiguration.class);
             assertNotNull(healthConfiguration);

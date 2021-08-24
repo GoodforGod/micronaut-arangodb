@@ -131,6 +131,10 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
             assertEquals(database, client.database());
             assertTrue(client.db().exists().join());
+
+            final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
+            assertTrue(configuration.isCreateDatabaseIfNotExist());
+            assertTrue(configuration.isCreateDatabaseAsync());
         } catch (InterruptedException e) {
             fail(e);
         }
