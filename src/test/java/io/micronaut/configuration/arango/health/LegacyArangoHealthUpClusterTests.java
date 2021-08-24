@@ -6,7 +6,6 @@ import io.micronaut.context.exceptions.NoSuchBeanException;
 import io.micronaut.health.HealthStatus;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
-import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.testcontainers.arangodb.cluster.ArangoClusterDefault;
 import io.testcontainers.arangodb.containers.ArangoContainer;
@@ -26,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  * @since 29.2.2020
  */
 @Testcontainers
-class ArangoHealthUpClusterTests extends ArangoRunner {
+class LegacyArangoHealthUpClusterTests extends ArangoRunner {
 
     private static final ArangoClusterDefault CLUSTER_DEFAULT = ArangoClusterDefault.build(ArangoContainer.LATEST);
 
@@ -46,52 +45,12 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
     private static final ArangoContainer coordinator2 = CLUSTER_DEFAULT.getCoordinator2();
 
     @Test
-    void healthSingleUpForSystemDatabase() {
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.create-database-if-not-exist", true);
-
-        try (final ApplicationContext context = ApplicationContext.run(properties)) {
-            final HealthIndicator healthIndicator = context.getBean(ArangoHealthIndicator.class);
-
-            final HealthResult result = Single.fromPublisher(healthIndicator.getResult())
-                    .timeout(10, TimeUnit.SECONDS).blockingGet();
-            assertNotNull(result);
-
-            assertEquals(HealthStatus.UP, result.getStatus());
-            assertEquals("arangodb", result.getName());
-            assertNotNull(result.getDetails());
-            assertTrue(result.getDetails() instanceof Map);
-        }
-    }
-
-    @Test
-    void healthSingleUpForCustomDatabase() {
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.database", "custom");
-        properties.put("arangodb.create-database-if-not-exist", true);
-        properties.put("arangodb.create-database-timeout-in-millis", 50000);
-
-        try (final ApplicationContext context = ApplicationContext.run(properties)) {
-            final HealthIndicator healthIndicator = context.getBean(ArangoHealthIndicator.class);
-
-            final HealthResult result = Flowable.fromPublisher(healthIndicator.getResult())
-                    .firstElement().blockingGet();
-            assertNotNull(result);
-
-            assertEquals(HealthStatus.UP, result.getStatus());
-            assertEquals("arangodb", result.getName());
-            assertNotNull(result.getDetails());
-            assertTrue(result.getDetails() instanceof Map);
-        }
-    }
-
-    @Test
     void healthClusterUpForSystemDatabase() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.health.cluster.enabled", true);
+        properties.put("arangodb.health-cluster.enabled", true);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
-            final HealthIndicator clusterHealthIndicator = context.getBean(ArangoClusterHealthIndicator.class);
+            final HealthIndicator clusterHealthIndicator = context.getBean(LegacyArangoClusterHealthIndicator.class);
 
             final HealthResult result = Single.fromPublisher(clusterHealthIndicator.getResult())
                     .timeout(10, TimeUnit.SECONDS).blockingGet();
@@ -112,10 +71,10 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.create-database-if-not-exist", true);
         properties.put("arangodb.create-database-timeout-in-millis", 50000);
-        properties.put("arangodb.health.cluster.enabled", true);
+        properties.put("arangodb.health-cluster.enabled", true);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
-            final HealthIndicator clusterHealthIndicator = context.getBean(ArangoClusterHealthIndicator.class);
+            final HealthIndicator clusterHealthIndicator = context.getBean(LegacyArangoClusterHealthIndicator.class);
 
             final HealthResult result = Single.fromPublisher(clusterHealthIndicator.getResult())
                     .timeout(10, TimeUnit.SECONDS).blockingGet();
@@ -130,21 +89,20 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
         }
     }
 
-    @Deprecated
     @Test
-    void clusterHealthLegacyDisabled() {
+    void clusterHealthLegacyOnly() {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.create-database-if-not-exist", true);
         properties.put("arangodb.create-database-timeout-in-millis", 50000);
-        properties.put("arangodb.health.cluster.enabled", true);
+        properties.put("arangodb.health-cluster.enabled", true);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
-            final HealthIndicator clusterHealthIndicator = context.getBean(ArangoClusterHealthIndicator.class);
+            final HealthIndicator clusterHealthIndicator = context.getBean(LegacyArangoClusterHealthIndicator.class);
             assertNotNull(clusterHealthIndicator);
 
             try {
-                final HealthIndicator healthIndicator = context.getBean(LegacyArangoClusterHealthIndicator.class);
+                final ArangoClusterHealthIndicator healthIndicator = context.getBean(ArangoClusterHealthIndicator.class);
                 fail("Should be disabled");
             } catch (NoSuchBeanException e) {
                 assertNotNull(e);

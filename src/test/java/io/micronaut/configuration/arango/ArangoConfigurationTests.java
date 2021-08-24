@@ -3,13 +3,11 @@ package io.micronaut.configuration.arango;
 import io.micronaut.configuration.arango.health.ArangoHealthConfiguration;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.exceptions.ConfigurationException;
-import io.testcontainers.arangodb.containers.ArangoContainer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,31 +17,22 @@ import java.util.Map;
 @Testcontainers
 class ArangoConfigurationTests extends ArangoRunner {
 
-    @Container
-    private static final ArangoContainer container = getContainer();
-
-    @Order(1)
-    @Test
-    void createConnectionWithCustomDatabaseAndDatabaseNotExistByDefault() {
-        try (final ApplicationContext context = ApplicationContext.run(Map.of("arangodb.database", "custom"))) {
-            final ArangoClient client = context.getBean(ArangoClient.class);
-            assertEquals("custom", client.database());
-
-            final boolean databaseExists = client.db().exists();
-            assertFalse(databaseExists);
-        }
-    }
-
     @Test
     void createConnectionWithCreateDatabaseIfNotExistOnStartup() {
         final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.port", 8528);
         properties.put("arangodb.database", "custom");
-        properties.put("arangodb.create-database-if-not-exist", true);
-        properties.put("arangodb.loadBalancingStrategy", "ONE_RANDOM");
+        properties.put("arangodb.max-connections", 111);
+        properties.put("arangodb.acquire-host-list", true);
+        properties.put("arangodb.load-balancing-strategy", "ONE_RANDOM");
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
-            final ArangoClient client = context.getBean(ArangoClient.class);
-            assertEquals("custom", client.database());
+            final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
+            assertEquals(8528, configuration.getPort());
+            assertEquals("custom", configuration.getDatabase());
+            assertEquals("ONE_RANDOM", configuration.getLoadBalancingStrategy().name());
+            assertEquals(111, configuration.getMaxConnections());
+            assertTrue(configuration.getAcquireHostList());
 
             final ArangoHealthConfiguration healthConfiguration = context.getBean(ArangoHealthConfiguration.class);
             assertNotNull(healthConfiguration);
@@ -51,14 +40,39 @@ class ArangoConfigurationTests extends ArangoRunner {
             assertEquals(5000, healthConfiguration.getTimeoutInMillis());
             assertEquals(2, healthConfiguration.getRetry());
             assertTrue(healthConfiguration.isEnabled());
-
-            final boolean databaseCreated = client.db().exists();
-            assertTrue(databaseCreated);
         }
     }
 
     @Test
-    void healthConfigurationBuilded() {
+    void createConfigurationForHostsAsString() {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.hosts", "localhost:8528,localhost:8528");
+
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
+            assertNotNull(configuration);
+            assertNotNull(configuration.getHosts());
+            assertEquals(1, configuration.getHosts().size());
+            assertTrue(configuration.getHosts().contains("localhost:8528"));
+        }
+    }
+
+    @Test
+    void createConfigurationForHostsAsList() {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.hosts", List.of("localhost:8528", "localhost:8528"));
+
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
+            assertNotNull(configuration);
+            assertNotNull(configuration.getHosts());
+            assertEquals(1, configuration.getHosts().size());
+            assertTrue(configuration.getHosts().contains("localhost:8528"));
+        }
+    }
+
+    @Test
+    void healthConfigurationBuild() {
         final ArangoHealthConfiguration healthConfiguration = new ArangoHealthConfiguration();
         healthConfiguration.setRetry(2);
         healthConfiguration.setTimeoutInMillis(1000);

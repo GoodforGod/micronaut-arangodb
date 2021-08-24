@@ -9,19 +9,19 @@ This project includes integration between Micronaut and ArangoDB.
 
 ## Dependency :rocket:
 
-**Gradle**
+[**Gradle**](https://mvnrepository.com/artifact/com.github.goodforgod/micronaut-arangodb)
 ```groovy
 dependencies {
-    compile 'com.github.goodforgod:micronaut-arangodb:2.3.0'
+    compile 'com.github.goodforgod:micronaut-arangodb:2.4.0'
 }
 ```
 
-**Maven**
+[**Maven**](https://mvnrepository.com/artifact/com.github.goodforgod/micronaut-arangodb)
 ```xml
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>2.3.0</version>
+    <version>2.4.0</version>
 </dependency>
 ```
 
@@ -128,12 +128,29 @@ Check [ArangoDB official](https://www.arangodb.com/docs/stable/drivers/java-refe
 
 ```yaml
 arangodb:
-  timeout: 3000                         # default - 10000 in milliseconds
-  chunksize: 3000                       # default - 30000
-  max-connections: 30                    # default - 1
-  connection-ttl: 200                    # default - null
+  hosts: localhost:8080,localhost:8081    # default to host - localhost:8081
+  timeout: 3000                           # default - 10000 in milliseconds
+  chunksize: 3000                         # default - 30000
+  max-connections: 30                     # default - 1
+  connection-ttl: 200                     # default - null
   acquire-host-list: true                 # default - false
   load-balancing-strategy: ONE_RANDOM     # default - NONE (check LoadBalancingStrategy for more)
+```
+
+Hosts can be passed to configuration as Strings (useful when passed via environment):
+
+```yaml
+arangodb:
+  hosts: localhost:8080,localhost:8081    # default to host - localhost:8081
+```
+
+Or can be passed as list (useful for manual configuring):
+
+```yaml
+arangodb:
+  hosts:
+    - localhost:8080
+    - localhost:8081
 ```
 
 #### Configuring SSL
@@ -285,10 +302,11 @@ You can turn on Cluster Health Check via configuration:
 
 ```yaml
 arangodb:
-  health-cluster:
-    enabled: true             # default - false
-    timeout-in-millis: 5000   # default - 5000
-    retry: 2                  # default - 2
+  health:
+    cluster:
+      enabled: true             # default - false
+      timeout-in-millis: 5000   # default - 5000
+      retry: 2                  # default - 2
 ```
 
 ## Testing

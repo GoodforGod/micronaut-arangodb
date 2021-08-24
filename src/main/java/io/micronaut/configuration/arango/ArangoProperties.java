@@ -1,5 +1,13 @@
 package io.micronaut.configuration.arango;
 
+/**
+ * Properties for ArangoDB driver
+ *
+ * @see com.arangodb.internal.InternalArangoDBBuilder
+ *
+ * @author Anton Kurako (GoodforGod)
+ * @since 11.6.2021
+ */
 public interface ArangoProperties {
 
     String HOSTS = "arangodb.hosts";

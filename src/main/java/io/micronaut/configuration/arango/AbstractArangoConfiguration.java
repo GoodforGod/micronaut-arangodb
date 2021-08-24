@@ -2,6 +2,7 @@ package io.micronaut.configuration.arango;
 
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.ArangoDefaults;
+import com.arangodb.internal.InternalArangoDBBuilder;
 import io.micronaut.configuration.arango.ssl.ArangoSSLConfiguration;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.util.CollectionUtils;
@@ -11,14 +12,15 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static io.micronaut.configuration.arango.ArangoSettings.SYSTEM_DATABASE;
 
 /**
  * Abstract ArangoDB configuration class.
  *
+ * @see ArangoProperties
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
@@ -28,8 +30,8 @@ public abstract class AbstractArangoConfiguration {
 
     private String user = ArangoDefaults.DEFAULT_USER;
     private String password;
-    private List<String> hosts;
     private String host = ArangoDefaults.DEFAULT_HOST;
+    private List<String> hosts;
     private int port = ArangoDefaults.DEFAULT_PORT;
     private String database = SYSTEM_DATABASE;
     private int timeout = 10000;
@@ -50,7 +52,9 @@ public abstract class AbstractArangoConfiguration {
     }
 
     /**
-     * @return client configuration builder
+     * @see ArangoProperties
+     * @see InternalArangoDBBuilder
+     * @return client configuration properties
      */
     public Properties getProperties() {
         final Properties properties = new Properties();
@@ -156,7 +160,15 @@ public abstract class AbstractArangoConfiguration {
     }
 
     public void setHosts(List<String> hosts) {
-        this.hosts = hosts;
+        this.hosts = List.copyOf(hosts);
+    }
+
+    public void setHosts(String hosts) {
+        if (StringUtils.isNotEmpty(hosts)) {
+            this.hosts = Arrays.stream(hosts.split(",")).sequential()
+                    .distinct()
+                    .collect(Collectors.toUnmodifiableList());
+        }
     }
 
     public int getPort() {

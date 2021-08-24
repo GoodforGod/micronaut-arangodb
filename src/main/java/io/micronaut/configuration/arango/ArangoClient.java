@@ -54,8 +54,6 @@ public class ArangoClient implements AutoCloseable {
 
     @Override
     public String toString() {
-        return "ArangoClient {"
-                + ", database='" + database()
-                + '}';
+        return "[database=" + database() + ']';
     }
 }

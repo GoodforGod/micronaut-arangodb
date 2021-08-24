@@ -20,7 +20,7 @@ import javax.inject.Inject;
  * @since 29.2.2020
  */
 @Property(name = "arangodb.port", value = "8529")
-@Property(name = "arangodb.health-cluster.enabled", value = "true")
+@Property(name = "arangodb.health.cluster.enabled", value = "true")
 @MicronautTest
 @Testcontainers
 class ArangoHealthDownTests extends ArangoRunner {
