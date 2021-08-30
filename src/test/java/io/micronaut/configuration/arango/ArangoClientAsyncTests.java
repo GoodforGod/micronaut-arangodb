@@ -43,7 +43,7 @@ class ArangoClientAsyncTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals("custom", client.database());
+            assertEquals("custom", client.db().name());
 
             final Boolean databaseCreated = client.db().exists().join();
             assertTrue(databaseCreated);
