@@ -10,6 +10,7 @@ import io.micronaut.health.HealthStatus;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
@@ -48,6 +49,7 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     private final String database;
     private final ArangoClusterHealthConfiguration healthConfiguration;
 
+    @Inject
     public ArangoClusterHealthIndicator(ArangoDB accessor,
                                         ArangoConfiguration configuration,
                                         ObjectMapper mapper,

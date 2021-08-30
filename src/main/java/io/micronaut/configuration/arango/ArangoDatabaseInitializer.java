@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * ArangoDB database context Initialization
+ * ArangoDB database initialization
  *
  * @author Anton Kurako (GoodforGod)
  * @see AbstractArangoConfiguration#isCreateDatabaseIfNotExist()
@@ -44,7 +44,7 @@ public class ArangoDatabaseInitializer {
                 try {
                     initializeDatabaseSynchronously(clientAsync, configuration);
                 } catch (Exception e) {
-                    logger.error(e.getMessage());
+                    logger.error(e.getMessage(), e);
                 }
             });
         } else {
