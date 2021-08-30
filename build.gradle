@@ -48,7 +48,7 @@ dependencies {
     annotationProcessor "io.micronaut:micronaut-inject-java"
     compileOnly "io.micronaut:micronaut-inject-java"
 
-    api "com.arangodb:arangodb-java-driver:6.12.3"
+    api "com.arangodb:arangodb-java-driver:6.13.0"
 
     implementation "org.apache.httpcomponents:httpclient:4.5.13"
     implementation "io.micronaut:micronaut-management"
