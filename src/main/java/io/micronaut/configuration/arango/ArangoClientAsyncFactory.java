@@ -7,7 +7,6 @@ import io.micronaut.runtime.context.scope.Refreshable;
 import jakarta.inject.Named;
 import jakarta.inject.Singleton;
 
-
 /**
  * Default factory for creating ArangoDB client {@link ArangoClientAsync}.
  *

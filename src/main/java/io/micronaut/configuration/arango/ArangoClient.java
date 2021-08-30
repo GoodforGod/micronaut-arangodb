@@ -4,7 +4,6 @@ import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * ArangoDB Sync Accessor {@link ArangoDB} and database name as configured for
@@ -16,7 +15,8 @@ import java.util.Properties;
 public interface ArangoClient extends AutoCloseable {
 
     /**
-     * @return Accessor to specified ArangoDB database {@link ArangoAsyncConfiguration#getDatabase()}.
+     * @return Accessor to specified ArangoDB database
+     *         {@link ArangoAsyncConfiguration#getDatabase()}.
      */
     ArangoDatabase db();
 

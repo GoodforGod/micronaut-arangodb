@@ -5,7 +5,6 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Inject;
 
-
 /**
  * ArangoDB Async configuration class.
  *

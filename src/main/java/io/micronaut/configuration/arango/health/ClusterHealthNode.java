@@ -8,7 +8,8 @@ import static io.micronaut.health.HealthStatus.DOWN;
 import static io.micronaut.health.HealthStatus.UNKNOWN;
 
 /**
- * A HealthNode DTO for ArangoDB {@link ClusterHealthResponse} health check information.
+ * A HealthNode DTO for ArangoDB {@link ClusterHealthResponse} health check
+ * information.
  *
  * @author Anton Kurako (GoodforGod)
  * @since 09.3.2020

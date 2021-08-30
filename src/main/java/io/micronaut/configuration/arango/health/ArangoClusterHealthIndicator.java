@@ -49,9 +49,9 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     private final ArangoClusterHealthConfiguration healthConfiguration;
 
     public ArangoClusterHealthIndicator(ArangoDB accessor,
-                                         ArangoConfiguration configuration,
-                                         ObjectMapper mapper,
-                                         ArangoClusterHealthConfiguration healthConfiguration) {
+                                        ArangoConfiguration configuration,
+                                        ObjectMapper mapper,
+                                        ArangoClusterHealthConfiguration healthConfiguration) {
         this.accessor = accessor;
         this.mapper = mapper;
         this.database = configuration.getDatabase();
