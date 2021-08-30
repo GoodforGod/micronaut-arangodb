@@ -6,6 +6,7 @@ import io.micronaut.context.exceptions.ConfigurationException;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ class ArangoConfigurationTests extends ArangoRunner {
             final ArangoHealthConfiguration healthConfiguration = context.getBean(ArangoHealthConfiguration.class);
             assertNotNull(healthConfiguration);
             assertNotNull(healthConfiguration.toString());
-            assertEquals(5000, healthConfiguration.getTimeoutInMillis());
+            assertEquals(Duration.ofSeconds(5), healthConfiguration.getTimeout());
             assertEquals(2, healthConfiguration.getRetry());
             assertTrue(healthConfiguration.isEnabled());
         }
@@ -75,9 +76,9 @@ class ArangoConfigurationTests extends ArangoRunner {
     void healthConfigurationBuild() {
         final ArangoHealthConfiguration healthConfiguration = new ArangoHealthConfiguration();
         healthConfiguration.setRetry(2);
-        healthConfiguration.setTimeoutInMillis(1000);
+        healthConfiguration.setTimeout(Duration.ofSeconds(1));
         assertEquals(2, healthConfiguration.getRetry());
-        assertEquals(1000, healthConfiguration.getTimeoutInMillis());
+        assertEquals(Duration.ofSeconds(1), healthConfiguration.getTimeout());
     }
 
     @Test
@@ -95,7 +96,7 @@ class ArangoConfigurationTests extends ArangoRunner {
     void healthConfigurationTimeoutFail() {
         try {
             final ArangoHealthConfiguration healthConfiguration = new ArangoHealthConfiguration();
-            healthConfiguration.setTimeoutInMillis(-1);
+            healthConfiguration.setTimeout(Duration.ofSeconds(-1));
             fail("Should not happen!");
         } catch (Exception e) {
             assertTrue(e instanceof ConfigurationException);

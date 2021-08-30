@@ -2,6 +2,8 @@ package io.micronaut.configuration.arango.health;
 
 import io.micronaut.context.exceptions.ConfigurationException;
 
+import java.time.Duration;
+
 /**
  * @author Anton Kurako (GoodforGod)
  * @since 13.08.2021
@@ -9,7 +11,7 @@ import io.micronaut.context.exceptions.ConfigurationException;
 public abstract class AbstractHealthConfiguration {
 
     private boolean enabled = true;
-    private long timeoutInMillis = 5000;
+    private Duration timeout = Duration.ofSeconds(5);
     private int retry = 2;
 
     public boolean isEnabled() {
@@ -20,14 +22,14 @@ public abstract class AbstractHealthConfiguration {
         this.enabled = enabled;
     }
 
-    public long getTimeoutInMillis() {
-        return timeoutInMillis;
+    public Duration getTimeout() {
+        return timeout;
     }
 
-    public void setTimeoutInMillis(long timeoutInMillis) {
-        if (timeoutInMillis < 0)
+    public void setTimeout(Duration timeout) {
+        if (timeout.isNegative())
             throw new ConfigurationException("Timeout for health can not be less than 0");
-        this.timeoutInMillis = timeoutInMillis;
+        this.timeout = timeout;
     }
 
     public int getRetry() {
@@ -42,8 +44,6 @@ public abstract class AbstractHealthConfiguration {
 
     @Override
     public String toString() {
-        return "[enabled=" + enabled +
-                ", timeoutInMillis=" + timeoutInMillis +
-                ", retry=" + retry + ']';
+        return "[enabled=" + enabled + ", timeout=" + timeout + ", retry=" + retry + ']';
     }
 }

@@ -12,6 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,7 @@ public abstract class AbstractArangoConfiguration {
 
     private boolean createDatabaseIfNotExist = false;
     private boolean createDatabaseAsync = false;
-    private int createDatabaseTimeoutInMillis = 10000;
+    private Duration createDatabaseTimeout = Duration.ofSeconds(10);
 
     protected AbstractArangoConfiguration(ArangoSSLConfiguration sslConfiguration) {
         this.sslConfiguration = sslConfiguration;
@@ -127,15 +128,17 @@ public abstract class AbstractArangoConfiguration {
     /**
      * @return database create timeout in millis
      */
-    public int getCreateDatabaseTimeoutInMillis() {
-        return createDatabaseTimeoutInMillis;
+    public Duration getCreateDatabaseTimeout() {
+        return createDatabaseTimeout;
     }
 
     /**
-     * @param createDatabaseTimeoutInMillis database create timeout in millis
+     * @param createDatabaseTimeout database create timeout in millis
      */
-    public void setCreateDatabaseTimeoutInMillis(int createDatabaseTimeoutInMillis) {
-        this.createDatabaseTimeoutInMillis = createDatabaseTimeoutInMillis;
+    public void setCreateDatabaseTimeout(Duration createDatabaseTimeout) {
+        if (createDatabaseTimeout.isNegative())
+            throw new ConfigurationException("Timeout for health can not be less than 0");
+        this.createDatabaseTimeout = createDatabaseTimeout;
     }
 
     public String getHost() {

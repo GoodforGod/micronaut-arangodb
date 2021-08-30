@@ -35,7 +35,7 @@ sonarqube {
 }
 
 micronaut {
-    version("2.5.12")
+    version("3.0.0")
     processing {
         incremental(true)
         module(project.name)
@@ -52,6 +52,7 @@ dependencies {
 
     implementation "org.apache.httpcomponents:httpclient:4.5.13"
     implementation "io.micronaut:micronaut-management"
+    implementation "io.projectreactor:reactor-core"
 
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
 

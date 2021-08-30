@@ -4,8 +4,8 @@ import com.arangodb.internal.ArangoDefaults;
 import io.micronaut.configuration.arango.ArangoSettings;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
+import jakarta.inject.Inject;
 
-import javax.inject.Inject;
 
 @Requires(property = ArangoSettings.PREFIX)
 @ConfigurationProperties(ArangoSettings.PREFIX + ".ssl")

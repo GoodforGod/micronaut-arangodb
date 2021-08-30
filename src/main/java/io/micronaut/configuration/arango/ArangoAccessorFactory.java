@@ -45,7 +45,7 @@ public class ArangoAccessorFactory {
 
             return builder.build();
         } catch (IOException e) {
-            throw new ConfigurationException(e.getMessage());
+            throw new ConfigurationException(e.getMessage(), e);
         }
     }
 }

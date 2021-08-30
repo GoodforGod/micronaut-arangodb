@@ -8,12 +8,12 @@ import static io.micronaut.health.HealthStatus.DOWN;
 import static io.micronaut.health.HealthStatus.UNKNOWN;
 
 /**
- * A HealthNode DTO for ArangoDB {@link HealthCluster} health check information.
+ * A HealthNode DTO for ArangoDB {@link ClusterHealthResponse} health check information.
  *
  * @author Anton Kurako (GoodforGod)
  * @since 09.3.2020
  */
-public class HealthNode {
+class ClusterHealthNode {
 
     public enum NodeRole {
         AGENT,
@@ -57,7 +57,7 @@ public class HealthNode {
         return nodeId;
     }
 
-    public HealthNode setNodeId(String nodeId) {
+    public ClusterHealthNode setNodeId(String nodeId) {
         this.nodeId = nodeId;
         return this;
     }

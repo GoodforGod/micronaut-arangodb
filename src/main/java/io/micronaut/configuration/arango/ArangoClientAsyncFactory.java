@@ -3,9 +3,9 @@ package io.micronaut.configuration.arango;
 import com.arangodb.async.ArangoDBAsync;
 import io.micronaut.context.annotation.*;
 import io.micronaut.runtime.context.scope.Refreshable;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
 
 /**
  * Default factory for creating ArangoDB client {@link ArangoClientAsync}.

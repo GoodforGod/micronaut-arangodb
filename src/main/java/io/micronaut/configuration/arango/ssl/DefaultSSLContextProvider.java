@@ -2,8 +2,8 @@ package io.micronaut.configuration.arango.ssl;
 
 import io.micronaut.context.annotation.Secondary;
 import io.micronaut.context.exceptions.ConfigurationException;
+import jakarta.inject.Singleton;
 
-import javax.inject.Singleton;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.ByteArrayInputStream;

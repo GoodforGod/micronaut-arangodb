@@ -12,21 +12,21 @@ import java.util.stream.Stream;
  * @author Anton Kurako (GoodforGod)
  * @since 09.3.2020
  */
-public class HealthCluster {
+class ClusterHealthResponse {
 
     @JsonProperty("Health")
-    private Map<String, HealthNode> nodes;
+    private Map<String, ClusterHealthNode> nodes;
     @JsonProperty("ClusterId")
     private String clusterId;
     private boolean error;
     private int code;
 
-    public Map<String, HealthNode> getNodes() {
+    public Map<String, ClusterHealthNode> getNodes() {
         return nodes;
     }
 
     @JsonIgnore
-    public Stream<HealthNode> streamNodes() {
+    public Stream<ClusterHealthNode> streamNodes() {
         return nodes.entrySet().stream().map(e -> e.getValue().setNodeId(e.getKey()));
     }
 
