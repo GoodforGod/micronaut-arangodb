@@ -32,7 +32,7 @@ public class ArangoAccessorAsyncFactory {
     @Bean(preDestroy = "shutdown")
     @Primary
     @Prototype
-    public ArangoDBAsync getAccessor(ArangoAsyncConfiguration configuration, SSLContextProvider sslContextProvider) {
+    ArangoDBAsync getAccessor(ArangoAsyncConfiguration configuration, SSLContextProvider sslContextProvider) {
         final ArangoSSLConfiguration sslConfiguration = configuration.getSslConfiguration();
 
         final ArangoDBAsync.Builder builder = new ArangoDBAsync.Builder();

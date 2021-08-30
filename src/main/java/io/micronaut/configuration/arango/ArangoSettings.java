@@ -14,7 +14,7 @@ public interface ArangoSettings {
     String PREFIX = "arangodb";
 
     /**
-     * ArangoDB default DATABASE
+     * ArangoDB default database name
      */
     String SYSTEM_DATABASE = "_system";
 }

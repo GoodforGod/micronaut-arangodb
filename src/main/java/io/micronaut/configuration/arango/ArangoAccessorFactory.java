@@ -32,7 +32,7 @@ public class ArangoAccessorFactory {
     @Bean(preDestroy = "shutdown")
     @Primary
     @Prototype
-    public ArangoDB getAccessor(ArangoConfiguration configuration, SSLContextProvider sslContextProvider) {
+    ArangoDB getAccessor(ArangoConfiguration configuration, SSLContextProvider sslContextProvider) {
         final ArangoSSLConfiguration sslConfiguration = configuration.getSslConfiguration();
 
         final ArangoDB.Builder builder = new ArangoDB.Builder();

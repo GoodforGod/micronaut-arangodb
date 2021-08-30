@@ -5,13 +5,14 @@ import io.micronaut.context.annotation.Property;
 import io.micronaut.health.HealthStatus;
 import io.micronaut.management.health.indicator.HealthResult;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.reactivex.Flowable;
 import io.testcontainers.arangodb.containers.ArangoContainer;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import reactor.core.publisher.Flux;
 
-import javax.inject.Inject;
+import java.time.Duration;
 
 /**
  * Tests when health is DOWN
@@ -36,7 +37,7 @@ class ArangoHealthDownTests extends ArangoRunner {
 
     @Test
     void healthDownWhenNoConnectionDueToWrongPort() {
-        final HealthResult result = Flowable.fromPublisher(healthIndicator.getResult()).firstElement().blockingGet();
+        final HealthResult result = Flux.from(healthIndicator.getResult()).blockFirst(Duration.ofSeconds(10));
         assertNotNull(result);
 
         assertEquals(HealthStatus.DOWN, result.getStatus());
@@ -46,7 +47,7 @@ class ArangoHealthDownTests extends ArangoRunner {
 
     @Test
     void healthClusterDownWhenNoConnectionDueToWrongPort() {
-        final HealthResult result = Flowable.fromPublisher(clusterHealthIndicator.getResult()).firstElement().blockingGet();
+        final HealthResult result = Flux.from(clusterHealthIndicator.getResult()).blockFirst(Duration.ofSeconds(10));
         assertNotNull(result);
 
         assertEquals(HealthStatus.DOWN, result.getStatus());
