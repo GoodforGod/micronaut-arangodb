@@ -5,7 +5,6 @@ import com.arangodb.ArangoDatabase;
 import io.micronaut.configuration.arango.ArangoAsyncConfiguration;
 import io.micronaut.configuration.arango.ArangoClient;
 import io.micronaut.configuration.arango.ArangoConfiguration;
-
 import java.util.Map;
 import java.util.stream.Collectors;
 

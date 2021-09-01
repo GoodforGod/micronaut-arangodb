@@ -3,13 +3,12 @@ package io.micronaut.configuration.arango;
 import io.micronaut.configuration.arango.health.ArangoHealthConfiguration;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.exceptions.ConfigurationException;
-import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Test;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * @author Anton Kurako (GoodforGod)

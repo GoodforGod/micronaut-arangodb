@@ -2,7 +2,6 @@ package io.micronaut.configuration.arango;
 
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
-
 import java.util.Map;
 
 /**

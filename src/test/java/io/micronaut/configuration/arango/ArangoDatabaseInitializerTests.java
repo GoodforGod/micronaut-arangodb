@@ -3,15 +3,14 @@ package io.micronaut.configuration.arango;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.runtime.exceptions.ApplicationStartupException;
 import io.testcontainers.arangodb.containers.ArangoContainer;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Anton Kurako (GoodforGod)

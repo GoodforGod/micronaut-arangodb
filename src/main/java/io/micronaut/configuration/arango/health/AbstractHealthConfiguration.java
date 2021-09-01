@@ -1,7 +1,6 @@
 package io.micronaut.configuration.arango.health;
 
 import io.micronaut.context.exceptions.ConfigurationException;
-
 import java.time.Duration;
 
 /**

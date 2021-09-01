@@ -1,5 +1,8 @@
 package io.micronaut.configuration.arango.health;
 
+import static io.micronaut.health.HealthStatus.DOWN;
+import static io.micronaut.health.HealthStatus.UP;
+
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.DatabaseEntity;
 import io.micronaut.configuration.arango.ArangoConfiguration;
@@ -9,15 +12,11 @@ import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import java.util.Map;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
-
-import java.util.Map;
-
-import static io.micronaut.health.HealthStatus.DOWN;
-import static io.micronaut.health.HealthStatus.UP;
 
 /**
  * A {@link HealthIndicator} for ArangoDB.

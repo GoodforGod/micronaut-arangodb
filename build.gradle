@@ -20,9 +20,10 @@ targetCompatibility = 11
 
 spotless {
     java {
-        encoding "UTF-8"
+        encoding("UTF-8")
+        importOrder()
         removeUnusedImports()
-        eclipse().configFile "${projectDir}/config/codestyle.xml"
+        eclipse().configFile("${projectDir}/config/codestyle.xml")
     }
 }
 

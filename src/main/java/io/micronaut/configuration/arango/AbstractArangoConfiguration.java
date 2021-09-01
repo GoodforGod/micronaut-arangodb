@@ -1,5 +1,7 @@
 package io.micronaut.configuration.arango;
 
+import static io.micronaut.configuration.arango.ArangoSettings.SYSTEM_DATABASE;
+
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
@@ -7,7 +9,6 @@ import io.micronaut.configuration.arango.ssl.ArangoSSLConfiguration;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.core.util.StringUtils;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,8 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
-
-import static io.micronaut.configuration.arango.ArangoSettings.SYSTEM_DATABASE;
 
 /**
  * Abstract ArangoDB configuration class.

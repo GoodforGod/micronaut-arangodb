@@ -1,11 +1,11 @@
 package io.micronaut.configuration.arango.health;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.micronaut.health.HealthStatus;
-
 import static io.micronaut.core.util.StringUtils.isEmpty;
 import static io.micronaut.health.HealthStatus.DOWN;
 import static io.micronaut.health.HealthStatus.UNKNOWN;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.health.HealthStatus;
 
 /**
  * A HealthNode DTO for ArangoDB {@link ClusterHealthResponse} health check

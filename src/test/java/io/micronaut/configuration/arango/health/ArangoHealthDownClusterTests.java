@@ -7,13 +7,12 @@ import io.micronaut.management.health.indicator.HealthResult;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import io.testcontainers.arangodb.containers.ArangoContainer;
 import jakarta.inject.Inject;
+import java.time.Duration;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import reactor.core.publisher.Flux;
-
-import java.time.Duration;
-import java.util.Map;
 
 /**
  * Tests when health is UP

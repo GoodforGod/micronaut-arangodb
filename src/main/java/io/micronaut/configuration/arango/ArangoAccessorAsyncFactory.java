@@ -6,10 +6,9 @@ import io.micronaut.configuration.arango.ssl.SSLContextProvider;
 import io.micronaut.context.annotation.*;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.runtime.context.scope.Refreshable;
-
-import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.io.InputStream;
+import javax.net.ssl.SSLContext;
 
 /**
  * Default factory for creating ArangoDB Async Connection {@link ArangoDBAsync}.

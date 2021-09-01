@@ -2,7 +2,6 @@ package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
-
 import java.util.Map;
 
 /**

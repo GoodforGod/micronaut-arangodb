@@ -5,13 +5,12 @@ import io.micronaut.configuration.arango.ssl.ArangoSSLConfiguration;
 import io.micronaut.configuration.arango.ssl.DefaultSSLContextProvider;
 import io.micronaut.context.ApplicationContext;
 import io.testcontainers.arangodb.containers.ArangoContainer;
+import java.util.HashMap;
+import java.util.Map;
+import javax.net.ssl.SSLContext;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import javax.net.ssl.SSLContext;
-import java.util.HashMap;
-import java.util.Map;
 
 @Testcontainers
 class ArangoSSLContextTests extends ArangoRunner {

@@ -3,10 +3,9 @@ package io.micronaut.configuration.arango.ssl;
 import io.micronaut.configuration.arango.ArangoSettings;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
-
-import javax.net.ssl.TrustManagerFactory;
 import java.security.KeyStore;
 import java.security.cert.CertificateFactory;
+import javax.net.ssl.TrustManagerFactory;
 
 @Requires(property = ArangoSettings.PREFIX)
 @ConfigurationProperties(ArangoSettings.PREFIX + ".ssl.certificate")

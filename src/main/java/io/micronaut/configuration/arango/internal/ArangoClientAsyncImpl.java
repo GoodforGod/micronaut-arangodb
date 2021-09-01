@@ -4,7 +4,6 @@ import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.async.ArangoDatabaseAsync;
 import io.micronaut.configuration.arango.ArangoAsyncConfiguration;
 import io.micronaut.configuration.arango.ArangoClientAsync;
-
 import java.util.Map;
 import java.util.stream.Collectors;
 

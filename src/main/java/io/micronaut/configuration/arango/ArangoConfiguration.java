@@ -5,7 +5,6 @@ import io.micronaut.configuration.arango.ssl.ArangoSSLConfiguration;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Inject;
-
 import java.util.Properties;
 
 /**
