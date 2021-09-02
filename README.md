@@ -245,11 +245,11 @@ ArangoDB Cluster Health output example:
 ```json
 {
   "name": "service-name",
-  "status": "UP",
+  "status": "DOWN",
   "details": {
     "arangodb-cluster": {
       "name": "service-name",
-      "status": "UP",
+      "status": "DOWN",
       "details": {
         "clusterId": "752f578b-8884-47ef-8984-894ae110d259",
         "version": "3.7.13",
