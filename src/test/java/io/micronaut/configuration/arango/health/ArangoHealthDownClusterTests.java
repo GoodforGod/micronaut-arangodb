@@ -51,7 +51,7 @@ class ArangoHealthDownClusterTests extends ArangoRunner {
         assertNotNull(result);
 
         assertEquals(HealthStatus.DOWN, result.getStatus());
-        assertEquals("arangodb (cluster)", result.getName());
+        assertEquals("arangodb-cluster", result.getName());
         assertNotNull(result.getDetails());
     }
 }

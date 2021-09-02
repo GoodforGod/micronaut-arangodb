@@ -97,7 +97,7 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
             assertNotNull(result);
 
             assertEquals(HealthStatus.UP, result.getStatus());
-            assertEquals("arangodb (cluster)", result.getName());
+            assertEquals("arangodb-cluster", result.getName());
             assertNotNull(result.getDetails());
             assertTrue(result.getDetails() instanceof Map);
             assertTrue(((Map) result.getDetails()).get("details") instanceof Collection);
@@ -121,7 +121,7 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
             assertNotNull(result);
 
             assertEquals(HealthStatus.UP, result.getStatus());
-            assertEquals("arangodb (cluster)", result.getName());
+            assertEquals("arangodb-cluster", result.getName());
             assertNotNull(result.getDetails());
             assertTrue(result.getDetails() instanceof Map);
             assertTrue(((Map) result.getDetails()).get("details") instanceof Collection);
