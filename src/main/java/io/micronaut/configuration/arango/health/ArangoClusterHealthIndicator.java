@@ -65,7 +65,7 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
                 .timeout(healthConfiguration.getTimeout())
                 .retry(healthConfiguration.getRetry())
                 .map(this::buildHealthResponse)
-                .onErrorResume(e -> Mono.just(buildDownReport(e)));
+                .onErrorResume(e -> Mono.just(buildReport(DOWN, e)));
     }
 
     private HealthResult buildHealthResponse(Response response) {
@@ -77,7 +77,7 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
                     .collect(Collectors.toList());
 
             if (!down.isEmpty()) {
-                logger.debug("Health '{}' reported DOWN for cause nodes named '{}' were DOWN", NAME, down);
+                logger.debug("Health '{}' reported DOWN cause nodes were DOWN: {}", NAME, down);
                 return buildReport(DOWN, details);
             } else if (streamCriticalNodes(health).allMatch(n -> UP.equals(n.getHealthStatus()))) {
                 return buildReport(UP, details);
@@ -90,7 +90,10 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     private Map<String, Object> buildDetails(ClusterHealthResponse clusterHealthResponse) {
         final List<Map<String, ?>> formattedNodesHealth = streamCriticalNodes(clusterHealthResponse)
                 .map(n -> {
-                    final String name = isEmpty(n.getShortName()) ? n.getRoleWithNodeId() : n.getShortName();
+                    final String name = isEmpty(n.getShortName())
+                            ? n.getRoleWithNodeId()
+                            : n.getShortName();
+
                     return n.isLeading()
                             ? Map.of("leading", true, "name", name, "status", n.getStatus())
                             : Map.of("name", name, "status", n.getStatus());
@@ -106,18 +109,15 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     }
 
     private HealthResult buildReport(HealthStatus status, Object details) {
-        logger.debug("Health '{}' reported {} with details: {}", NAME, status, details);
+        if (DOWN.equals(status)) {
+            logger.warn("Health '{}' reported {} with details: {}", NAME, status, details);
+        } else {
+            logger.debug("Health '{}' reported {} with details: {}", NAME, status, details);
+        }
+
         return getBuilder()
                 .status(status)
                 .details(details)
-                .build();
-    }
-
-    private HealthResult buildDownReport(Throwable e) {
-        logger.debug("Health '{}' reported DOWN with error: {}", NAME, e.getMessage());
-        return getBuilder()
-                .status(DOWN)
-                .exception(e)
                 .build();
     }
 
