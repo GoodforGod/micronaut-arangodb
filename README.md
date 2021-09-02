@@ -39,12 +39,6 @@ arangodb:
   password: 1234      # or no pass if auth is not required
 ```
 
-To use the drivers, just add a dependency to your application.
-
-```groovy
-compile 'com.arangodb:arangodb-java-driver'
-```
-
 ### Accessors
 
 Both async *ArangoDBAsync* and sync *ArangoDB* accessors are then available for dependency injection.
