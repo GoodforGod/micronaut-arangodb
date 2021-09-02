@@ -69,6 +69,7 @@ dependencies {
 }
 
 test {
+    failFast(true)
     useJUnitPlatform()
     testLogging {
         events("passed", "skipped", "failed")
@@ -79,17 +80,6 @@ test {
         html.enabled(false)
         junitXml.enabled(false)
     }
-}
-
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-    options.incremental = true
-    options.fork = true
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
 }
 
 publishing {
@@ -137,18 +127,22 @@ publishing {
     }
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding("UTF-8")
+    options.incremental(true)
+    options.fork = true
+}
+
 check.dependsOn jacocoTestReport
 jacocoTestReport {
     reports {
-        xml.enabled true
-        html.destination file("${buildDir}/jacocoHtml")
-    }
-}
-
-if (project.hasProperty("signing.keyId")) {
-    apply plugin: "signing"
-    signing {
-        sign publishing.publications.mavenJava
+        xml.enabled(true)
+        html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
     }
 }
 
@@ -156,5 +150,12 @@ javadoc {
     options.encoding = "UTF-8"
     if (JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption("html5", true)
+    }
+}
+
+if (project.hasProperty("signing.keyId")) {
+    apply plugin: "signing"
+    signing {
+        sign publishing.publications.mavenJava
     }
 }
