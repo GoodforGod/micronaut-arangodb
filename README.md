@@ -122,7 +122,7 @@ Check [ArangoDB official](https://www.arangodb.com/docs/stable/drivers/java-refe
 
 ```yaml
 arangodb:
-  hosts: localhost:8080,localhost:8081    # default to host - localhost:8081
+  hosts: localhost:8080,localhost:8081    # default to host - localhost:8080
   timeout: 10000ms                        # default - 10000 in milliseconds
   chunksize: 3000                         # default - 30000
   max-connections: 30                     # default - 1
@@ -135,7 +135,7 @@ Hosts can be passed to configuration as Strings (useful when passed via environm
 
 ```yaml
 arangodb:
-  hosts: localhost:8080,localhost:8081    # default to host - localhost:8081
+  hosts: localhost:8080,localhost:8081    # default to host - localhost:8080
 ```
 
 Or can be passed as list (useful for manual configuring):
