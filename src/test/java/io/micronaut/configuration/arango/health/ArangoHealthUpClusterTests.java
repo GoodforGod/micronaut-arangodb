@@ -3,6 +3,7 @@ package io.micronaut.configuration.arango.health;
 import io.micronaut.configuration.arango.ArangoRunner;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.health.HealthStatus;
+import io.micronaut.management.endpoint.health.HealthEndpoint;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
 import io.testcontainers.arangodb.cluster.ArangoClusterDefault;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Tests when health is UP for mocked ArangoDB cluster
@@ -98,8 +100,8 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
             assertEquals("arangodb (cluster)", result.getName());
             assertNotNull(result.getDetails());
             assertTrue(result.getDetails() instanceof Map);
-            assertTrue(((Map) result.getDetails()).get("nodes") instanceof Collection);
-            assertEquals(7, ((Collection) ((Map) result.getDetails()).get("nodes")).size());
+            assertTrue(((Map) result.getDetails()).get("details") instanceof Collection);
+            assertEquals(1, ((Collection) ((Map) result.getDetails()).get("details")).size());
         }
     }
 
@@ -122,8 +124,12 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
             assertEquals("arangodb (cluster)", result.getName());
             assertNotNull(result.getDetails());
             assertTrue(result.getDetails() instanceof Map);
-            assertTrue(((Map) result.getDetails()).get("nodes") instanceof Collection);
-            assertEquals(7, ((Collection) ((Map) result.getDetails()).get("nodes")).size());
+            assertTrue(((Map) result.getDetails()).get("details") instanceof Collection);
+            assertEquals(1, ((Collection) ((Map) result.getDetails()).get("cluster")).size());
+
+            final HealthEndpoint healthEndpoint = context.getBean(HealthEndpoint.class);
+            HealthResult block = Mono.from(healthEndpoint.getHealth(null)).block(Duration.ofSeconds(10));
+            assertNotNull(block);
         }
     }
 }

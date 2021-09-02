@@ -183,13 +183,13 @@ on startup you can set it via property.
 
 ```yaml
 arangodb:
-  create-database-timeout: 10000ms # default - 10000
+  create-database-timeout: 10000ms      # default - 10000
 ```
 
 In case you want to create database asynchronously you can specify that via this property:
 ```yaml
 arangodb:
-  create-database-async: true    # default - false
+  create-database-async: true           # default - false
 ```
 
 ### Health Check
@@ -210,7 +210,7 @@ Example of ArangoDB health:
       "name": "arangodb",
       "status": "UP",
       "details": {
-        "version": "3.7.12",
+        "version": "3.7.13",
         "database": "_system"
       }
     }
@@ -244,43 +244,33 @@ ArangoDB Cluster Health output example:
 
 ```json
 {
-  "name": "service",
+  "name": "service-name",
   "status": "UP",
   "details": {
-    "arangodb (cluster)": {
-      "name": "arangodb (cluster)",
+    "arangodb-cluster": {
+      "name": "service-name",
       "status": "UP",
       "details": {
-        "clusterId": "89b7e1a8-53f5-44ea-bb5c-9e7cb201417c",
-        "nodes": [
+        "clusterId": "752f578b-8884-47ef-8984-894ae110d259",
+        "version": "3.7.13",
+        "database": "_system",
+        "details": [
           {
-            "name": "Coordinator0002",
-            "status": "GOOD"
+            "status": "UP",
+            "nodes": [
+              "Coordinator0002",
+              "DBServer0002",
+              "DBServer0001",
+              "Agent",
+              "Agent Leader",
+              "Agent"
+            ]
           },
           {
-            "name": "Coordinator0001",
-            "status": "GOOD"
-          },
-          {
-            "name": "DBServer0001",
-            "status": "GOOD"
-          },
-          {
-            "name": "DBServer0002",
-            "status": "GOOD"
-          },
-          {
-            "name": "AGENT (AGNT-4206f181-8791-4c3f-952d-79d9aa58b7c2)",
-            "leading": true,
-            "status": "GOOD"
-          },
-          {
-            "name": "AGENT (AGNT-2cc832bf-a8b7-4f8a-823a-15d778594bc1)",
-            "status": "GOOD"
-          },
-          {
-            "name": "AGENT (AGNT-78172be0-1adc-47ea-8152-3a3b0ab0b10e)",
-            "status": "GOOD"
+            "status": "DOWN",
+            "nodes": [
+              "Coordinator0001"
+            ]
           }
         ]
       }

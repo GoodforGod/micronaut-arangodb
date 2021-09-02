@@ -44,6 +44,32 @@ class ArangoConfigurationTests extends ArangoRunner {
     }
 
     @Test
+    void configurationDriverTimeoutNegativeFail() {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.timeout", Duration.ofSeconds(-1));
+
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            context.getBean(ArangoConfiguration.class);
+            fail("Should not happen");
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof ConfigurationException);
+        }
+    }
+
+    @Test
+    void configurationCreateTimeoutNegativeFail() {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.create-database-timeout", Duration.ofSeconds(-1));
+
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            context.getBean(ArangoConfiguration.class);
+            fail("Should not happen");
+        } catch (Exception e) {
+            assertTrue(e.getCause() instanceof ConfigurationException);
+        }
+    }
+
+    @Test
     void createConfigurationForHostsAsString() {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.hosts", "localhost:8528,localhost:8528");

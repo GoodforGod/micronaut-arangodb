@@ -16,6 +16,8 @@ import io.micronaut.health.HealthStatus;
  */
 class ClusterHealthNode {
 
+    private static final String ROLE_LEADER = "Agent Leader";
+
     public enum NodeRole {
         AGENT,
         COORDINATOR,
@@ -80,7 +82,7 @@ class ClusterHealthNode {
     }
 
     public String getRole() {
-        return role;
+        return isLeading() ? ROLE_LEADER : role;
     }
 
     public boolean isCanBeDeleted() {

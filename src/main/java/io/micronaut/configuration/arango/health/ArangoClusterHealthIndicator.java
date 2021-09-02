@@ -9,15 +9,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.configuration.arango.ArangoConfiguration;
 import io.micronaut.configuration.arango.ArangoSettings;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.util.CollectionUtils;
+import io.micronaut.core.util.StringUtils;
 import io.micronaut.health.HealthStatus;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.reactivestreams.Publisher;
@@ -37,12 +37,15 @@ import reactor.core.publisher.Mono;
 @Singleton
 public class ArangoClusterHealthIndicator implements HealthIndicator {
 
+    private static final String FIELD_STATUS = "status";
+    private static final String FIELD_NODES = "nodes";
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * The name to expose details with.
      */
-    private static final String NAME = "arangodb (cluster)";
+    private static final String NAME = "arangodb-cluster";
     private final ArangoDB accessor;
     private final ObjectMapper mapper;
     private final String database;
@@ -71,13 +74,13 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     private HealthResult buildHealthResponse(Response response) {
         return convertToClusterHealth(response).map(health -> {
             final Map<String, Object> details = buildDetails(health);
-            final List<String> down = streamCriticalNodes(health)
+            final List<String> downNodes = streamCriticalNodes(health)
                     .filter(n -> DOWN.equals(n.getHealthStatus()))
                     .map(h -> isEmpty(h.getShortName()) ? h.getRoleWithNodeId() : h.getShortName())
                     .collect(Collectors.toList());
 
-            if (!down.isEmpty()) {
-                logger.debug("Health '{}' reported DOWN cause nodes were DOWN: {}", NAME, down);
+            if (!downNodes.isEmpty()) {
+                logger.debug("Health '{}' reported DOWN cause nodes were DOWN: {}", NAME, downNodes);
                 return buildReport(DOWN, details);
             } else if (streamCriticalNodes(health).allMatch(n -> UP.equals(n.getHealthStatus()))) {
                 return buildReport(UP, details);
@@ -88,20 +91,35 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     }
 
     private Map<String, Object> buildDetails(ClusterHealthResponse clusterHealthResponse) {
-        final List<Map<String, ?>> formattedNodesHealth = streamCriticalNodes(clusterHealthResponse)
-                .map(n -> {
-                    final String name = isEmpty(n.getShortName())
-                            ? n.getRoleWithNodeId()
-                            : n.getShortName();
+        final List<String> upNodes = getNodeNames(clusterHealthResponse, UP);
+        final List<String> downNodes = getNodeNames(clusterHealthResponse, DOWN);
+        final List<String> unknownNodes = getNodeNames(clusterHealthResponse, UNKNOWN);
 
-                    return n.isLeading()
-                            ? Map.of("leading", true, "name", name, "status", n.getStatus())
-                            : Map.of("name", name, "status", n.getStatus());
-                })
-                .collect(Collectors.toList());
+        final List<Map<String, Object>> clusterDetails = new ArrayList<>(3);
+        if (CollectionUtils.isNotEmpty(upNodes))
+            clusterDetails.add(Map.of(FIELD_STATUS, UP, FIELD_NODES, upNodes));
+        if (CollectionUtils.isNotEmpty(downNodes))
+            clusterDetails.add(Map.of(FIELD_STATUS, DOWN, FIELD_NODES, downNodes));
+        if (CollectionUtils.isNotEmpty(unknownNodes))
+            clusterDetails.add(Map.of(FIELD_STATUS, UNKNOWN, FIELD_NODES, unknownNodes));
+
+        final String version = clusterHealthResponse.streamNodes()
+                .map(ClusterHealthNode::getVersion)
+                .filter(StringUtils::isNotEmpty)
+                .findFirst()
+                .orElse("unknown");
 
         return Map.of("clusterId", clusterHealthResponse.getClusterId(),
-                "nodes", formattedNodesHealth);
+                "version", version,
+                "database", database,
+                "cluster", clusterDetails);
+    }
+
+    private List<String> getNodeNames(ClusterHealthResponse clusterHealthResponse, HealthStatus status) {
+        return clusterHealthResponse.streamNodes()
+                .filter(n -> status.equals(n.getHealthStatus()))
+                .map(n -> isEmpty(n.getShortName()) ? n.getRole() : n.getShortName())
+                .collect(Collectors.toList());
     }
 
     private Stream<ClusterHealthNode> streamCriticalNodes(ClusterHealthResponse clusterHealthResponse) {
