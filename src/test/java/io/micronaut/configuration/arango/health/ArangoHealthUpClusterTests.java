@@ -66,7 +66,7 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.create-database-if-not-exist", true);
-        properties.put("arangodb.create-database-timeout-in-millis", 50000);
+        properties.put("arangodb.create-database-timeout", Duration.ofSeconds(50));
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final HealthIndicator healthIndicator = context.getBean(ArangoHealthIndicator.class);
@@ -108,7 +108,7 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.create-database-if-not-exist", true);
-        properties.put("arangodb.create-database-timeout-in-millis", 50000);
+        properties.put("arangodb.create-database-timeout", Duration.ofSeconds(50));
         properties.put("arangodb.health.cluster.enabled", true);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {

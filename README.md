@@ -12,7 +12,7 @@ This project includes integration between Micronaut and ArangoDB.
 [**Gradle**](https://mvnrepository.com/artifact/com.github.goodforgod/micronaut-arangodb)
 ```groovy
 dependencies {
-    compile 'com.github.goodforgod:micronaut-arangodb:2.4.0'
+    compile 'com.github.goodforgod:micronaut-arangodb:3.0.0'
 }
 ```
 
@@ -21,7 +21,7 @@ dependencies {
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>2.4.0</version>
+    <version>3.0.0</version>
 </dependency>
 ```
 
@@ -129,7 +129,7 @@ Check [ArangoDB official](https://www.arangodb.com/docs/stable/drivers/java-refe
 ```yaml
 arangodb:
   hosts: localhost:8080,localhost:8081    # default to host - localhost:8081
-  timeout: 3000                           # default - 10000 in milliseconds
+  timeout: 10000ms                        # default - 10000 in milliseconds
   chunksize: 3000                         # default - 30000
   max-connections: 30                     # default - 1
   connection-ttl: 200                     # default - null
@@ -189,7 +189,7 @@ on startup you can set it via property.
 
 ```yaml
 arangodb:
-  create-database-timeout-in-millis: 500 # default - 10000
+  create-database-timeout: 10000ms # default - 10000
 ```
 
 In case you want to create database asynchronously you can specify that via this property:
@@ -216,7 +216,7 @@ Example of ArangoDB health:
       "name": "arangodb",
       "status": "UP",
       "details": {
-        "version": "3.6.1",
+        "version": "3.7.12",
         "database": "_system"
       }
     }
@@ -232,7 +232,7 @@ You can explicitly *turn off* health check.
 arangodb:
   health:
     enabled: false            # default - true 
-    timeout-in-millis: 5000   # default - 5000
+    timeout: 5000ms           # default - 5000
     retry: 2                  # default - 2
 ```
 
@@ -305,7 +305,7 @@ arangodb:
   health:
     cluster:
       enabled: true             # default - false
-      timeout-in-millis: 5000   # default - 5000
+      timeout: 5000ms           # default - 5000
       retry: 2                  # default - 2
 ```
 
@@ -318,6 +318,8 @@ TestContainers allows you to use integration tests against real database in all 
 check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Micronaut Compatability
+
+Starting from version *3.0.0* library ships for *Micronaut 3*.
 
 Starting from version *2.0.0* library ships for *Micronaut 2*.
 

@@ -3,6 +3,7 @@ package io.micronaut.configuration.arango;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.runtime.exceptions.ApplicationStartupException;
 import io.testcontainers.arangodb.containers.ArangoContainer;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.MethodOrderer;
@@ -86,7 +87,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.port", 8566);
         properties.put("arangodb.create-database-if-not-exist", true);
-        properties.put("arangodb.create-database-timeout-in-millis", 1);
+        properties.put("arangodb.create-database-timeout", Duration.ofMillis(1));
 
         try (ApplicationContext context = ApplicationContext.run(properties)) {
             fail("Should not happen!");
@@ -102,9 +103,9 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.port", 8566);
-        properties.put("arangodb.timeout", 1000);
+        properties.put("arangodb.timeout", Duration.ofSeconds(1));
         properties.put("arangodb.create-database-if-not-exist", true);
-        properties.put("arangodb.create-database-timeout-in-millis", 10000);
+        properties.put("arangodb.create-database-timeout", Duration.ofSeconds(10));
 
         try (ApplicationContext context = ApplicationContext.run(properties)) {
             fail("Should not happen!");
@@ -122,7 +123,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
         properties.put("arangodb.database", database);
         properties.put("arangodb.create-database-if-not-exist", true);
         properties.put("arangodb.create-database-async", true);
-        properties.put("arangodb.create-database-timeout-in-millis", 10000);
+        properties.put("arangodb.create-database-timeout", Duration.ofSeconds(10));
 
         try (ApplicationContext context = ApplicationContext.run(properties)) {
             Thread.sleep(2000);

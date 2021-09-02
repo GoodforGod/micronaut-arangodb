@@ -36,7 +36,7 @@ public abstract class AbstractArangoConfiguration {
     private List<String> hosts;
     private int port = ArangoDefaults.DEFAULT_PORT;
     private String database = SYSTEM_DATABASE;
-    private int timeout = 10000;
+    private Duration timeout = Duration.ofSeconds(10);
     private int chunksize = ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE;
     private int maxConnections = ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
     private Long connectionTtl;
@@ -70,7 +70,7 @@ public abstract class AbstractArangoConfiguration {
         if (StringUtils.isNotEmpty(getPassword())) {
             properties.setProperty(ArangoProperties.PASSWORD, getPassword());
         }
-        properties.setProperty(ArangoProperties.TIMEOUT, String.valueOf(getTimeout()));
+        properties.setProperty(ArangoProperties.TIMEOUT, String.valueOf(getTimeout().toMillis()));
         properties.setProperty(ArangoProperties.USE_SSL, String.valueOf(getSslConfiguration().isEnabled()));
         properties.setProperty(ArangoProperties.CHUNK_SIZE, String.valueOf(getChunksize()));
         properties.setProperty(ArangoProperties.MAX_CONNECTIONS, String.valueOf(getMaxConnections()));
@@ -138,7 +138,7 @@ public abstract class AbstractArangoConfiguration {
      */
     public void setCreateDatabaseTimeout(Duration createDatabaseTimeout) {
         if (createDatabaseTimeout.isNegative())
-            throw new ConfigurationException("Timeout for health can not be less than 0");
+            throw new ConfigurationException("Timeout for create database can not be less than 0");
         this.createDatabaseTimeout = createDatabaseTimeout;
     }
 
@@ -227,11 +227,13 @@ public abstract class AbstractArangoConfiguration {
      * @see com.arangodb.ArangoDB.Builder#timeout(Integer)
      * @return value
      */
-    public int getTimeout() {
+    public Duration getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(int timeout) {
+    public void setTimeout(Duration timeout) {
+        if (timeout.isNegative())
+            throw new ConfigurationException("Timeout for driver can not be less than 0");
         this.timeout = timeout;
     }
 
