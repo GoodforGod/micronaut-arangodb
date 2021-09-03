@@ -100,8 +100,8 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
             assertEquals("arangodb-cluster", result.getName());
             assertNotNull(result.getDetails());
             assertTrue(result.getDetails() instanceof Map);
-            assertTrue(((Map) result.getDetails()).get("details") instanceof Collection);
-            assertEquals(1, ((Collection) ((Map) result.getDetails()).get("details")).size());
+            assertTrue(((Map) result.getDetails()).get("cluster") instanceof Collection);
+            assertEquals(1, ((Collection) ((Map) result.getDetails()).get("cluster")).size());
         }
     }
 
@@ -124,7 +124,7 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
             assertEquals("arangodb-cluster", result.getName());
             assertNotNull(result.getDetails());
             assertTrue(result.getDetails() instanceof Map);
-            assertTrue(((Map) result.getDetails()).get("details") instanceof Collection);
+            assertTrue(((Map) result.getDetails()).get("cluster") instanceof Collection);
             assertEquals(1, ((Collection) ((Map) result.getDetails()).get("cluster")).size());
 
             final HealthEndpoint healthEndpoint = context.getBean(HealthEndpoint.class);
