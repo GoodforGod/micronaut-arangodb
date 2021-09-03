@@ -46,6 +46,7 @@ class ArangoClientAsyncTests extends ArangoRunner {
             assertNotNull(client.db());
             assertNotNull(client.properties());
             assertNotNull(client.accessor());
+            assertNotNull(client.toString());
 
             final Boolean databaseCreated = client.db().exists().join();
             assertTrue(databaseCreated);

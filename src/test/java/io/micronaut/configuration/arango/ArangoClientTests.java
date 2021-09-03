@@ -64,6 +64,7 @@ class ArangoClientTests extends ArangoRunner {
             assertNotNull(client.db());
             assertNotNull(client.properties());
             assertNotNull(client.accessor());
+            assertNotNull(client.toString());
 
             final Boolean created = client.db().create();
             assertTrue(created);
