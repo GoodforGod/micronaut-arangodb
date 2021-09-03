@@ -31,7 +31,7 @@ class ArangoHealthModelsTests extends Assertions {
                 assertNotNull(v);
                 assertNotNull(v.getEndpoint());
                 assertNotNull(v.getHealthStatus());
-                assertNotNull(v.getEndpoint());
+                assertNotNull(v.getStatus());
                 assertNotNull(v.getEngine());
                 assertNotNull(v.getRoleWithNodeId());
                 assertNotNull(v.getNodeRole());
