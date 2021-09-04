@@ -4,12 +4,11 @@ import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.entity.DatabaseEntity;
 import io.micronaut.context.ApplicationContext;
 import io.testcontainers.arangodb.containers.ArangoContainer;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Anton Kurako (GoodforGod)

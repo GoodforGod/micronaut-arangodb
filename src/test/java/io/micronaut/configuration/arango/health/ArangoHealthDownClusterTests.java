@@ -5,14 +5,14 @@ import io.micronaut.context.annotation.Property;
 import io.micronaut.health.HealthStatus;
 import io.micronaut.management.health.indicator.HealthResult;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.reactivex.Flowable;
 import io.testcontainers.arangodb.containers.ArangoContainer;
+import jakarta.inject.Inject;
+import java.time.Duration;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import javax.inject.Inject;
-import java.util.Map;
+import reactor.core.publisher.Flux;
 
 /**
  * Tests when health is UP
@@ -36,7 +36,7 @@ class ArangoHealthDownClusterTests extends ArangoRunner {
 
     @Test
     void healthUpWhenDatabaseUp() {
-        final HealthResult result = Flowable.fromPublisher(healthIndicator.getResult()).firstElement().blockingGet();
+        final HealthResult result = Flux.from(healthIndicator.getResult()).blockFirst(Duration.ofSeconds(10));
         assertNotNull(result);
 
         assertEquals(HealthStatus.UP, result.getStatus());
@@ -47,11 +47,11 @@ class ArangoHealthDownClusterTests extends ArangoRunner {
 
     @Test
     void healthClusterDownWhenDatabaseIsSingle() {
-        final HealthResult result = Flowable.fromPublisher(clusterHealthIndicator.getResult()).firstElement().blockingGet();
+        final HealthResult result = Flux.from(clusterHealthIndicator.getResult()).blockFirst(Duration.ofSeconds(10));
         assertNotNull(result);
 
         assertEquals(HealthStatus.DOWN, result.getStatus());
-        assertEquals("arangodb (cluster)", result.getName());
+        assertEquals("arangodb-cluster", result.getName());
         assertNotNull(result.getDetails());
     }
 }

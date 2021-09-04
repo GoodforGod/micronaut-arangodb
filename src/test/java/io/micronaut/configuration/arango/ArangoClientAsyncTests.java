@@ -3,12 +3,11 @@ package io.micronaut.configuration.arango;
 import com.arangodb.async.ArangoDBAsync;
 import io.micronaut.context.ApplicationContext;
 import io.testcontainers.arangodb.containers.ArangoContainer;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Anton Kurako (GoodforGod)
@@ -27,7 +26,7 @@ class ArangoClientAsyncTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals("custom", client.database());
+            assertEquals("custom", client.db().name());
 
             final Boolean databaseExists = client.db().exists().join();
             assertFalse(databaseExists);
@@ -43,7 +42,11 @@ class ArangoClientAsyncTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals("custom", client.database());
+            assertEquals("custom", client.db().name());
+            assertNotNull(client.db());
+            assertNotNull(client.properties());
+            assertNotNull(client.accessor());
+            assertNotNull(client.toString());
 
             final Boolean databaseCreated = client.db().exists().join();
             assertTrue(databaseCreated);

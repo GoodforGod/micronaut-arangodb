@@ -3,15 +3,15 @@ package io.micronaut.configuration.arango;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.runtime.exceptions.ApplicationStartupException;
 import io.testcontainers.arangodb.containers.ArangoContainer;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Anton Kurako (GoodforGod)
@@ -33,7 +33,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals("custom", client.database());
+            assertEquals("custom", client.db().name());
             assertTrue(client.db().exists().join());
         }
     }
@@ -47,7 +47,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals("custom", client.database());
+            assertEquals("custom", client.db().name());
             assertTrue(client.db().exists().join());
         }
     }
@@ -61,7 +61,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals(ArangoSettings.SYSTEM_DATABASE, client.database());
+            assertEquals(ArangoSettings.SYSTEM_DATABASE, client.db().name());
             assertTrue(client.db().exists().join());
         }
     }
@@ -75,7 +75,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals("nodata", client.database());
+            assertEquals("nodata", client.db().name());
             assertFalse(client.db().exists().join());
         }
     }
@@ -87,7 +87,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.port", 8566);
         properties.put("arangodb.create-database-if-not-exist", true);
-        properties.put("arangodb.create-database-timeout-in-millis", 1);
+        properties.put("arangodb.create-database-timeout", Duration.ofMillis(1));
 
         try (ApplicationContext context = ApplicationContext.run(properties)) {
             fail("Should not happen!");
@@ -103,9 +103,9 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.port", 8566);
-        properties.put("arangodb.timeout", 1000);
+        properties.put("arangodb.timeout", Duration.ofSeconds(1));
         properties.put("arangodb.create-database-if-not-exist", true);
-        properties.put("arangodb.create-database-timeout-in-millis", 10000);
+        properties.put("arangodb.create-database-timeout", Duration.ofSeconds(10));
 
         try (ApplicationContext context = ApplicationContext.run(properties)) {
             fail("Should not happen!");
@@ -123,13 +123,13 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
         properties.put("arangodb.database", database);
         properties.put("arangodb.create-database-if-not-exist", true);
         properties.put("arangodb.create-database-async", true);
-        properties.put("arangodb.create-database-timeout-in-millis", 10000);
+        properties.put("arangodb.create-database-timeout", Duration.ofSeconds(10));
 
         try (ApplicationContext context = ApplicationContext.run(properties)) {
             Thread.sleep(2000);
 
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals(database, client.database());
+            assertEquals(database, client.db().name());
             assertTrue(client.db().exists().join());
 
             final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);

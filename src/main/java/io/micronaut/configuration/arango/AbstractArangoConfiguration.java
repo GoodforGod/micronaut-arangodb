@@ -1,5 +1,7 @@
 package io.micronaut.configuration.arango;
 
+import static io.micronaut.configuration.arango.ArangoSettings.SYSTEM_DATABASE;
+
 import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
@@ -7,15 +9,15 @@ import io.micronaut.configuration.arango.ssl.ArangoSSLConfiguration;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.core.util.StringUtils;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
-
-import static io.micronaut.configuration.arango.ArangoSettings.SYSTEM_DATABASE;
 
 /**
  * Abstract ArangoDB configuration class.
@@ -34,7 +36,7 @@ public abstract class AbstractArangoConfiguration {
     private List<String> hosts;
     private int port = ArangoDefaults.DEFAULT_PORT;
     private String database = SYSTEM_DATABASE;
-    private int timeout = 10000;
+    private Duration timeout = Duration.ofSeconds(10);
     private int chunksize = ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE;
     private int maxConnections = ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
     private Long connectionTtl;
@@ -45,7 +47,7 @@ public abstract class AbstractArangoConfiguration {
 
     private boolean createDatabaseIfNotExist = false;
     private boolean createDatabaseAsync = false;
-    private int createDatabaseTimeoutInMillis = 10000;
+    private Duration createDatabaseTimeout = Duration.ofSeconds(10);
 
     protected AbstractArangoConfiguration(ArangoSSLConfiguration sslConfiguration) {
         this.sslConfiguration = sslConfiguration;
@@ -68,7 +70,7 @@ public abstract class AbstractArangoConfiguration {
         if (StringUtils.isNotEmpty(getPassword())) {
             properties.setProperty(ArangoProperties.PASSWORD, getPassword());
         }
-        properties.setProperty(ArangoProperties.TIMEOUT, String.valueOf(getTimeout()));
+        properties.setProperty(ArangoProperties.TIMEOUT, String.valueOf(getTimeout().toMillis()));
         properties.setProperty(ArangoProperties.USE_SSL, String.valueOf(getSslConfiguration().isEnabled()));
         properties.setProperty(ArangoProperties.CHUNK_SIZE, String.valueOf(getChunksize()));
         properties.setProperty(ArangoProperties.MAX_CONNECTIONS, String.valueOf(getMaxConnections()));
@@ -127,15 +129,17 @@ public abstract class AbstractArangoConfiguration {
     /**
      * @return database create timeout in millis
      */
-    public int getCreateDatabaseTimeoutInMillis() {
-        return createDatabaseTimeoutInMillis;
+    public Duration getCreateDatabaseTimeout() {
+        return createDatabaseTimeout;
     }
 
     /**
-     * @param createDatabaseTimeoutInMillis database create timeout in millis
+     * @param createDatabaseTimeout database create timeout in millis
      */
-    public void setCreateDatabaseTimeoutInMillis(int createDatabaseTimeoutInMillis) {
-        this.createDatabaseTimeoutInMillis = createDatabaseTimeoutInMillis;
+    public void setCreateDatabaseTimeout(Duration createDatabaseTimeout) {
+        if (createDatabaseTimeout.isNegative())
+            throw new ConfigurationException("Timeout for create database can not be less than 0");
+        this.createDatabaseTimeout = createDatabaseTimeout;
     }
 
     public String getHost() {
@@ -223,11 +227,13 @@ public abstract class AbstractArangoConfiguration {
      * @see com.arangodb.ArangoDB.Builder#timeout(Integer)
      * @return value
      */
-    public int getTimeout() {
+    public Duration getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(int timeout) {
+    public void setTimeout(Duration timeout) {
+        if (timeout.isNegative())
+            throw new ConfigurationException("Timeout for driver can not be less than 0");
         this.timeout = timeout;
     }
 

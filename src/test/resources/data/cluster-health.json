@@ -1,0 +1,96 @@
+{
+  "ClusterId": "b620954f-980a-4de8-b315-9fcf9badb3a2",
+  "Health": {
+    "CRDN-3251ec80-4f3c-4dbf-aa8d-8685d39d75c0": {
+      "Endpoint": "tcp://coordinator1:8529",
+      "Engine": "rocksdb",
+      "Host": "coordinator1",
+      "LastAckedTime": "2021-09-03T19:01:23Z",
+      "ShortName": "Coordinator0002",
+      "Status": "GOOD",
+      "SyncStatus": "SERVING",
+      "SyncTime": "2021-09-03T19:01:23Z",
+      "Timestamp": "2021-09-03T19:01:23Z",
+      "Version": "3.7.11",
+      "Role": "Coordinator",
+      "CanBeDeleted": false
+    },
+    "CRDN-71d64a92-344b-4b00-86bb-a9f5e2ce42ba": {
+      "Endpoint": "tcp://coordinator0:8529",
+      "Engine": "rocksdb",
+      "Host": "coordinator0",
+      "LastAckedTime": "2021-09-03T19:00:52Z",
+      "ShortName": "Coordinator0001",
+      "Status": "GOOD",
+      "SyncStatus": "SERVING",
+      "SyncTime": "2021-09-03T19:00:52Z",
+      "Timestamp": "2021-09-03T19:00:52Z",
+      "Version": "3.7.11",
+      "Role": "Coordinator",
+      "CanBeDeleted": false
+    },
+    "PRMR-05899480-0932-41dc-a841-66c08820fb14": {
+      "Endpoint": "tcp://dbserver0:8529",
+      "Engine": "rocksdb",
+      "Host": "dbserver0",
+      "LastAckedTime": "2021-09-03T19:00:40Z",
+      "ShortName": "DBServer0002",
+      "Status": "BAD",
+      "SyncStatus": "SERVING",
+      "SyncTime": "2021-09-03T19:00:40Z",
+      "Timestamp": "2021-09-03T19:00:40Z",
+      "Version": "3.7.11",
+      "Role": "DBServer",
+      "CanBeDeleted": false
+    },
+    "PRMR-4ba7f98f-d63b-414a-b453-5a963311c6d3": {
+      "Endpoint": "tcp://dbserver1:8529",
+      "Engine": "rocksdb",
+      "Host": "dbserver1",
+      "LastAckedTime": "2021-09-03T19:00:40Z",
+      "ShortName": "DBServer0001",
+      "Status": "GOOD",
+      "SyncStatus": "SERVING",
+      "SyncTime": "2021-09-03T19:00:40Z",
+      "Timestamp": "2021-09-03T19:00:40Z",
+      "Version": "3.7.11",
+      "Role": "DBServer",
+      "CanBeDeleted": false
+    },
+    "AGNT-2a51ba59-b73c-4bda-b250-230cda15cc5a": {
+      "Role": "Agent",
+      "Endpoint": "tcp://agent1:8529",
+      "CanBeDeleted": false,
+      "Leading": false,
+      "LastAckedTime": 0.6880000000000001,
+      "Engine": "rocksdb",
+      "Version": "3.7.11",
+      "Leader": "AGNT-53bd7474-d930-4a27-882d-059c35c4de7a",
+      "Status": "GOOD"
+    },
+    "AGNT-53bd7474-d930-4a27-882d-059c35c4de7a": {
+      "Role": "Agent",
+      "Endpoint": "tcp://agent2:8529",
+      "CanBeDeleted": false,
+      "Leading": true,
+      "LastAckedTime": 0.0,
+      "Engine": "rocksdb",
+      "Version": "3.7.11",
+      "Leader": "AGNT-53bd7474-d930-4a27-882d-059c35c4de7a",
+      "Status": "GOOD"
+    },
+    "AGNT-a5309c0a-c523-441d-bcb8-b48b64029d17": {
+      "Role": "Agent",
+      "Endpoint": "tcp://agent0:8529",
+      "CanBeDeleted": false,
+      "Leading": false,
+      "LastAckedTime": 0.634,
+      "Engine": "rocksdb",
+      "Version": "3.7.11",
+      "Leader": "AGNT-53bd7474-d930-4a27-882d-059c35c4de7a",
+      "Status": "GOOD"
+    }
+  },
+  "error": false,
+  "code": 200
+}

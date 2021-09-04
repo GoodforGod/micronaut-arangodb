@@ -5,16 +5,17 @@ import io.micronaut.context.annotation.Context;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.runtime.exceptions.ApplicationStartupException;
+import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 /**
- * ArangoDB database context Initialization
+ * ArangoDB database initialization
  *
  * @author Anton Kurako (GoodforGod)
  * @see AbstractArangoConfiguration#isCreateDatabaseIfNotExist()
@@ -42,7 +43,7 @@ public class ArangoDatabaseInitializer {
                 try {
                     initializeDatabaseSynchronously(clientAsync, configuration);
                 } catch (Exception e) {
-                    logger.error(e.getMessage());
+                    logger.error(e.getMessage(), e);
                 }
             });
         } else {
@@ -53,7 +54,7 @@ public class ArangoDatabaseInitializer {
     protected void initializeDatabaseSynchronously(ArangoClientAsync clientAsync,
                                                    ArangoAsyncConfiguration configuration) {
         final String database = configuration.getDatabase();
-        final int timeout = configuration.getCreateDatabaseTimeoutInMillis();
+        final Duration timeout = configuration.getCreateDatabaseTimeout();
 
         try {
             logger.debug("Arango Database '{}' initialization starting...", database);
@@ -62,7 +63,7 @@ public class ArangoDatabaseInitializer {
                     .thenCompose(exist -> exist
                             ? CompletableFuture.completedFuture(true)
                             : clientAsync.db().create())
-                    .get(timeout, TimeUnit.MILLISECONDS);
+                    .get(timeout.toMillis(), TimeUnit.MILLISECONDS);
             final long tookTime = System.currentTimeMillis() - startTime;
             logger.debug("Arango Database '{}' creation took '{}' millis", database, tookTime);
         } catch (TimeoutException e) {
@@ -70,7 +71,8 @@ public class ArangoDatabaseInitializer {
         } catch (ArangoDBException e) {
             throw e;
         } catch (Exception e) {
-            throw new ApplicationStartupException("Arango Database initialization failed due to: " + e.getMessage(), e);
+            final Throwable cause = (e instanceof CompletionException) ? e.getCause() : e;
+            throw new ApplicationStartupException("Arango Database initialization failed due to: " + cause.getMessage(), cause);
         }
     }
 }

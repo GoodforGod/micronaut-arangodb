@@ -1,5 +1,8 @@
 package io.micronaut.configuration.arango.health;
 
+import static io.micronaut.health.HealthStatus.DOWN;
+import static io.micronaut.health.HealthStatus.UP;
+
 import com.arangodb.ArangoDB;
 import com.arangodb.entity.DatabaseEntity;
 import io.micronaut.configuration.arango.ArangoConfiguration;
@@ -7,17 +10,13 @@ import io.micronaut.configuration.arango.ArangoSettings;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
-import io.reactivex.Flowable;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import java.util.Map;
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import static io.micronaut.health.HealthStatus.DOWN;
-import static io.micronaut.health.HealthStatus.UP;
+import reactor.core.publisher.Mono;
 
 /**
  * A {@link HealthIndicator} for ArangoDB.
@@ -50,12 +49,12 @@ public class ArangoHealthIndicator implements HealthIndicator {
     }
 
     @Override
-    public Flowable<HealthResult> getResult() {
-        return Flowable.fromCallable(() -> accessor.db(database).getInfo())
-                .timeout(healthConfiguration.getTimeoutInMillis(), TimeUnit.MILLISECONDS)
+    public Publisher<HealthResult> getResult() {
+        return Mono.fromCallable(() -> accessor.db(database).getInfo())
+                .timeout(healthConfiguration.getTimeout())
                 .retry(healthConfiguration.getRetry())
                 .map(this::buildUpReport)
-                .onErrorReturn(this::buildDownReport);
+                .onErrorResume(e -> Mono.just(buildDownReport(e)));
     }
 
     private Map<String, Object> buildDetails(DatabaseEntity db) {

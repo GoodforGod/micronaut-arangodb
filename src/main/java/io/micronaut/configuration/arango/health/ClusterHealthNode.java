@@ -1,19 +1,22 @@
 package io.micronaut.configuration.arango.health;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.micronaut.health.HealthStatus;
-
 import static io.micronaut.core.util.StringUtils.isEmpty;
 import static io.micronaut.health.HealthStatus.DOWN;
 import static io.micronaut.health.HealthStatus.UNKNOWN;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.health.HealthStatus;
+
 /**
- * A HealthNode DTO for ArangoDB {@link HealthCluster} health check information.
+ * A HealthNode DTO for ArangoDB {@link ClusterHealthResponse} health check
+ * information.
  *
  * @author Anton Kurako (GoodforGod)
  * @since 09.3.2020
  */
-public class HealthNode {
+class ClusterHealthNode {
+
+    private static final String ROLE_LEADER = "Agent Leader";
 
     public enum NodeRole {
         AGENT,
@@ -57,7 +60,7 @@ public class HealthNode {
         return nodeId;
     }
 
-    public HealthNode setNodeId(String nodeId) {
+    public ClusterHealthNode setNodeId(String nodeId) {
         this.nodeId = nodeId;
         return this;
     }
@@ -79,7 +82,7 @@ public class HealthNode {
     }
 
     public String getRole() {
-        return role;
+        return isLeading() ? ROLE_LEADER : role;
     }
 
     public boolean isCanBeDeleted() {

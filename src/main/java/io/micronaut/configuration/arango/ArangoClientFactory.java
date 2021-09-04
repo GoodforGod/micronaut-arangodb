@@ -1,11 +1,11 @@
 package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDB;
+import io.micronaut.configuration.arango.internal.ArangoClientImpl;
 import io.micronaut.context.annotation.*;
 import io.micronaut.runtime.context.scope.Refreshable;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 
 /**
  * Default factory for creating ArangoDB client {@link ArangoClient}.
@@ -28,7 +28,7 @@ public class ArangoClientFactory {
     @Bean(preDestroy = "close")
     @Singleton
     @Primary
-    public ArangoClient getClient(ArangoDB accessor, ArangoConfiguration configuration) {
+    ArangoClient getClient(ArangoDB accessor, ArangoConfiguration configuration) {
         return getClientPrototype(accessor, configuration);
     }
 
@@ -43,7 +43,7 @@ public class ArangoClientFactory {
     @Bean(preDestroy = "close")
     @Named("prototype")
     @Prototype
-    protected ArangoClient getClientPrototype(ArangoDB accessor, ArangoConfiguration configuration) {
-        return new ArangoClient(accessor, configuration);
+    ArangoClient getClientPrototype(ArangoDB accessor, ArangoConfiguration configuration) {
+        return new ArangoClientImpl(accessor, configuration);
     }
 }

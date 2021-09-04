@@ -4,7 +4,7 @@ plugins {
 
     id "io.micronaut.library" version "2.0.3"
     id "org.sonarqube" version "3.3"
-    id "com.diffplug.spotless" version "5.11.0"
+    id "com.diffplug.spotless" version "5.14.3"
 }
 
 repositories {
@@ -20,9 +20,10 @@ targetCompatibility = 11
 
 spotless {
     java {
-        encoding "UTF-8"
+        encoding("UTF-8")
+        importOrder()
         removeUnusedImports()
-        eclipse().configFile "${projectDir}/config/codestyle.xml"
+        eclipse().configFile("${projectDir}/config/codestyle.xml")
     }
 }
 
@@ -35,7 +36,7 @@ sonarqube {
 }
 
 micronaut {
-    version("2.5.12")
+    version("3.0.0")
     processing {
         incremental(true)
         module(project.name)
@@ -52,6 +53,7 @@ dependencies {
 
     implementation "org.apache.httpcomponents:httpclient:4.5.13"
     implementation "io.micronaut:micronaut-management"
+    implementation "io.projectreactor:reactor-core"
 
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
 
@@ -67,6 +69,7 @@ dependencies {
 }
 
 test {
+    failFast(true)
     useJUnitPlatform()
     testLogging {
         events("passed", "skipped", "failed")
@@ -77,17 +80,6 @@ test {
         html.enabled(false)
         junitXml.enabled(false)
     }
-}
-
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-    options.incremental = true
-    options.fork = true
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
 }
 
 publishing {
@@ -135,18 +127,22 @@ publishing {
     }
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding("UTF-8")
+    options.incremental(true)
+    options.fork = true
+}
+
 check.dependsOn jacocoTestReport
 jacocoTestReport {
     reports {
-        xml.enabled true
-        html.destination file("${buildDir}/jacocoHtml")
-    }
-}
-
-if (project.hasProperty("signing.keyId")) {
-    apply plugin: "signing"
-    signing {
-        sign publishing.publications.mavenJava
+        xml.enabled(true)
+        html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
     }
 }
 
@@ -154,5 +150,12 @@ javadoc {
     options.encoding = "UTF-8"
     if (JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption("html5", true)
+    }
+}
+
+if (project.hasProperty("signing.keyId")) {
+    apply plugin: "signing"
+    signing {
+        sign publishing.publications.mavenJava
     }
 }

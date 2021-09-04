@@ -2,13 +2,12 @@ package io.micronaut.configuration.arango;
 
 import io.micronaut.context.ApplicationContext;
 import io.testcontainers.arangodb.containers.ArangoContainer;
-import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Test;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * @author Anton Kurako (GoodforGod)
@@ -29,7 +28,7 @@ class ArangoClientTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClient client = context.getBean(ArangoClient.class);
-            assertEquals("custom", client.database());
+            assertEquals("custom", client.db().name());
 
             final boolean databaseExists = client.db().exists();
             assertFalse(databaseExists);
@@ -44,7 +43,7 @@ class ArangoClientTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync clientAsync = context.getBean(ArangoClientAsync.class);
-            assertEquals("async-custom", clientAsync.database());
+            assertEquals("async-custom", clientAsync.db().name());
             assertNotNull(clientAsync.toString());
 
             final Boolean created = clientAsync.db().create().join();
@@ -60,7 +59,11 @@ class ArangoClientTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClient client = context.getBean(ArangoClient.class);
-            assertEquals("sync-custom", client.database());
+            assertEquals("sync-custom", client.db().name());
+            assertNotNull(client.toString());
+            assertNotNull(client.db());
+            assertNotNull(client.properties());
+            assertNotNull(client.accessor());
             assertNotNull(client.toString());
 
             final Boolean created = client.db().create();

@@ -12,7 +12,7 @@ This project includes integration between Micronaut and ArangoDB.
 [**Gradle**](https://mvnrepository.com/artifact/com.github.goodforgod/micronaut-arangodb)
 ```groovy
 dependencies {
-    compile 'com.github.goodforgod:micronaut-arangodb:2.4.0'
+    compile 'com.github.goodforgod:micronaut-arangodb:3.0.0'
 }
 ```
 
@@ -21,7 +21,7 @@ dependencies {
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>2.4.0</version>
+    <version>3.0.0</version>
 </dependency>
 ```
 
@@ -37,12 +37,6 @@ arangodb:
   database: _system   # default (is used for health check)
   user: root          # default
   password: 1234      # or no pass if auth is not required
-```
-
-To use the drivers, just add a dependency to your application.
-
-```groovy
-compile 'com.arangodb:arangodb-java-driver'
 ```
 
 ### Accessors
@@ -128,8 +122,8 @@ Check [ArangoDB official](https://www.arangodb.com/docs/stable/drivers/java-refe
 
 ```yaml
 arangodb:
-  hosts: localhost:8080,localhost:8081    # default to host - localhost:8081
-  timeout: 3000                           # default - 10000 in milliseconds
+  hosts: localhost:8080,localhost:8081    # default to host - localhost:8080
+  timeout: 10000ms                        # default - 10000 in milliseconds
   chunksize: 3000                         # default - 30000
   max-connections: 30                     # default - 1
   connection-ttl: 200                     # default - null
@@ -141,7 +135,7 @@ Hosts can be passed to configuration as Strings (useful when passed via environm
 
 ```yaml
 arangodb:
-  hosts: localhost:8080,localhost:8081    # default to host - localhost:8081
+  hosts: localhost:8080,localhost:8081    # default to host - localhost:8080
 ```
 
 Or can be passed as list (useful for manual configuring):
@@ -189,13 +183,13 @@ on startup you can set it via property.
 
 ```yaml
 arangodb:
-  create-database-timeout-in-millis: 500 # default - 10000
+  create-database-timeout: 10000ms      # default - 10000
 ```
 
 In case you want to create database asynchronously you can specify that via this property:
 ```yaml
 arangodb:
-  create-database-async: true    # default - false
+  create-database-async: true           # default - false
 ```
 
 ### Health Check
@@ -216,7 +210,7 @@ Example of ArangoDB health:
       "name": "arangodb",
       "status": "UP",
       "details": {
-        "version": "3.6.1",
+        "version": "3.7.13",
         "database": "_system"
       }
     }
@@ -232,7 +226,7 @@ You can explicitly *turn off* health check.
 arangodb:
   health:
     enabled: false            # default - true 
-    timeout-in-millis: 5000   # default - 5000
+    timeout: 5000ms           # default - 5000
     retry: 2                  # default - 2
 ```
 
@@ -250,43 +244,33 @@ ArangoDB Cluster Health output example:
 
 ```json
 {
-  "name": "service",
-  "status": "UP",
+  "name": "service-name",
+  "status": "DOWN",
   "details": {
-    "arangodb (cluster)": {
-      "name": "arangodb (cluster)",
-      "status": "UP",
+    "arangodb-cluster": {
+      "name": "service-name",
+      "status": "DOWN",
       "details": {
-        "clusterId": "89b7e1a8-53f5-44ea-bb5c-9e7cb201417c",
-        "nodes": [
+        "clusterId": "752f578b-8884-47ef-8984-894ae110d259",
+        "version": "3.7.13",
+        "database": "_system",
+        "cluster": [
           {
-            "name": "Coordinator0002",
-            "status": "GOOD"
+            "status": "UP",
+            "nodes": [
+              "Coordinator0002",
+              "DBServer0002",
+              "DBServer0001",
+              "Agent",
+              "Agent Leader",
+              "Agent"
+            ]
           },
           {
-            "name": "Coordinator0001",
-            "status": "GOOD"
-          },
-          {
-            "name": "DBServer0001",
-            "status": "GOOD"
-          },
-          {
-            "name": "DBServer0002",
-            "status": "GOOD"
-          },
-          {
-            "name": "AGENT (AGNT-4206f181-8791-4c3f-952d-79d9aa58b7c2)",
-            "leading": true,
-            "status": "GOOD"
-          },
-          {
-            "name": "AGENT (AGNT-2cc832bf-a8b7-4f8a-823a-15d778594bc1)",
-            "status": "GOOD"
-          },
-          {
-            "name": "AGENT (AGNT-78172be0-1adc-47ea-8152-3a3b0ab0b10e)",
-            "status": "GOOD"
+            "status": "DOWN",
+            "nodes": [
+              "Coordinator0001"
+            ]
           }
         ]
       }
@@ -305,7 +289,7 @@ arangodb:
   health:
     cluster:
       enabled: true             # default - false
-      timeout-in-millis: 5000   # default - 5000
+      timeout: 5000ms           # default - 5000
       retry: 2                  # default - 2
 ```
 
@@ -318,6 +302,8 @@ TestContainers allows you to use integration tests against real database in all 
 check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Micronaut Compatability
+
+Starting from version *3.0.0* library ships for *Micronaut 3*.
 
 Starting from version *2.0.0* library ships for *Micronaut 2*.
 

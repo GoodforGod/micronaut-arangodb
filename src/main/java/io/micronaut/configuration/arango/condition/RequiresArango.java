@@ -2,7 +2,6 @@ package io.micronaut.configuration.arango.condition;
 
 import io.micronaut.configuration.arango.ArangoSettings;
 import io.micronaut.context.annotation.Requires;
-
 import java.lang.annotation.*;
 
 /**
