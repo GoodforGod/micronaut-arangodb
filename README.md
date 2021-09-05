@@ -157,7 +157,7 @@ Check for [more info](https://www.arangodb.com/docs/stable/programs-arangod-ssl.
 arangodb:
   ssl: 
     enabled: true                       # default - false
-    certifiacte:
+    certificate:
       enabled: true
       value:                            # certificate as base64
       alias: arangodb
