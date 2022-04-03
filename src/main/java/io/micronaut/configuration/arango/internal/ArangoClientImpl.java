@@ -2,6 +2,7 @@ package io.micronaut.configuration.arango.internal;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
+import com.arangodb.DbName;
 import io.micronaut.configuration.arango.ArangoAsyncConfiguration;
 import io.micronaut.configuration.arango.ArangoClient;
 import io.micronaut.configuration.arango.ArangoConfiguration;
@@ -31,7 +32,7 @@ public class ArangoClientImpl implements ArangoClient {
 
     public ArangoClientImpl(ArangoDB accessor, ArangoConfiguration configuration) {
         this.accessor = accessor;
-        this.database = accessor.db(configuration.getDatabase());
+        this.database = accessor.db(DbName.of(configuration.getDatabase()));
         this.properties = configuration.getProperties().entrySet().stream()
                 .collect(Collectors.toUnmodifiableMap(e -> e.getKey().toString(), Map.Entry::getValue));
     }
@@ -63,6 +64,6 @@ public class ArangoClientImpl implements ArangoClient {
 
     @Override
     public String toString() {
-        return "[database=" + database.name() + ']';
+        return "[database=" + database.dbName().get() + ']';
     }
 }

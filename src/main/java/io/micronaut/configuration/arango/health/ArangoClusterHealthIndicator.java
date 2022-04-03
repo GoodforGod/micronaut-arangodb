@@ -4,6 +4,7 @@ import static io.micronaut.core.util.StringUtils.isEmpty;
 import static io.micronaut.health.HealthStatus.*;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.DbName;
 import com.arangodb.velocystream.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.configuration.arango.ArangoConfiguration;
@@ -64,7 +65,7 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
 
     @Override
     public Publisher<HealthResult> getResult() {
-        return Mono.fromCallable(() -> accessor.db(database).route("/_admin/cluster/health").get())
+        return Mono.fromCallable(() -> accessor.db(DbName.of(database)).route("/_admin/cluster/health").get())
                 .timeout(healthConfiguration.getTimeout())
                 .retry(healthConfiguration.getRetry())
                 .map(this::buildHealthResponse)
