@@ -15,7 +15,7 @@ public interface ArangoClientAsync extends AutoCloseable {
 
     /**
      * @return Accessor to specified ArangoDB database
-     *         {@link ArangoAsyncConfiguration#getDatabase()}.
+     *             {@link ArangoAsyncConfiguration#getDatabase()}.
      */
     ArangoDatabaseAsync db();
 

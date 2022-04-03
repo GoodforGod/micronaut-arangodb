@@ -71,7 +71,9 @@ public class ArangoDatabaseInitializer {
         } catch (ArangoDBException e) {
             throw e;
         } catch (Exception e) {
-            final Throwable cause = (e instanceof CompletionException) ? e.getCause() : e;
+            final Throwable cause = (e instanceof CompletionException)
+                    ? e.getCause()
+                    : e;
             throw new ApplicationStartupException("Arango Database initialization failed due to: " + cause.getMessage(), cause);
         }
     }

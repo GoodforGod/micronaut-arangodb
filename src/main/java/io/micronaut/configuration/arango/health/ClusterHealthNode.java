@@ -82,7 +82,9 @@ class ClusterHealthNode {
     }
 
     public String getRole() {
-        return isLeading() ? ROLE_LEADER : role;
+        return isLeading()
+                ? ROLE_LEADER
+                : role;
     }
 
     public boolean isCanBeDeleted() {
