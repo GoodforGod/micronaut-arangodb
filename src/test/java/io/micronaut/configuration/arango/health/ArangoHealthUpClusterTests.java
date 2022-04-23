@@ -6,7 +6,8 @@ import io.micronaut.health.HealthStatus;
 import io.micronaut.management.endpoint.health.HealthEndpoint;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
-import io.testcontainers.arangodb.cluster.ArangoClusterDefault;
+import io.testcontainers.arangodb.cluster.ArangoCluster;
+import io.testcontainers.arangodb.cluster.ArangoClusterBuilder;
 import io.testcontainers.arangodb.containers.ArangoContainer;
 import java.time.Duration;
 import java.util.Collection;
@@ -27,7 +28,7 @@ import reactor.core.publisher.Mono;
 @Testcontainers
 class ArangoHealthUpClusterTests extends ArangoRunner {
 
-    private static final ArangoClusterDefault CLUSTER_DEFAULT = ArangoClusterDefault.build(ArangoContainer.LATEST);
+    private static final ArangoCluster CLUSTER_DEFAULT = ArangoClusterBuilder.buildDefault(ArangoContainer.LATEST);
 
     @Container
     private static final ArangoContainer agent1 = CLUSTER_DEFAULT.getAgent1();

@@ -33,7 +33,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals("custom", client.db().name());
+            assertEquals("custom", client.db().dbName().get());
             assertTrue(client.db().exists().join());
         }
     }
@@ -47,7 +47,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals("custom", client.db().name());
+            assertEquals("custom", client.db().dbName().get());
             assertTrue(client.db().exists().join());
         }
     }
@@ -61,7 +61,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals(ArangoSettings.SYSTEM_DATABASE, client.db().name());
+            assertEquals(ArangoSettings.SYSTEM_DATABASE, client.db().dbName().get());
             assertTrue(client.db().exists().join());
         }
     }
@@ -75,7 +75,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals("nodata", client.db().name());
+            assertEquals("nodata", client.db().dbName().get());
             assertFalse(client.db().exists().join());
         }
     }
@@ -129,7 +129,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
             Thread.sleep(2000);
 
             final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals(database, client.db().name());
+            assertEquals(database, client.db().dbName().get());
             assertTrue(client.db().exists().join());
 
             final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);

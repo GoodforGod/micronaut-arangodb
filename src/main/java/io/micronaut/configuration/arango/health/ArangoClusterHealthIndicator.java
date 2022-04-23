@@ -4,6 +4,7 @@ import static io.micronaut.core.util.StringUtils.isEmpty;
 import static io.micronaut.health.HealthStatus.*;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.DbName;
 import com.arangodb.velocystream.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.configuration.arango.ArangoConfiguration;
@@ -64,7 +65,7 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
 
     @Override
     public Publisher<HealthResult> getResult() {
-        return Mono.fromCallable(() -> accessor.db(database).route("/_admin/cluster/health").get())
+        return Mono.fromCallable(() -> accessor.db(DbName.of(database)).route("/_admin/cluster/health").get())
                 .timeout(healthConfiguration.getTimeout())
                 .retry(healthConfiguration.getRetry())
                 .map(this::buildHealthResponse)
@@ -76,7 +77,9 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
             final Map<String, Object> details = buildDetails(health);
             final List<String> downNodes = streamCriticalNodes(health)
                     .filter(n -> DOWN.equals(n.getHealthStatus()))
-                    .map(h -> isEmpty(h.getShortName()) ? h.getRoleWithNodeId() : h.getShortName())
+                    .map(h -> isEmpty(h.getShortName())
+                            ? h.getRoleWithNodeId()
+                            : h.getShortName())
                     .collect(Collectors.toList());
 
             if (!downNodes.isEmpty()) {
@@ -118,7 +121,9 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
     private List<String> getNodeNames(ClusterHealthResponse clusterHealthResponse, HealthStatus status) {
         return clusterHealthResponse.streamNodes()
                 .filter(n -> status.equals(n.getHealthStatus()))
-                .map(n -> isEmpty(n.getShortName()) ? n.getRole() : n.getShortName())
+                .map(n -> isEmpty(n.getShortName())
+                        ? n.getRole()
+                        : n.getShortName())
                 .collect(Collectors.toList());
     }
 

@@ -1,5 +1,6 @@
 package io.micronaut.configuration.arango;
 
+import com.arangodb.DbName;
 import com.arangodb.async.ArangoDBAsync;
 import com.arangodb.entity.DatabaseEntity;
 import io.micronaut.context.ApplicationContext;
@@ -21,7 +22,7 @@ class ArangoClientAsyncAuthTests extends ArangoRunner {
 
     @Container
     private static final ArangoContainer ARANGO_CONTAINER = new ArangoContainer(ArangoContainer.LATEST)
-            .withFixedPort(ArangoContainer.PORT_DEFAULT)
+            .withFixedPort(ArangoContainer.DEFAULT_PORT)
             .withPassword(PASS);
 
     @Test
@@ -33,7 +34,7 @@ class ArangoClientAsyncAuthTests extends ArangoRunner {
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoDBAsync accessor = context.getBean(ArangoDBAsync.class);
             assertNotNull(accessor.toString());
-            accessor.db(ArangoSettings.SYSTEM_DATABASE).getInfo().join();
+            accessor.db(DbName.of(ArangoSettings.SYSTEM_DATABASE)).getInfo().join();
         } catch (Exception e) {
             assertNotNull(e);
         }
@@ -47,7 +48,7 @@ class ArangoClientAsyncAuthTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoDBAsync accessor = context.getBean(ArangoDBAsync.class);
-            final DatabaseEntity entity = accessor.db(ArangoSettings.SYSTEM_DATABASE).getInfo().join();
+            final DatabaseEntity entity = accessor.db(DbName.of(ArangoSettings.SYSTEM_DATABASE)).getInfo().join();
             assertNotNull(entity);
         }
     }

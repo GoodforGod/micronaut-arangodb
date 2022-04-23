@@ -6,15 +6,17 @@ package io.micronaut.configuration.arango;
  * @author Anton Kurako (GoodforGod)
  * @since 1.3.2020
  */
-public interface ArangoSettings {
+public final class ArangoSettings {
+
+    private ArangoSettings() {}
 
     /**
      * Prefix to use for all ArangoDB settings.
      */
-    String PREFIX = "arangodb";
+    public static final String PREFIX = "arangodb";
 
     /**
      * ArangoDB default database name
      */
-    String SYSTEM_DATABASE = "_system";
+    public static final String SYSTEM_DATABASE = "_system";
 }

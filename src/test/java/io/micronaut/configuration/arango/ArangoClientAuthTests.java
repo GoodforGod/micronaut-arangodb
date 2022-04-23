@@ -1,6 +1,7 @@
 package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.DbName;
 import com.arangodb.Protocol;
 import com.arangodb.entity.DatabaseEntity;
 import io.micronaut.context.ApplicationContext;
@@ -24,7 +25,7 @@ class ArangoClientAuthTests extends ArangoRunner {
 
     @Container
     private static final ArangoContainer ARANGO_CONTAINER = new ArangoContainer(ArangoContainer.LATEST)
-            .withFixedPort(ArangoContainer.PORT_DEFAULT)
+            .withFixedPort(ArangoContainer.DEFAULT_PORT)
             .withPassword(PASS);
 
     @Test
@@ -36,7 +37,7 @@ class ArangoClientAuthTests extends ArangoRunner {
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoDB accessor = context.getBean(ArangoDB.class);
             assertNotNull(accessor.toString());
-            accessor.db(ArangoSettings.SYSTEM_DATABASE).getInfo();
+            accessor.db(DbName.of(ArangoSettings.SYSTEM_DATABASE)).getInfo();
             fail("Should've failed with auth error");
         } catch (Exception e) {
             assertNotNull(e);
@@ -53,7 +54,7 @@ class ArangoClientAuthTests extends ArangoRunner {
             final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
 
             final ArangoDB accessor = context.getBean(ArangoDB.class);
-            final DatabaseEntity entity = accessor.db(ArangoSettings.SYSTEM_DATABASE).getInfo();
+            final DatabaseEntity entity = accessor.db(DbName.of(ArangoSettings.SYSTEM_DATABASE)).getInfo();
             assertNotNull(entity);
 
             configuration.setProtocol(Protocol.VST);

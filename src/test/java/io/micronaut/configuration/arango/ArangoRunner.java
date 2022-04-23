@@ -12,6 +12,6 @@ public abstract class ArangoRunner extends Assertions {
     protected static ArangoContainer getContainer() {
         return new ArangoContainer("3.7.13")
                 .withoutAuth()
-                .withFixedPort(ArangoContainer.PORT_DEFAULT);
+                .withFixedPort(ArangoContainer.DEFAULT_PORT);
     }
 }

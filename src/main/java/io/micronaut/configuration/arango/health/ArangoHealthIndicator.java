@@ -4,6 +4,7 @@ import static io.micronaut.health.HealthStatus.DOWN;
 import static io.micronaut.health.HealthStatus.UP;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.DbName;
 import com.arangodb.entity.DatabaseEntity;
 import io.micronaut.configuration.arango.ArangoConfiguration;
 import io.micronaut.configuration.arango.ArangoSettings;
@@ -50,7 +51,7 @@ public class ArangoHealthIndicator implements HealthIndicator {
 
     @Override
     public Publisher<HealthResult> getResult() {
-        return Mono.fromCallable(() -> accessor.db(database).getInfo())
+        return Mono.fromCallable(() -> accessor.db(DbName.of(database)).getInfo())
                 .timeout(healthConfiguration.getTimeout())
                 .retry(healthConfiguration.getRetry())
                 .map(this::buildUpReport)

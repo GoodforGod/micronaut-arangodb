@@ -11,9 +11,7 @@ This project includes integration between Micronaut and ArangoDB.
 
 [**Gradle**](https://mvnrepository.com/artifact/com.github.goodforgod/micronaut-arangodb)
 ```groovy
-dependencies {
-    compile 'com.github.goodforgod:micronaut-arangodb:3.0.0'
-}
+implementation "com.github.goodforgod:micronaut-arangodb:3.1.0"
 ```
 
 [**Maven**](https://mvnrepository.com/artifact/com.github.goodforgod/micronaut-arangodb)
@@ -21,7 +19,7 @@ dependencies {
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
 </dependency>
 ```
 

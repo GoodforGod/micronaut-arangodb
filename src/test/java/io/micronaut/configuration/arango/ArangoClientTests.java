@@ -28,7 +28,7 @@ class ArangoClientTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClient client = context.getBean(ArangoClient.class);
-            assertEquals("custom", client.db().name());
+            assertEquals("custom", client.db().dbName().get());
 
             final boolean databaseExists = client.db().exists();
             assertFalse(databaseExists);
@@ -43,7 +43,7 @@ class ArangoClientTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClientAsync clientAsync = context.getBean(ArangoClientAsync.class);
-            assertEquals("async-custom", clientAsync.db().name());
+            assertEquals("async-custom", clientAsync.db().dbName().get());
             assertNotNull(clientAsync.toString());
 
             final Boolean created = clientAsync.db().create().join();
@@ -59,7 +59,7 @@ class ArangoClientTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClient client = context.getBean(ArangoClient.class);
-            assertEquals("sync-custom", client.db().name());
+            assertEquals("sync-custom", client.db().dbName().get());
             assertNotNull(client.toString());
             assertNotNull(client.db());
             assertNotNull(client.properties());
