@@ -3,7 +3,7 @@ plugins {
     id "maven-publish"
 
     id "org.sonarqube" version "3.3"
-    id "com.diffplug.spotless" version "6.1.0"
+    id "com.diffplug.spotless" version "6.5.0"
     id "io.micronaut.library" version "3.3.2"
 
 }
@@ -20,7 +20,7 @@ sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
 micronaut {
-    version("3.4.1")
+    version("3.4.2")
     processing {
         incremental(true)
         module(project.name)
@@ -34,7 +34,6 @@ dependencies {
 
     api "com.arangodb:arangodb-java-driver:6.16.1"
 
-    implementation "org.apache.httpcomponents:httpclient:4.5.13"
     implementation "io.micronaut:micronaut-management"
     implementation "io.projectreactor:reactor-core"
 
