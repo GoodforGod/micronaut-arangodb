@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Assertions;
  */
 public abstract class ArangoRunner extends Assertions {
 
+    protected static final String TAG = "3.9.1";
+
     protected static ArangoContainer getContainer() {
-        return new ArangoContainer("3.7.13")
-                .withoutAuth()
-                .withFixedPort(ArangoContainer.DEFAULT_PORT);
+        return new ArangoContainer(TAG);
     }
 }

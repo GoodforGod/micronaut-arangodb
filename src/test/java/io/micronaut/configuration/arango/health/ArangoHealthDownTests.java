@@ -26,7 +26,8 @@ import reactor.core.publisher.Flux;
 class ArangoHealthDownTests extends ArangoRunner {
 
     @Container
-    private static final ArangoContainer ARANGO_CONTAINER = new ArangoContainer(ArangoContainer.LATEST).withoutAuth()
+    private static final ArangoContainer ARANGO_CONTAINER = getContainer()
+            .withoutAuth()
             .withFixedPort(8528);
 
     @Inject

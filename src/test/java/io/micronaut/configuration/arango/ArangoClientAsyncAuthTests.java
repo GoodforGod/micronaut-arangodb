@@ -21,7 +21,7 @@ class ArangoClientAsyncAuthTests extends ArangoRunner {
     private static final String PASS = "mypass";
 
     @Container
-    private static final ArangoContainer ARANGO_CONTAINER = new ArangoContainer(ArangoContainer.LATEST)
+    private static final ArangoContainer ARANGO_CONTAINER = getContainer()
             .withFixedPort(ArangoContainer.DEFAULT_PORT)
             .withPassword(PASS);
 

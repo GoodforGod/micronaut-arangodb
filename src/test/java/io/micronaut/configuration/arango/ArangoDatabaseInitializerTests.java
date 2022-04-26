@@ -22,7 +22,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 class ArangoDatabaseInitializerTests extends ArangoRunner {
 
     @Container
-    private static final ArangoContainer container = getContainer();
+    private static final ArangoContainer container = getContainer()
+            .withoutAuth()
+            .withFixedPort(ArangoContainer.DEFAULT_PORT);
 
     @Order(1)
     @Test

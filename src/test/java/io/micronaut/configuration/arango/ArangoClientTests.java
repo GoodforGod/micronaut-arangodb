@@ -1,5 +1,8 @@
 package io.micronaut.configuration.arango;
 
+import com.arangodb.entity.BaseDocument;
+import com.arangodb.entity.CollectionEntity;
+import com.arangodb.entity.DocumentCreateEntity;
 import io.micronaut.context.ApplicationContext;
 import io.testcontainers.arangodb.containers.ArangoContainer;
 import java.util.HashMap;
@@ -18,6 +21,7 @@ class ArangoClientTests extends ArangoRunner {
 
     @Container
     private static final ArangoContainer container = getContainer()
+            .withoutAuth()
             .withFixedPort(8528);
 
     @Test
@@ -48,6 +52,65 @@ class ArangoClientTests extends ArangoRunner {
 
             final Boolean created = clientAsync.db().create().join();
             assertTrue(created);
+        }
+    }
+
+    @Test
+    void createDatabaseSimpleQuerySuccess() {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.port", 8528);
+        properties.put("arangodb.database", "custom");
+
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoClientAsync clientAsync = context.getBean(ArangoClientAsync.class);
+            assertEquals("custom", clientAsync.db().dbName().get());
+            assertNotNull(clientAsync.toString());
+
+            final Boolean dbCreated = clientAsync.db().create().join();
+            assertTrue(dbCreated);
+
+            final CollectionEntity custom = clientAsync.db().collection("custom").create().join();
+            assertNotNull(custom);
+
+            final BaseDocument document = new BaseDocument();
+            document.setKey("1");
+
+            final DocumentCreateEntity<BaseDocument> created = clientAsync.db().collection("custom").insertDocument(document)
+                    .join();
+            assertNotNull(created);
+
+            final BaseDocument found = clientAsync.db().collection("custom").getDocument("1", BaseDocument.class).join();
+            assertEquals(created.getKey(), found.getKey());
+        }
+    }
+
+    @Test
+    void createDatabaseForProtocolHttpSimpleQuerySuccess() {
+        final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.port", 8528);
+        properties.put("arangodb.database", "custom");
+        properties.put("arangodb.protocol", "HTTP_JSON");
+
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoClientAsync clientAsync = context.getBean(ArangoClientAsync.class);
+            assertEquals("custom", clientAsync.db().dbName().get());
+            assertNotNull(clientAsync.toString());
+
+            final Boolean dbCreated = clientAsync.db().create().join();
+            assertTrue(dbCreated);
+
+            final CollectionEntity custom = clientAsync.db().collection("custom").create().join();
+            assertNotNull(custom);
+
+            final BaseDocument document = new BaseDocument();
+            document.setKey("1");
+
+            final DocumentCreateEntity<BaseDocument> created = clientAsync.db().collection("custom").insertDocument(document)
+                    .join();
+            assertNotNull(created);
+
+            final BaseDocument found = clientAsync.db().collection("custom").getDocument("1", BaseDocument.class).join();
+            assertEquals(created.getKey(), found.getKey());
         }
     }
 

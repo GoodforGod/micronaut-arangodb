@@ -17,7 +17,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 class ArangoClientAsyncTests extends ArangoRunner {
 
     @Container
-    private static final ArangoContainer container = getContainer();
+    private static final ArangoContainer container = getContainer()
+            .withoutAuth()
+            .withFixedPort(ArangoContainer.DEFAULT_PORT);
 
     @Test
     void createConnectionWithCustomDatabaseAndDatabaseNotExistByDefault() {
