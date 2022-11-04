@@ -6,9 +6,12 @@ import io.micronaut.configuration.arango.ssl.SSLContextProvider;
 import io.micronaut.context.annotation.*;
 import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.runtime.context.scope.Refreshable;
+
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.net.ssl.SSLContext;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Default factory for creating ArangoDB Async Connection {@link ArangoDBAsync}.
@@ -31,7 +34,7 @@ public class ArangoAccessorAsyncFactory {
     @Bean(preDestroy = "shutdown")
     @Primary
     @Prototype
-    ArangoDBAsync getAccessor(ArangoAsyncConfiguration configuration, SSLContextProvider sslContextProvider) {
+    ArangoDBAsync getAccessor(ArangoAsyncConfiguration configuration, SSLContextProvider sslContextProvider, List<ArangoDBAsyncBuilderConfigurator> configurators) {
         final ArangoSSLConfiguration sslConfiguration = configuration.getSslConfiguration();
 
         final ArangoDBAsync.Builder builder = new ArangoDBAsync.Builder();
@@ -42,6 +45,9 @@ public class ArangoAccessorAsyncFactory {
                 builder.useSsl(true).sslContext(sslContext);
             }
 
+            if (Objects.nonNull(configurators) && !configurators.isEmpty()) {
+                configurators.forEach(consumer -> consumer.accept(builder));
+            }
             return builder.build();
         } catch (IOException e) {
             throw new ConfigurationException(e.getMessage(), e);
