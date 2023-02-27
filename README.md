@@ -52,6 +52,22 @@ private ArangoDBAsync async;
 private ArangoDB sync;
 ```
 
+### ArangoSerialization
+
+You can provide custom *ArangoSerialization* module as bean and it will be used while building ArangoDB accessor or client.
+
+ArangoSerialization factory example:
+```java
+@Factory
+public class ArangoSerializationFactory {
+
+    @Bean
+    public ArangoSerialization getArangoSerialization() {
+        return new ArangoJack();
+    }
+}
+```
+
 ### Clients
 
 Configuration supports setup database for your application 
