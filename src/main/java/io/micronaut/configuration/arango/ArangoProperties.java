@@ -16,6 +16,7 @@ public final class ArangoProperties {
     public static final String PORT = "arangodb.port";
     public static final String USER = "arangodb.user";
     public static final String PASSWORD = "arangodb.password";
+    public static final String JWT = "arangodb.jwt";
     public static final String TIMEOUT = "arangodb.timeout";
     public static final String PROTOCOL = "arangodb.protocol";
     public static final String USE_SSL = "arangodb.usessl";
@@ -26,4 +27,5 @@ public final class ArangoProperties {
     public static final String ACQUIRE_HOST_LIST = "arangodb.acquireHostList";
     public static final String ACQUIRE_HOST_LIST_INTERVAL = "arangodb.acquireHostList.interval";
     public static final String LOAD_BALANCING_STRATEGY = "arangodb.loadBalancingStrategy";
+    public static final String RESPONSE_QUEUE_TIME_SAMPLES = "arangodb.metrics.responseQueueTimeSamples";
 }

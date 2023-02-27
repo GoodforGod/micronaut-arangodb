@@ -18,6 +18,7 @@ import java.util.Properties;
 public class ArangoConfiguration extends AbstractArangoConfiguration {
 
     private Protocol protocol;
+    private Integer responseQueueTimeSamples;
 
     @Inject
     public ArangoConfiguration(ArangoSSLConfiguration sslConfiguration) {
@@ -36,12 +37,27 @@ public class ArangoConfiguration extends AbstractArangoConfiguration {
         this.protocol = protocol;
     }
 
+    public Integer getResponseQueueTimeSamples() {
+        return responseQueueTimeSamples;
+    }
+
+    /**
+     * @param responseQueueTimeSamples Setting the amount of samples kept for queue time metrics
+     */
+    public void setResponseQueueTimeSamples(Integer responseQueueTimeSamples) {
+        this.responseQueueTimeSamples = responseQueueTimeSamples;
+    }
+
     @Override
     public Properties getProperties() {
         final Properties properties = super.getProperties();
         if (protocol != null) {
             properties.setProperty(ArangoProperties.PROTOCOL, String.valueOf(getProtocol()));
         }
+        if (responseQueueTimeSamples != null) {
+            properties.setProperty(ArangoProperties.RESPONSE_QUEUE_TIME_SAMPLES, String.valueOf(getResponseQueueTimeSamples()));
+        }
+
         return properties;
     }
 }

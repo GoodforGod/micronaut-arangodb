@@ -17,13 +17,14 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 class ArangoClientAsyncTests extends ArangoRunner {
 
     @Container
-    private static final ArangoContainer container = getContainer()
+    private static final ArangoContainer CONTAINER = getContainer()
             .withoutAuth()
             .withFixedPort(ArangoContainer.DEFAULT_PORT);
 
     @Test
     void createConnectionWithCustomDatabaseAndDatabaseNotExistByDefault() {
         final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.port", CONTAINER.getPort());
         properties.put("arangodb.database", "custom");
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
@@ -38,6 +39,7 @@ class ArangoClientAsyncTests extends ArangoRunner {
     @Test
     void createConnectionWithCreateDatabaseIfNotExistOnStartup() {
         final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.port", CONTAINER.getPort());
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.create-database-if-not-exist", true);
         properties.put("arangodb.load-balancing-strategy", "ONE_RANDOM");
@@ -58,6 +60,7 @@ class ArangoClientAsyncTests extends ArangoRunner {
     @Test
     void asyncAccessorIsAvailable() {
         final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.port", CONTAINER.getPort());
         properties.put("arangodb.database", "custom");
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {

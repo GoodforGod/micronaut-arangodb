@@ -32,6 +32,7 @@ public abstract class AbstractArangoConfiguration {
 
     private String user = ArangoDefaults.DEFAULT_USER;
     private String password;
+    private String jwt;
     private String host = ArangoDefaults.DEFAULT_HOST;
     private List<String> hosts;
     private int port = ArangoDefaults.DEFAULT_PORT;
@@ -70,6 +71,10 @@ public abstract class AbstractArangoConfiguration {
         if (StringUtils.isNotEmpty(getPassword())) {
             properties.setProperty(ArangoProperties.PASSWORD, getPassword());
         }
+        if (getJwt() != null) {
+            properties.setProperty(ArangoProperties.JWT, getJwt());
+        }
+
         properties.setProperty(ArangoProperties.TIMEOUT, String.valueOf(getTimeout().toMillis()));
         properties.setProperty(ArangoProperties.USE_SSL, String.valueOf(getSslConfiguration().isEnabled()));
         properties.setProperty(ArangoProperties.CHUNK_SIZE, String.valueOf(getChunksize()));
@@ -80,6 +85,7 @@ public abstract class AbstractArangoConfiguration {
         if (getKeepAliveInterval() != null) {
             properties.setProperty(ArangoProperties.KEEP_ALIVE_INTERVAL, String.valueOf(getKeepAliveInterval()));
         }
+
         properties.setProperty(ArangoProperties.ACQUIRE_HOST_LIST, String.valueOf(getAcquireHostList()));
         properties.setProperty(ArangoProperties.ACQUIRE_HOST_LIST_INTERVAL, String.valueOf(getAcquireHostListInterval()));
         properties.setProperty(ArangoProperties.LOAD_BALANCING_STRATEGY, String.valueOf(getLoadBalancingStrategy()));
@@ -235,6 +241,17 @@ public abstract class AbstractArangoConfiguration {
         if (timeout.isNegative())
             throw new ConfigurationException("Timeout for driver can not be less than 0");
         this.timeout = timeout;
+    }
+
+    public String getJwt() {
+        return jwt;
+    }
+
+    /**
+     * @param jwt Sets the JWT for the user authentication.
+     */
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
     }
 
     /**
