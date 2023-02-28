@@ -1,13 +1,19 @@
 package io.micronaut.configuration.arango;
 
+import com.arangodb.ArangoDBException;
 import com.arangodb.entity.BaseDocument;
 import com.arangodb.entity.CollectionEntity;
 import com.arangodb.entity.DocumentCreateEntity;
+import com.arangodb.mapping.ArangoJack;
+import com.arangodb.util.ArangoSerialization;
+import com.arangodb.velocypack.VPackSlice;
 import io.micronaut.context.ApplicationContext;
 import io.testcontainers.arangodb.containers.ArangoContainer;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -39,49 +45,105 @@ class ArangoClientTests extends ArangoRunner {
     }
 
     @Test
+    void createWithCustomSerialization() {
+        final Map<String, Object> properties = new HashMap<>();
+        final String database = "custom-serialization";
+        final String collection = "custom-serialization";
+        properties.put("arangodb.port", CONTAINER.getPort());
+        properties.put("arangodb.database", database);
+
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final AtomicInteger counter = new AtomicInteger();
+
+            context.registerSingleton(new ArangoSerialization() {
+
+                private final ArangoJack jack = new ArangoJack();
+
+                @Override
+                public <T> T deserialize(VPackSlice vpack, Type type) throws ArangoDBException {
+                    counter.incrementAndGet();
+                    return jack.deserialize(vpack, type);
+                }
+
+                @Override
+                public VPackSlice serialize(Object entity) throws ArangoDBException {
+                    counter.incrementAndGet();
+                    return jack.serialize(entity);
+                }
+
+                @Override
+                public VPackSlice serialize(Object entity, Options options) throws ArangoDBException {
+                    counter.incrementAndGet();
+                    return jack.serialize(entity, options);
+                }
+            });
+
+            final ArangoClient clientAsync = context.getBean(ArangoClient.class);
+            assertEquals(database, clientAsync.db().dbName().get());
+            assertNotNull(clientAsync.toString());
+
+            final Boolean dbCreated = clientAsync.db().create();
+            assertTrue(dbCreated);
+
+            final CollectionEntity custom = clientAsync.db().collection(collection).create();
+            assertNotNull(custom);
+
+            final BaseDocument document = new BaseDocument();
+            document.setKey("1");
+
+            final DocumentCreateEntity<BaseDocument> created = clientAsync.db().collection(collection).insertDocument(document);
+            assertNotNull(created);
+
+            final BaseDocument found = clientAsync.db().collection(collection).getDocument("1", BaseDocument.class);
+            assertEquals(created.getKey(), found.getKey());
+
+            assertNotEquals(0, counter.get());
+        }
+    }
+
+    @Test
     void createDatabaseSuccess() {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.port", CONTAINER.getPort());
         properties.put("arangodb.database", "async-custom");
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
-            final ArangoClientAsync clientAsync = context.getBean(ArangoClientAsync.class);
+            final ArangoClient clientAsync = context.getBean(ArangoClient.class);
             assertEquals("async-custom", clientAsync.db().dbName().get());
             assertNotNull(clientAsync.toString());
 
-            final Boolean created = clientAsync.db().create().join();
+            final Boolean created = clientAsync.db().create();
             assertTrue(created);
         }
     }
 
     @Test
     void createDatabaseSimpleQuerySuccess() {
-        final String database = "custom123";
-        final String collection = "custom123";
+        final String database = "custom123456";
+        final String collection = "custom123456";
 
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.port", CONTAINER.getPort());
         properties.put("arangodb.database", database);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
-            final ArangoClientAsync clientAsync = context.getBean(ArangoClientAsync.class);
+            final ArangoClient clientAsync = context.getBean(ArangoClient.class);
             assertEquals(database, clientAsync.db().dbName().get());
             assertNotNull(clientAsync.toString());
 
-            final Boolean dbCreated = clientAsync.db().create().join();
+            final Boolean dbCreated = clientAsync.db().create();
             assertTrue(dbCreated);
 
-            final CollectionEntity custom = clientAsync.db().collection(collection).create().join();
+            final CollectionEntity custom = clientAsync.db().collection(collection).create();
             assertNotNull(custom);
 
             final BaseDocument document = new BaseDocument();
             document.setKey("1");
 
-            final DocumentCreateEntity<BaseDocument> created = clientAsync.db().collection(collection).insertDocument(document)
-                    .join();
+            final DocumentCreateEntity<BaseDocument> created = clientAsync.db().collection(collection).insertDocument(document);
             assertNotNull(created);
 
-            final BaseDocument found = clientAsync.db().collection(collection).getDocument("1", BaseDocument.class).join();
+            final BaseDocument found = clientAsync.db().collection(collection).getDocument("1", BaseDocument.class);
             assertEquals(created.getKey(), found.getKey());
         }
     }
@@ -94,24 +156,23 @@ class ArangoClientTests extends ArangoRunner {
         properties.put("arangodb.protocol", "HTTP_JSON");
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
-            final ArangoClientAsync clientAsync = context.getBean(ArangoClientAsync.class);
+            final ArangoClient clientAsync = context.getBean(ArangoClient.class);
             assertEquals("custom", clientAsync.db().dbName().get());
             assertNotNull(clientAsync.toString());
 
-            final Boolean dbCreated = clientAsync.db().create().join();
+            final Boolean dbCreated = clientAsync.db().create();
             assertTrue(dbCreated);
 
-            final CollectionEntity custom = clientAsync.db().collection("custom").create().join();
+            final CollectionEntity custom = clientAsync.db().collection("custom").create();
             assertNotNull(custom);
 
             final BaseDocument document = new BaseDocument();
             document.setKey("1");
 
-            final DocumentCreateEntity<BaseDocument> created = clientAsync.db().collection("custom").insertDocument(document)
-                    .join();
+            final DocumentCreateEntity<BaseDocument> created = clientAsync.db().collection("custom").insertDocument(document);
             assertNotNull(created);
 
-            final BaseDocument found = clientAsync.db().collection("custom").getDocument("1", BaseDocument.class).join();
+            final BaseDocument found = clientAsync.db().collection("custom").getDocument("1", BaseDocument.class);
             assertEquals(created.getKey(), found.getKey());
         }
     }

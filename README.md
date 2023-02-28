@@ -54,7 +54,9 @@ private ArangoDB sync;
 
 ### ArangoSerialization
 
-You can provide custom *ArangoSerialization* module as bean and it will be used while building ArangoDB accessor or client.
+You can provide custom *ArangoSerialization* module as bean, and it will be used while building ArangoDB accessor or client.
+
+[ArangoJack](https://github.com/arangodb/jackson-dataformat-velocypack) is official serializer available.
 
 ArangoSerialization factory example:
 ```java
