@@ -11,7 +11,7 @@ This project includes integration between Micronaut and ArangoDB.
 
 [**Gradle**](https://mvnrepository.com/artifact/com.github.goodforgod/micronaut-arangodb)
 ```groovy
-implementation "com.github.goodforgod:micronaut-arangodb:3.1.0"
+implementation "com.github.goodforgod:micronaut-arangodb:3.2.0"
 ```
 
 [**Maven**](https://mvnrepository.com/artifact/com.github.goodforgod/micronaut-arangodb)
@@ -19,7 +19,7 @@ implementation "com.github.goodforgod:micronaut-arangodb:3.1.0"
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>3.1.0</version>
+    <version>3.2.0</version>
 </dependency>
 ```
 
@@ -50,6 +50,24 @@ private ArangoDBAsync async;
 
 @Inject
 private ArangoDB sync;
+```
+
+### ArangoSerialization
+
+You can provide custom *ArangoSerialization* module as bean, and it will be used while building ArangoDB accessor or client.
+
+[ArangoJack](https://github.com/arangodb/jackson-dataformat-velocypack) is official serializer available.
+
+ArangoSerialization factory example:
+```java
+@Factory
+public class ArangoSerializationFactory {
+
+    @Bean
+    public ArangoSerialization getArangoSerialization() {
+        return new ArangoJack();
+    }
+}
 ```
 
 ### Clients

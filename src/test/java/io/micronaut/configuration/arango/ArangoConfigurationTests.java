@@ -8,13 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * @author Anton Kurako (GoodforGod)
  * @since 28.2.2020
  */
-@Testcontainers
 class ArangoConfigurationTests extends ArangoRunner {
 
     @Test
@@ -25,6 +23,8 @@ class ArangoConfigurationTests extends ArangoRunner {
         properties.put("arangodb.max-connections", 111);
         properties.put("arangodb.acquire-host-list", true);
         properties.put("arangodb.load-balancing-strategy", "ONE_RANDOM");
+        properties.put("arangodb.jwt", "123");
+        properties.put("arangodb.responseQueueTimeSamples", 123);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
@@ -33,6 +33,8 @@ class ArangoConfigurationTests extends ArangoRunner {
             assertEquals("ONE_RANDOM", configuration.getLoadBalancingStrategy().name());
             assertEquals(111, configuration.getMaxConnections());
             assertTrue(configuration.getAcquireHostList());
+            assertEquals("123", configuration.getJwt());
+            assertEquals(123, configuration.getResponseQueueTimeSamples());
 
             final ArangoHealthConfiguration healthConfiguration = context.getBean(ArangoHealthConfiguration.class);
             assertNotNull(healthConfiguration);

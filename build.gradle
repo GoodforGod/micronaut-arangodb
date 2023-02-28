@@ -3,9 +3,8 @@ plugins {
     id "maven-publish"
 
     id "org.sonarqube" version "3.3"
-    id "com.diffplug.spotless" version "6.1.0"
-    id "io.micronaut.library" version "3.3.2"
-
+    id "com.diffplug.spotless" version "6.12.0"
+    id "io.micronaut.library" version "3.7.2"
 }
 
 repositories {
@@ -20,7 +19,7 @@ sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
 micronaut {
-    version("3.4.2")
+    version("3.8.5")
     processing {
         incremental(true)
         module(project.name)
@@ -32,18 +31,23 @@ dependencies {
     annotationProcessor "io.micronaut:micronaut-inject-java"
     compileOnly "io.micronaut:micronaut-inject-java"
 
-    api "com.arangodb:arangodb-java-driver:6.16.1"
+    api "com.arangodb:arangodb-java-driver:6.20.0"
 
-    implementation "org.apache.httpcomponents:httpclient:4.5.13"
     implementation "io.micronaut:micronaut-management"
     implementation "io.projectreactor:reactor-core"
 
+    implementation("org.apache.httpcomponents:httpclient:4.5.14") {
+        exclude group: "org.apache.httpcomponents", module: "httpclient"
+    }
+    implementation "commons-codec:commons-codec:1.15"
+
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
 
-    testRuntimeOnly "ch.qos.logback:logback-classic:1.2.11"
+    testRuntimeOnly "ch.qos.logback:logback-classic:1.4.5"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    testRuntimeOnly "com.arangodb:jackson-dataformat-velocypack:4.0.1"
 
-    testImplementation "org.testcontainers:junit-jupiter:1.16.3"
+    testImplementation "org.testcontainers:junit-jupiter:1.17.6"
     testImplementation "com.github.goodforgod:arangodb-testcontainer:2.0.0"
 
     testImplementation "io.micronaut.test:micronaut-test-core"

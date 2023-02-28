@@ -24,13 +24,14 @@ class ArangoClientAuthTests extends ArangoRunner {
     private static final String PASS = "mypass";
 
     @Container
-    private static final ArangoContainer ARANGO_CONTAINER = new ArangoContainer(ArangoContainer.LATEST)
+    private static final ArangoContainer CONTAINER = getContainer()
             .withFixedPort(ArangoContainer.DEFAULT_PORT)
             .withPassword(PASS);
 
     @Test
     void createConnectionWithUserAndPassword() {
         final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.port", CONTAINER.getPort());
         properties.put("arangodb.user", "tom");
         properties.put("arangodb.password", "1234");
 
@@ -47,6 +48,7 @@ class ArangoClientAuthTests extends ArangoRunner {
     @Test
     void createConnectionSuccessWithCorrectAuth() {
         final Map<String, Object> properties = new HashMap<>();
+        properties.put("arangodb.port", CONTAINER.getPort());
         properties.put("arangodb.user", "root");
         properties.put("arangodb.password", PASS);
 
@@ -64,6 +66,8 @@ class ArangoClientAuthTests extends ArangoRunner {
             configuration.setConnectionTtl(10000L);
             configuration.setHosts(List.of("localhost:8080", "localhost:8081"));
             configuration.setHost("localhost");
+            configuration.setJwt("123");
+            configuration.setResponseQueueTimeSamples(123);
 
             final Properties configurationProperties = configuration.getProperties();
             assertNotNull(configurationProperties.getProperty(ArangoProperties.HOSTS));

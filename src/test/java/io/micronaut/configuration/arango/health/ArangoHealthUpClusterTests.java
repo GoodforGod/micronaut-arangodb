@@ -28,7 +28,7 @@ import reactor.core.publisher.Mono;
 @Testcontainers
 class ArangoHealthUpClusterTests extends ArangoRunner {
 
-    private static final ArangoCluster CLUSTER_DEFAULT = ArangoClusterBuilder.buildDefault(ArangoContainer.LATEST);
+    private static final ArangoCluster CLUSTER_DEFAULT = ArangoClusterBuilder.buildDefault(TAG);
 
     @Container
     private static final ArangoContainer agent1 = CLUSTER_DEFAULT.getAgent1();
