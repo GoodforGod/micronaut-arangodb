@@ -66,6 +66,8 @@ class ArangoClientAuthTests extends ArangoRunner {
             configuration.setConnectionTtl(10000L);
             configuration.setHosts(List.of("localhost:8080", "localhost:8081"));
             configuration.setHost("localhost");
+            configuration.setJwt("123");
+            configuration.setResponseQueueTimeSamples(123);
 
             final Properties configurationProperties = configuration.getProperties();
             assertNotNull(configurationProperties.getProperty(ArangoProperties.HOSTS));
