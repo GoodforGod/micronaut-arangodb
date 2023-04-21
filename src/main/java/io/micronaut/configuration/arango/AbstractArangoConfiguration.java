@@ -33,12 +33,14 @@ public abstract class AbstractArangoConfiguration {
     private String user = ArangoDefaults.DEFAULT_USER;
     private String password;
     private String jwt;
-    private String host = ArangoDefaults.DEFAULT_HOST;
     private List<String> hosts;
+    private String host = ArangoDefaults.DEF;
     private int port = ArangoDefaults.DEFAULT_PORT;
     private String database = SYSTEM_DATABASE;
     private Duration timeout = Duration.ofSeconds(10);
-    private int chunksize = ArangoDefaults.CHUNK_DEFAULT_CONTENT_SIZE;
+    private int chunksize = ArangoDefaults.DEFAULT_CHUNK_SIZE;
+    private int chunksizeMin = ArangoDefaults.CHUNK_MIN_HEADER_SIZE;
+    private int chunksizeMax = ArangoDefaults.CHUNK_MAX_HEADER_SIZE;
     private int maxConnections = ArangoDefaults.MAX_CONNECTIONS_VST_DEFAULT;
     private Long connectionTtl;
     private Integer keepAliveInterval;

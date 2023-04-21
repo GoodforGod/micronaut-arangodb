@@ -1,6 +1,7 @@
 package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDB;
+import com.arangodb.serde.ArangoSerde;
 import com.arangodb.util.ArangoSerialization;
 import io.micronaut.configuration.arango.ssl.ArangoSSLConfiguration;
 import io.micronaut.configuration.arango.ssl.SSLContextProvider;
@@ -35,7 +36,7 @@ public class ArangoAccessorFactory {
     @Prototype
     ArangoDB getAccessor(ArangoConfiguration configuration,
                          SSLContextProvider sslContextProvider,
-                         @Nullable ArangoSerialization serialization) {
+                         @Nullable ArangoSerde serde) {
         final ArangoSSLConfiguration sslConfiguration = configuration.getSslConfiguration();
 
         final ArangoDB.Builder builder = new ArangoDB.Builder();
@@ -46,9 +47,9 @@ public class ArangoAccessorFactory {
                 builder.useSsl(true).sslContext(sslContext);
             }
 
-            return (serialization == null)
+            return (serde == null)
                     ? builder.build()
-                    : builder.serializer(serialization).build();
+                    : builder.serde(serde).build();
         } catch (IOException e) {
             throw new ConfigurationException(e.getMessage(), e);
         }

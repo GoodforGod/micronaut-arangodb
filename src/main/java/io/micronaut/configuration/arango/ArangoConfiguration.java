@@ -26,7 +26,7 @@ public class ArangoConfiguration extends AbstractArangoConfiguration {
     }
 
     /**
-     * @see com.arangodb.ArangoDB.Builder#useProtocol(Protocol)
+     * @see com.arangodb.ArangoDB.Builder#protocol(Protocol)
      * @return protocol value
      */
     public Protocol getProtocol() {

@@ -1,7 +1,6 @@
 package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDB;
-import io.micronaut.configuration.arango.internal.ArangoClientImpl;
 import io.micronaut.context.annotation.*;
 import io.micronaut.runtime.context.scope.Refreshable;
 import jakarta.inject.Named;

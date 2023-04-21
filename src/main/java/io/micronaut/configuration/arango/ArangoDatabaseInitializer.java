@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
  * @since 16.3.2020
  */
 @Requires(property = ArangoSettings.PREFIX + ".create-database-if-not-exist", value = "true", defaultValue = "false")
-@Requires(beans = ArangoAsyncConfiguration.class)
+@Requires(beans = ArangoConfiguration.class)
 @Context
 @Internal
 public class ArangoDatabaseInitializer {
@@ -30,8 +30,7 @@ public class ArangoDatabaseInitializer {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @PostConstruct
-    public void setupDatabase(ArangoClientAsync clientAsync,
-                              ArangoAsyncConfiguration configuration) {
+    public void setupDatabase(ArangoClient client, ArangoConfiguration configuration) {
         final String database = configuration.getDatabase();
         if (ArangoSettings.SYSTEM_DATABASE.equals(database)) {
             logger.debug("Arango is configured to use System Database, skipping initialization");
@@ -41,29 +40,28 @@ public class ArangoDatabaseInitializer {
         if (configuration.isCreateDatabaseAsync()) {
             CompletableFuture.runAsync(() -> {
                 try {
-                    initializeDatabaseSynchronously(clientAsync, configuration);
+                    initializeDatabaseSynchronously(client, configuration);
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                 }
             });
         } else {
-            initializeDatabaseSynchronously(clientAsync, configuration);
+            initializeDatabaseSynchronously(client, configuration);
         }
     }
 
-    protected void initializeDatabaseSynchronously(ArangoClientAsync clientAsync,
-                                                   ArangoAsyncConfiguration configuration) {
+    protected void initializeDatabaseSynchronously(ArangoClient client, ArangoConfiguration configuration) {
         final String database = configuration.getDatabase();
         final Duration timeout = configuration.getCreateDatabaseTimeout();
 
         try {
             logger.debug("Arango Database '{}' initialization starting...", database);
             final long startTime = System.currentTimeMillis();
-            clientAsync.db().exists()
-                    .thenCompose(exist -> exist
-                            ? CompletableFuture.completedFuture(true)
-                            : clientAsync.db().create())
-                    .get(timeout.toMillis(), TimeUnit.MILLISECONDS);
+            if(!client.db().exists()) {
+                CompletableFuture.supplyAsync(() -> client.db().create())
+                        .get(timeout.toMillis(), TimeUnit.MILLISECONDS);
+            }
+
             final long tookTime = System.currentTimeMillis() - startTime;
             logger.debug("Arango Database '{}' creation took '{}' millis", database, tookTime);
         } catch (TimeoutException e) {

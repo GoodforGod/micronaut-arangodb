@@ -1,11 +1,9 @@
-package io.micronaut.configuration.arango.internal;
+package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.DbName;
-import io.micronaut.configuration.arango.ArangoAsyncConfiguration;
-import io.micronaut.configuration.arango.ArangoClient;
-import io.micronaut.configuration.arango.ArangoConfiguration;
+
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -16,11 +14,10 @@ import java.util.stream.Collectors;
  * @author Anton Kurako (GoodforGod)
  * @since 15.3.2020
  */
-public class ArangoClientImpl implements ArangoClient {
+final class ArangoClientImpl implements ArangoClient {
 
     /**
-     * Configured database name for application
-     * {@link ArangoAsyncConfiguration#getDatabase()}.
+     * Configured database name for application {@link ArangoConfiguration#getDatabase()}.
      */
     private final ArangoDatabase database;
     private final Map<String, Object> properties;
