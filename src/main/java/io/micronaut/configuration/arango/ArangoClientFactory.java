@@ -16,17 +16,9 @@ import jakarta.inject.Singleton;
 @Factory
 public class ArangoClientFactory {
 
-    /**
-     * Factory method to return a client.
-     *
-     * @param accessor      that will be used in client
-     * @param configuration configuration pulled in
-     * @return {@link ArangoClient}
-     */
     @Refreshable(ArangoSettings.PREFIX)
     @Bean(preDestroy = "close")
     @Singleton
-    @Primary
     ArangoClient getClient(ArangoDB accessor, ArangoConfiguration configuration) {
         return getClientPrototype(accessor, configuration);
     }
@@ -42,6 +34,7 @@ public class ArangoClientFactory {
     @Bean(preDestroy = "close")
     @Named("prototype")
     @Prototype
+    @Secondary
     ArangoClient getClientPrototype(ArangoDB accessor, ArangoConfiguration configuration) {
         return new ArangoClientImpl(accessor, configuration);
     }

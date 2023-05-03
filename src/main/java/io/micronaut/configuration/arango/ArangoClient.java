@@ -2,7 +2,6 @@ package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
-import java.util.Map;
 
 /**
  * ArangoDB Sync Accessor {@link ArangoDB} and database name as configured for
@@ -23,9 +22,4 @@ public interface ArangoClient extends AutoCloseable {
      * @return Configured ArangoDB accessor {@link ArangoDB}.
      */
     ArangoDB accessor();
-
-    /**
-     * @return Properties accessor as configured with {@link ArangoProperties}
-     */
-    Map<String, Object> properties();
 }

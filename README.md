@@ -11,7 +11,7 @@ This project includes integration between Micronaut and ArangoDB.
 
 [**Gradle**](https://mvnrepository.com/artifact/com.github.goodforgod/micronaut-arangodb)
 ```groovy
-implementation "com.github.goodforgod:micronaut-arangodb:3.2.0"
+implementation "com.github.goodforgod:micronaut-arangodb:4.0.0"
 ```
 
 [**Maven**](https://mvnrepository.com/artifact/com.github.goodforgod/micronaut-arangodb)
@@ -19,7 +19,7 @@ implementation "com.github.goodforgod:micronaut-arangodb:3.2.0"
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>3.2.0</version>
+    <version>4.0.0</version>
 </dependency>
 ```
 
@@ -39,33 +39,37 @@ arangodb:
 
 ### Accessors
 
-Both async *ArangoDBAsync* and sync *ArangoDB* accessors are then available for dependency injection.
+*ArangoDB* accessor is available for dependency injection.
 
-Accessors injected as [**prototypes**](https://docs.micronaut.io/latest/guide/index.html#builtInScopes) 
+Accessors injected as [**singleton**](https://docs.micronaut.io/latest/guide/index.html#builtInScopes) 
 beans remember that while using them.
 
 ```java
 @Inject
-private ArangoDBAsync async;
-
-@Inject
-private ArangoDB sync;
+private ArangoDB accessor;
 ```
 
-### ArangoSerialization
+In case you want inject clients as [**prototypes**](https://docs.micronaut.io/latest/guide/index.html#builtInScopes)
+you can use *named* bean injection.
 
-You can provide custom *ArangoSerialization* module as bean, and it will be used while building ArangoDB accessor or client.
+```java
+@Named("prototype")
+@Inject
+private ArangoDB accessor;    
+```
 
-[ArangoJack](https://github.com/arangodb/jackson-dataformat-velocypack) is official serializer available.
+### ArangoSerde
+
+You can provide custom *ArangoSerde* serialization module as bean, and it will be used while building ArangoDB accessor or client.
 
 ArangoSerialization factory example:
 ```java
 @Factory
-public class ArangoSerializationFactory {
+public class ArangoSerdeFactory {
 
     @Bean
-    public ArangoSerialization getArangoSerialization() {
-        return new ArangoJack();
+    public ArangoSerde getArangoSerde() {
+        return new JacksonSerdeImpl(new ObjectMapper());
     }
 }
 ```
@@ -75,17 +79,14 @@ public class ArangoSerializationFactory {
 Configuration supports setup database for your application 
 (ArangoDB accessors do not require or have database config).
 
-So in order to use database specified as per [configuration](#Configuration) inject provided Arango Clients instead.
+In order to use database specified as per [configuration](#Configuration) inject provided Arango Clients instead.
 
 Clients injected as [**singletons**](https://docs.micronaut.io/latest/guide/index.html#builtInScopes) 
 beans remember that while using them.
 
 ```java
 @Inject
-private ArangoClientAsync asyncClient;
-
-@Inject
-private ArangoClient syncClient;
+private ArangoClient client;
 ```
 
 Both clients provide as sync and async implementation and are same [accessors](#Accessors) 
@@ -97,18 +98,11 @@ So you can use connection with knowledge about database your app is working with
 class ArangoClientTests {
 
     @Inject
-    private ArangoClientAsync asyncClient;    
-
-    @Inject
-    private ArangoClient syncClient;    
+    private ArangoClient client;    
 
     void checkConfiguredDatabase() {
-        final String databaseAsync = asyncClient.getDatabase(); // Database as per config
-        final String databaseSync = syncClient.getDatabase(); // Database as per config
+        final String databaseSync = client.getDatabase(); // Database as per config
         assertEquals(database, database);
-    
-        final ArangoDBAsync async = asyncClient.accessor();
-        final ArangoDB sync = syncClient.accessor();
     }
 }
 ```
@@ -119,11 +113,7 @@ you can use *named* bean injection.
 ```java
 @Named("prototype")
 @Inject
-private ArangoClientAsync asyncClient;    
-
-@Named("prototype")
-@Inject
-private ArangoClient syncClient;    
+private ArangoClient client;    
 ```
 
 ### Configuring ArangoDB Driver
@@ -138,13 +128,22 @@ Check [ArangoDB official](https://www.arangodb.com/docs/stable/drivers/java-refe
 
 ```yaml
 arangodb:
-  hosts: localhost:8080,localhost:8081    # default to host - localhost:8080
+  hosts: localhost:8080,localhost:8081    # default - null
+  user: user                              # default - root
+  password: password                      # default - null
+  database: _system                       # default - _system
+  protocol: HTTP2_JSON                    # default - HTTP2_JSON
   timeout: 10000ms                        # default - 10000 in milliseconds
+  jwt: YourToken                          # default - null
   chunksize: 3000                         # default - 30000
-  max-connections: 30                     # default - 1
+  connection-max: 30                      # default - 1
   connection-ttl: 200                     # default - null
+  verify-host: true                       # default - true
+  keep-alive-interval: 200                # default - null
   acquire-host-list: true                 # default - false
+  acquire-host-list-interval: 360000      # default - 3600000 (hour)
   load-balancing-strategy: ONE_RANDOM     # default - NONE (check LoadBalancingStrategy for more)
+  response-queue-time-samples: 10         # default - 10
 ```
 
 Hosts can be passed to configuration as Strings (useful when passed via environment):
@@ -239,11 +238,12 @@ Where database *version* is specified and *database* name service is connected t
 You can explicitly *turn off* health check.
 
 ```yaml
-arangodb:
+endpoints:
   health:
-    enabled: false            # default - true 
-    timeout: 5000ms           # default - 5000
-    retry: 2                  # default - 2
+    arangodb:
+      enabled: true             # default - true 
+      timeout: 5000ms           # default - 5000
+      retry: 2                  # default - 2
 ```
 
 #### Cluster Health Check
@@ -301,12 +301,13 @@ or *NodeID* for *Agent* nodes and flag for leading *Agent* node.
 You can turn on Cluster Health Check via configuration:
 
 ```yaml
-arangodb:
+endpoints:
   health:
-    cluster:
-      enabled: true             # default - false
-      timeout: 5000ms           # default - 5000
-      retry: 2                  # default - 2
+    arangodb:
+      cluster:
+        enabled: false            # default - false 
+        timeout: 5000ms           # default - 5000
+        retry: 2                  # default - 2
 ```
 
 ## Testing

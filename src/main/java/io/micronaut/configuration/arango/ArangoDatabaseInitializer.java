@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * ArangoDB database initialization
  *
  * @author Anton Kurako (GoodforGod)
- * @see AbstractArangoConfiguration#isCreateDatabaseIfNotExist()
+ * @see ArangoConfiguration#isCreateDatabaseIfNotExist()
  * @since 16.3.2020
  */
 @Requires(property = ArangoSettings.PREFIX + ".create-database-if-not-exist", value = "true", defaultValue = "false")
@@ -57,7 +57,7 @@ public class ArangoDatabaseInitializer {
         try {
             logger.debug("Arango Database '{}' initialization starting...", database);
             final long startTime = System.currentTimeMillis();
-            if(!client.db().exists()) {
+            if (!client.db().exists()) {
                 CompletableFuture.supplyAsync(() -> client.db().create())
                         .get(timeout.toMillis(), TimeUnit.MILLISECONDS);
             }
