@@ -9,6 +9,7 @@ import com.arangodb.entity.LoadBalancingStrategy;
 import com.arangodb.internal.ArangoDefaults;
 import com.arangodb.internal.InternalArangoDBBuilder;
 import io.micronaut.configuration.arango.ssl.ArangoSSLConfiguration;
+import io.micronaut.context.annotation.ConfigurationBuilder;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.exceptions.ConfigurationException;
@@ -121,6 +122,19 @@ public class ArangoConfiguration {
         }
     }
 
+    public static class ArangoSerdeConfig {
+
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+
     protected final ArangoSSLConfiguration sslConfiguration;
 
     private String user = ArangoDefaults.DEFAULT_USER;
@@ -143,6 +157,9 @@ public class ArangoConfiguration {
     private boolean createDatabaseIfNotExist = false;
     private boolean createDatabaseAsync = false;
     private Duration createDatabaseTimeout = Duration.ofSeconds(10);
+
+    @ConfigurationBuilder("serde")
+    private final ArangoSerdeConfig serde = new ArangoSerdeConfig();
 
     public ArangoConfiguration(ArangoSSLConfiguration sslConfiguration) {
         this.sslConfiguration = sslConfiguration;
@@ -450,6 +467,10 @@ public class ArangoConfiguration {
 
     public ArangoSSLConfiguration getSslConfiguration() {
         return sslConfiguration;
+    }
+
+    public ArangoSerdeConfig getSerde() {
+        return serde;
     }
 
     @Override

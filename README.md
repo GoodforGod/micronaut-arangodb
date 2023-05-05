@@ -1,5 +1,6 @@
 # Micronaut ArangoDB Configuration
 
+[![Minimum required Java version](https://img.shields.io/badge/Java-11%2B-blue?logo=openjdk)](https://openjdk.org/projects/jdk/11/)
 ![Java CI](https://github.com/GoodforGod/micronaut-arangodb/workflows/Java%20CI/badge.svg)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=GoodforGod_micronaut-arangodb&metric=alert_status)](https://sonarcloud.io/dashboard?id=GoodforGod_micronaut-arangodb)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=GoodforGod_micronaut-arangodb&metric=coverage)](https://sonarcloud.io/dashboard?id=GoodforGod_micronaut-arangodb)
@@ -128,6 +129,8 @@ Check [ArangoDB official](https://www.arangodb.com/docs/stable/drivers/java-refe
 
 ```yaml
 arangodb:
+  serde:
+    enabled: true
   hosts: localhost:8080,localhost:8081    # default - null
   user: user                              # default - root
   password: password                      # default - null
@@ -205,6 +208,18 @@ In case you want to create database asynchronously you can specify that via this
 ```yaml
 arangodb:
   create-database-async: true           # default - false
+```
+
+### Micronaut Serialization
+
+Library support by default [Micronaut Serialization](https://micronaut-projects.github.io/micronaut-serialization) module if found on classpath, 
+please check Micronaut documentation on how to configure it.
+
+In case you use [Micronaut Serialization](https://micronaut-projects.github.io/micronaut-serialization) in your application and would like to disable it for ArangoDB module, use option below:
+```yaml
+arangodb:
+  serde:
+    enabled: true     # default - true
 ```
 
 ### Health Check

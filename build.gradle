@@ -30,6 +30,7 @@ micronaut {
 dependencies {
     annotationProcessor "io.micronaut:micronaut-inject-java"
     compileOnly "io.micronaut:micronaut-inject-java"
+    compileOnly "io.micronaut.serde:micronaut-serde-jackson"
 
     api "com.arangodb:arangodb-java-driver:7.0.0"
 
