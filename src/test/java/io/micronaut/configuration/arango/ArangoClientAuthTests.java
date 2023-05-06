@@ -1,7 +1,6 @@
 package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDB;
-import com.arangodb.DbName;
 import com.arangodb.Protocol;
 import com.arangodb.entity.DatabaseEntity;
 import io.micronaut.context.ApplicationContext;
@@ -31,14 +30,14 @@ class ArangoClientAuthTests extends ArangoRunner {
     @Test
     void createConnectionWithUserAndPassword() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.port", CONTAINER.getPort());
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
         properties.put("arangodb.user", "tom");
         properties.put("arangodb.password", "1234");
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoDB accessor = context.getBean(ArangoDB.class);
             assertNotNull(accessor.toString());
-            accessor.db(DbName.of(ArangoSettings.SYSTEM_DATABASE)).getInfo();
+            accessor.db(ArangoSettings.SYSTEM_DATABASE).getInfo();
             fail("Should've failed with auth error");
         } catch (Exception e) {
             assertNotNull(e);
@@ -48,7 +47,7 @@ class ArangoClientAuthTests extends ArangoRunner {
     @Test
     void createConnectionSuccessWithCorrectAuth() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.port", CONTAINER.getPort());
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
         properties.put("arangodb.user", "root");
         properties.put("arangodb.password", PASS);
 
@@ -56,7 +55,7 @@ class ArangoClientAuthTests extends ArangoRunner {
             final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
 
             final ArangoDB accessor = context.getBean(ArangoDB.class);
-            final DatabaseEntity entity = accessor.db(DbName.of(ArangoSettings.SYSTEM_DATABASE)).getInfo();
+            final DatabaseEntity entity = accessor.db(ArangoSettings.SYSTEM_DATABASE).getInfo();
             assertNotNull(entity);
 
             configuration.setProtocol(Protocol.VST);
@@ -65,7 +64,6 @@ class ArangoClientAuthTests extends ArangoRunner {
             configuration.setKeepAliveInterval(10000);
             configuration.setConnectionTtl(10000L);
             configuration.setHosts(List.of("localhost:8080", "localhost:8081"));
-            configuration.setHost("localhost");
             configuration.setJwt("123");
             configuration.setResponseQueueTimeSamples(123);
 

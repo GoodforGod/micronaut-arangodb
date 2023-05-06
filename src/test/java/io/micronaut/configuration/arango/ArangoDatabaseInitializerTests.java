@@ -1,10 +1,11 @@
 package io.micronaut.configuration.arango;
 
+import com.arangodb.ArangoDBException;
 import io.micronaut.context.ApplicationContext;
-import io.micronaut.runtime.exceptions.ApplicationStartupException;
 import io.testcontainers.arangodb.containers.ArangoContainer;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -29,14 +30,14 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
     @Test
     void createConnectionWithCreateDatabaseIfNotExistOnStartup() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.port", CONTAINER.getPort());
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.create-database-if-not-exist", true);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
-            final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals("custom", client.db().dbName().get());
-            assertTrue(client.db().exists().join());
+            final ArangoClient client = context.getBean(ArangoClient.class);
+            assertEquals("custom", client.db().name());
+            assertTrue(client.db().exists());
         }
     }
 
@@ -44,14 +45,14 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
     @Test
     void createdDatabaseInitIsSkipped() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.port", CONTAINER.getPort());
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.create-database-if-not-exist", true);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
-            final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals("custom", client.db().dbName().get());
-            assertTrue(client.db().exists().join());
+            final ArangoClient client = context.getBean(ArangoClient.class);
+            assertEquals("custom", client.db().name());
+            assertTrue(client.db().exists());
         }
     }
 
@@ -59,14 +60,14 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
     @Test
     void defaultDatabaseInitializationIsSkipped() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.port", CONTAINER.getPort());
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
         properties.put("arangodb.database", ArangoSettings.SYSTEM_DATABASE);
         properties.put("arangodb.create-database-if-not-exist", true);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
-            final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals(ArangoSettings.SYSTEM_DATABASE, client.db().dbName().get());
-            assertTrue(client.db().exists().join());
+            final ArangoClient client = context.getBean(ArangoClient.class);
+            assertEquals(ArangoSettings.SYSTEM_DATABASE, client.db().name());
+            assertTrue(client.db().exists());
         }
     }
 
@@ -74,14 +75,14 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
     @Test
     void databaseCreationIsOff() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.port", CONTAINER.getPort());
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
         properties.put("arangodb.database", "nodata");
         properties.put("arangodb.create-database-if-not-exist", false);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
-            final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals("nodata", client.db().dbName().get());
-            assertFalse(client.db().exists().join());
+            final ArangoClient client = context.getBean(ArangoClient.class);
+            assertEquals("nodata", client.db().name());
+            assertFalse(client.db().exists());
         }
     }
 
@@ -90,7 +91,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
     void startUpForContextFailsOnTimeout() {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
-        properties.put("arangodb.port", 8566);
+        properties.put("arangodb.hosts", List.of("localhost:" + 8566));
         properties.put("arangodb.create-database-if-not-exist", true);
         properties.put("arangodb.create-database-timeout", Duration.ofMillis(1));
 
@@ -98,7 +99,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
             fail("Should not happen!");
         } catch (Exception e) {
             assertNotNull(e.getCause());
-            assertTrue(e.getCause().getCause() instanceof ApplicationStartupException);
+            assertTrue(e.getCause().getCause() instanceof ArangoDBException);
         }
     }
 
@@ -107,7 +108,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
     void startUpForContextFailsOnConnectionError() {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("arangodb.database", "custom");
-        properties.put("arangodb.port", 8566);
+        properties.put("arangodb.hosts", List.of("localhost:" + 8566));
         properties.put("arangodb.timeout", Duration.ofSeconds(1));
         properties.put("arangodb.create-database-if-not-exist", true);
         properties.put("arangodb.create-database-timeout", Duration.ofSeconds(10));
@@ -116,7 +117,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
             fail("Should not happen!");
         } catch (Exception e) {
             assertNotNull(e.getCause());
-            assertTrue(e.getCause().getCause() instanceof ApplicationStartupException);
+            assertTrue(e.getCause().getCause() instanceof ArangoDBException);
         }
     }
 
@@ -125,7 +126,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
     void databaseCreateAsync() {
         final Map<String, Object> properties = new HashMap<>();
         final String database = "asyncdb";
-        properties.put("arangodb.port", CONTAINER.getPort());
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
         properties.put("arangodb.database", database);
         properties.put("arangodb.create-database-if-not-exist", true);
         properties.put("arangodb.create-database-async", true);
@@ -134,9 +135,9 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
         try (ApplicationContext context = ApplicationContext.run(properties)) {
             Thread.sleep(2000);
 
-            final ArangoClientAsync client = context.getBean(ArangoClientAsync.class);
-            assertEquals(database, client.db().dbName().get());
-            assertTrue(client.db().exists().join());
+            final ArangoClient client = context.getBean(ArangoClient.class);
+            assertEquals(database, client.db().name());
+            assertTrue(client.db().exists());
 
             final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
             assertTrue(configuration.isCreateDatabaseIfNotExist());

@@ -20,7 +20,8 @@ import reactor.core.publisher.Flux;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Property(name = "arangodb.health.cluster.enabled", value = "true")
+@Property(name = "arangodb.hosts", value = "localhost:8529")
+@Property(name = "endpoints.health.arangodb.cluster.enabled", value = "true")
 @MicronautTest
 @Testcontainers
 class ArangoHealthDownClusterTests extends ArangoRunner {

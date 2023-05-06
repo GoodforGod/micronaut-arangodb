@@ -9,7 +9,7 @@ import io.micronaut.context.annotation.Requires;
  * @since 13.08.2021
  */
 @Requires(property = ArangoSettings.PREFIX)
-@ConfigurationProperties(ArangoSettings.PREFIX + ".health")
+@ConfigurationProperties("endpoints.health.arangodb")
 public class ArangoHealthConfiguration extends AbstractHealthConfiguration {
 
 }

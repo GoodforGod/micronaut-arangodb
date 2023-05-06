@@ -11,7 +11,7 @@ import java.util.stream.Stream;
  * @author Anton Kurako (GoodforGod)
  * @since 09.3.2020
  */
-class ClusterHealthResponse {
+final class ClusterHealthResponse {
 
     @JsonProperty("Health")
     private Map<String, ClusterHealthNode> nodes;
@@ -26,7 +26,9 @@ class ClusterHealthResponse {
 
     @JsonIgnore
     public Stream<ClusterHealthNode> streamNodes() {
-        return nodes.entrySet().stream().map(e -> e.getValue().setNodeId(e.getKey()));
+        return (nodes == null)
+                ? Stream.empty()
+                : nodes.entrySet().stream().map(e -> e.getValue().setNodeId(e.getKey()));
     }
 
     public String getClusterId() {

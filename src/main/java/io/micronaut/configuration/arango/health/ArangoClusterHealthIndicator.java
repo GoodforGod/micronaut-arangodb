@@ -4,11 +4,12 @@ import static io.micronaut.core.util.StringUtils.isEmpty;
 import static io.micronaut.health.HealthStatus.*;
 
 import com.arangodb.ArangoDB;
-import com.arangodb.DbName;
-import com.arangodb.velocystream.Response;
+import com.arangodb.Request;
+import com.arangodb.Response;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.configuration.arango.ArangoConfiguration;
-import io.micronaut.configuration.arango.ArangoSettings;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.util.CollectionUtils;
 import io.micronaut.core.util.StringUtils;
@@ -18,7 +19,10 @@ import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.reactivestreams.Publisher;
@@ -33,7 +37,7 @@ import reactor.core.publisher.Mono;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Requires(property = ArangoSettings.PREFIX + ".health.cluster.enabled", value = "true", defaultValue = "false")
+@Requires(property = "endpoints.health.arangodb.cluster.enabled", value = "true", defaultValue = "false")
 @Requires(beans = ArangoDB.class, classes = HealthIndicator.class)
 @Singleton
 public class ArangoClusterHealthIndicator implements HealthIndicator {
@@ -48,31 +52,35 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
      */
     private static final String NAME = "arangodb-cluster";
     private final ArangoDB accessor;
-    private final ObjectMapper mapper;
     private final String database;
+    private final ObjectMapper mapper;
     private final ArangoClusterHealthConfiguration healthConfiguration;
 
     @Inject
     public ArangoClusterHealthIndicator(ArangoDB accessor,
                                         ArangoConfiguration configuration,
-                                        ObjectMapper mapper,
                                         ArangoClusterHealthConfiguration healthConfiguration) {
         this.accessor = accessor;
-        this.mapper = mapper;
         this.database = configuration.getDatabase();
         this.healthConfiguration = healthConfiguration;
+        this.mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @Override
     public Publisher<HealthResult> getResult() {
-        return Mono.fromCallable(() -> accessor.db(DbName.of(database)).route("/_admin/cluster/health").get())
+        return Mono.fromCallable(() -> accessor.execute(Request.builder()
+                .db(database)
+                .method(Request.Method.GET)
+                .path("/_admin/cluster/health")
+                .build(), JsonNode.class))
                 .timeout(healthConfiguration.getTimeout())
                 .retry(healthConfiguration.getRetry())
                 .map(this::buildHealthResponse)
                 .onErrorResume(e -> Mono.just(buildReport(DOWN, e)));
     }
 
-    private HealthResult buildHealthResponse(Response response) {
+    private HealthResult buildHealthResponse(Response<JsonNode> response) {
         return convertToClusterHealth(response).map(health -> {
             final Map<String, Object> details = buildDetails(health);
             final List<String> downNodes = streamCriticalNodes(health)
@@ -148,12 +156,12 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
         return HealthResult.builder(NAME);
     }
 
-    private Optional<ClusterHealthResponse> convertToClusterHealth(Response response) {
+    private Optional<ClusterHealthResponse> convertToClusterHealth(Response<JsonNode> response) {
         if (HttpStatus.OK.getCode() != response.getResponseCode())
             return Optional.empty();
 
         try {
-            return Optional.ofNullable(mapper.readValue(response.getBody().toString(), ClusterHealthResponse.class));
+            return Optional.ofNullable(mapper.convertValue(response.getBody(), ClusterHealthResponse.class));
         } catch (Exception e) {
             logger.error(e.getMessage());
             return Optional.empty();

@@ -4,10 +4,8 @@ import static io.micronaut.health.HealthStatus.DOWN;
 import static io.micronaut.health.HealthStatus.UP;
 
 import com.arangodb.ArangoDB;
-import com.arangodb.DbName;
 import com.arangodb.entity.DatabaseEntity;
 import io.micronaut.configuration.arango.ArangoConfiguration;
-import io.micronaut.configuration.arango.ArangoSettings;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.management.health.indicator.HealthIndicator;
 import io.micronaut.management.health.indicator.HealthResult;
@@ -25,7 +23,7 @@ import reactor.core.publisher.Mono;
  * @author Anton Kurako (GoodforGod)
  * @since 29.2.2020
  */
-@Requires(property = ArangoSettings.PREFIX + ".health.enabled", value = "true", defaultValue = "true")
+@Requires(property = "endpoints.health.arangodb.enabled", value = "true", defaultValue = "true")
 @Requires(beans = ArangoDB.class, classes = HealthIndicator.class)
 @Singleton
 public class ArangoHealthIndicator implements HealthIndicator {
@@ -51,7 +49,7 @@ public class ArangoHealthIndicator implements HealthIndicator {
 
     @Override
     public Publisher<HealthResult> getResult() {
-        return Mono.fromCallable(() -> accessor.db(DbName.of(database)).getInfo())
+        return Mono.fromCallable(() -> accessor.db(database).getInfo())
                 .timeout(healthConfiguration.getTimeout())
                 .retry(healthConfiguration.getRetry())
                 .map(this::buildUpReport)

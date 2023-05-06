@@ -18,9 +18,9 @@ class ArangoConfigurationTests extends ArangoRunner {
     @Test
     void createConnectionWithCreateDatabaseIfNotExistOnStartup() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.port", 8528);
+        properties.put("arangodb.hosts", List.of("localhost:" + 8528));
         properties.put("arangodb.database", "custom");
-        properties.put("arangodb.max-connections", 111);
+        properties.put("arangodb.connection-max", 111);
         properties.put("arangodb.acquire-host-list", true);
         properties.put("arangodb.load-balancing-strategy", "ONE_RANDOM");
         properties.put("arangodb.jwt", "123");
@@ -28,10 +28,10 @@ class ArangoConfigurationTests extends ArangoRunner {
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
-            assertEquals(8528, configuration.getPort());
+            assertEquals(1, configuration.getHosts().size());
             assertEquals("custom", configuration.getDatabase());
             assertEquals("ONE_RANDOM", configuration.getLoadBalancingStrategy().name());
-            assertEquals(111, configuration.getMaxConnections());
+            assertEquals(111, configuration.getConnectionMax());
             assertTrue(configuration.getAcquireHostList());
             assertEquals("123", configuration.getJwt());
             assertEquals(123, configuration.getResponseQueueTimeSamples());

@@ -1,15 +1,15 @@
 package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDB;
-import com.arangodb.util.ArangoSerialization;
+import com.arangodb.config.ArangoConfigProperties;
+import com.arangodb.serde.ArangoSerde;
 import io.micronaut.configuration.arango.ssl.ArangoSSLConfiguration;
 import io.micronaut.configuration.arango.ssl.SSLContextProvider;
 import io.micronaut.context.annotation.*;
-import io.micronaut.context.exceptions.ConfigurationException;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.runtime.context.scope.Refreshable;
-import java.io.IOException;
-import java.io.InputStream;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import javax.net.ssl.SSLContext;
 
 /**
@@ -22,6 +22,15 @@ import javax.net.ssl.SSLContext;
 @Factory
 public class ArangoAccessorFactory {
 
+    @Refreshable(ArangoSettings.PREFIX)
+    @Bean(preDestroy = "shutdown")
+    @Singleton
+    ArangoDB getAccessor(ArangoConfiguration configuration,
+                         SSLContextProvider sslContextProvider,
+                         @Nullable ArangoSerde serde) {
+        return getAccessorPrototype(configuration, sslContextProvider, serde);
+    }
+
     /**
      * Factory method to return a ArangoDB sync connection.
      *
@@ -31,26 +40,24 @@ public class ArangoAccessorFactory {
      */
     @Refreshable(ArangoSettings.PREFIX)
     @Bean(preDestroy = "shutdown")
-    @Primary
+    @Named("prototype")
     @Prototype
-    ArangoDB getAccessor(ArangoConfiguration configuration,
-                         SSLContextProvider sslContextProvider,
-                         @Nullable ArangoSerialization serialization) {
+    @Secondary
+    ArangoDB getAccessorPrototype(ArangoConfiguration configuration,
+                                  SSLContextProvider sslContextProvider,
+                                  @Nullable ArangoSerde serde) {
         final ArangoSSLConfiguration sslConfiguration = configuration.getSslConfiguration();
 
         final ArangoDB.Builder builder = new ArangoDB.Builder();
-        try (final InputStream properties = configuration.getPropertiesAsInputStream()) {
-            builder.loadProperties(properties);
-            if (sslConfiguration.isEnabled()) {
-                final SSLContext sslContext = sslContextProvider.get(sslConfiguration);
-                builder.useSsl(true).sslContext(sslContext);
-            }
-
-            return (serialization == null)
-                    ? builder.build()
-                    : builder.serializer(serialization).build();
-        } catch (IOException e) {
-            throw new ConfigurationException(e.getMessage(), e);
+        final ArangoConfigProperties properties = configuration.getArangoConfigProperties();
+        builder.loadProperties(properties);
+        if (sslConfiguration.isEnabled()) {
+            final SSLContext sslContext = sslContextProvider.get(sslConfiguration);
+            builder.useSsl(true).sslContext(sslContext);
         }
+
+        return (serde == null)
+                ? builder.build()
+                : builder.serde(serde).build();
     }
 }

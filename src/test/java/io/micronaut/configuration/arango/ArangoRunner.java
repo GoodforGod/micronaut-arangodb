@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Assertions;
  */
 public abstract class ArangoRunner extends Assertions {
 
-    protected static final String TAG = "3.9.1";
+    protected static final String TAG = "3.10.5";
 
     protected static ArangoContainer getContainer() {
         return new ArangoContainer(TAG);

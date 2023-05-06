@@ -14,7 +14,7 @@ import io.micronaut.health.HealthStatus;
  * @author Anton Kurako (GoodforGod)
  * @since 09.3.2020
  */
-class ClusterHealthNode {
+final class ClusterHealthNode {
 
     private static final String ROLE_LEADER = "Agent Leader";
 
