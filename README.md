@@ -210,10 +210,10 @@ arangodb:
 
 ### Micronaut Serialization
 
-Library support by default [Micronaut Serialization](https://micronaut-projects.github.io/micronaut-serialization) module if found on classpath, 
+Library support by default [Micronaut Serialization](https://micronaut-projects.github.io/micronaut-serialization/1.0.x/guide/) module if found on classpath, 
 please check Micronaut documentation on how to configure it and use it.
 
-In case you would like to disable [Micronaut Serialization](https://micronaut-projects.github.io/micronaut-serialization) for ArangoDB module only, use option below:
+In case you would like to disable [Micronaut Serialization](https://micronaut-projects.github.io/micronaut-serialization/1.0.x/guide/) for ArangoDB module only, use option below:
 ```yaml
 arangodb:
   serde:
