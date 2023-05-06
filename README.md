@@ -129,8 +129,6 @@ Check [ArangoDB official](https://www.arangodb.com/docs/stable/drivers/java-refe
 
 ```yaml
 arangodb:
-  serde:
-    enabled: true
   hosts: localhost:8080,localhost:8081    # default - null
   user: user                              # default - root
   password: password                      # default - null
@@ -213,9 +211,9 @@ arangodb:
 ### Micronaut Serialization
 
 Library support by default [Micronaut Serialization](https://micronaut-projects.github.io/micronaut-serialization) module if found on classpath, 
-please check Micronaut documentation on how to configure it.
+please check Micronaut documentation on how to configure it and use it.
 
-In case you use [Micronaut Serialization](https://micronaut-projects.github.io/micronaut-serialization) in your application and would like to disable it for ArangoDB module, use option below:
+In case you would like to disable [Micronaut Serialization](https://micronaut-projects.github.io/micronaut-serialization) for ArangoDB module only, use option below:
 ```yaml
 arangodb:
   serde:

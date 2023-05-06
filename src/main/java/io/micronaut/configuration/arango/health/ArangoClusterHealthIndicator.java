@@ -6,6 +6,8 @@ import static io.micronaut.health.HealthStatus.*;
 import com.arangodb.ArangoDB;
 import com.arangodb.Request;
 import com.arangodb.Response;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.configuration.arango.ArangoConfiguration;
 import io.micronaut.context.annotation.Requires;
@@ -50,19 +52,19 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
      */
     private static final String NAME = "arangodb-cluster";
     private final ArangoDB accessor;
-    private final ObjectMapper mapper;
     private final String database;
+    private final ObjectMapper mapper;
     private final ArangoClusterHealthConfiguration healthConfiguration;
 
     @Inject
     public ArangoClusterHealthIndicator(ArangoDB accessor,
                                         ArangoConfiguration configuration,
-                                        ObjectMapper mapper,
                                         ArangoClusterHealthConfiguration healthConfiguration) {
         this.accessor = accessor;
-        this.mapper = mapper;
         this.database = configuration.getDatabase();
         this.healthConfiguration = healthConfiguration;
+        this.mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @Override
@@ -71,14 +73,14 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
                 .db(database)
                 .method(Request.Method.GET)
                 .path("/_admin/cluster/health")
-                .build(), ClusterHealthResponse.class))
+                .build(), JsonNode.class))
                 .timeout(healthConfiguration.getTimeout())
                 .retry(healthConfiguration.getRetry())
                 .map(this::buildHealthResponse)
                 .onErrorResume(e -> Mono.just(buildReport(DOWN, e)));
     }
 
-    private HealthResult buildHealthResponse(Response<ClusterHealthResponse> response) {
+    private HealthResult buildHealthResponse(Response<JsonNode> response) {
         return convertToClusterHealth(response).map(health -> {
             final Map<String, Object> details = buildDetails(health);
             final List<String> downNodes = streamCriticalNodes(health)
@@ -154,12 +156,12 @@ public class ArangoClusterHealthIndicator implements HealthIndicator {
         return HealthResult.builder(NAME);
     }
 
-    private Optional<ClusterHealthResponse> convertToClusterHealth(Response<ClusterHealthResponse> response) {
+    private Optional<ClusterHealthResponse> convertToClusterHealth(Response<JsonNode> response) {
         if (HttpStatus.OK.getCode() != response.getResponseCode())
             return Optional.empty();
 
         try {
-            return Optional.ofNullable(response.getBody());
+            return Optional.ofNullable(mapper.convertValue(response.getBody(), ClusterHealthResponse.class));
         } catch (Exception e) {
             logger.error(e.getMessage());
             return Optional.empty();

@@ -6,10 +6,7 @@ import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.runtime.exceptions.ApplicationStartupException;
 import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +30,7 @@ public class ArangoDatabaseInitializer {
     public void setupDatabase(ArangoClient client, ArangoConfiguration configuration) {
         final String database = configuration.getDatabase();
         if (ArangoSettings.SYSTEM_DATABASE.equals(database)) {
-            logger.debug("Arango is configured to use System Database, skipping initialization");
+            logger.debug("ArangoDB is configured to use System Database, skipping initialization");
             return;
         }
 
@@ -55,7 +52,7 @@ public class ArangoDatabaseInitializer {
         final Duration timeout = configuration.getCreateDatabaseTimeout();
 
         try {
-            logger.debug("Arango Database '{}' initialization starting...", database);
+            logger.debug("ArangoDB Database '{}' initialization starting...", database);
             final long startTime = System.currentTimeMillis();
             if (!client.db().exists()) {
                 CompletableFuture.supplyAsync(() -> client.db().create())
@@ -63,16 +60,16 @@ public class ArangoDatabaseInitializer {
             }
 
             final long tookTime = System.currentTimeMillis() - startTime;
-            logger.debug("Arango Database '{}' creation took '{}' millis", database, tookTime);
+            logger.debug("ArangoDB Database '{}' created in '{}' millis", database, tookTime);
         } catch (TimeoutException e) {
-            throw new ApplicationStartupException("Arango Database initialization timed out in '" + timeout + "' millis");
+            throw new ApplicationStartupException("ArangoDB Database initialization timed out in '" + timeout + "' millis");
         } catch (ArangoDBException e) {
             throw e;
         } catch (Exception e) {
-            final Throwable cause = (e instanceof CompletionException)
+            final Throwable cause = (e instanceof CompletionException || e instanceof ExecutionException)
                     ? e.getCause()
                     : e;
-            throw new ApplicationStartupException("Arango Database initialization failed due to: " + cause.getMessage(), cause);
+            throw new ApplicationStartupException("ArangoDB Database initialization failed due to: " + cause.getMessage(), cause);
         }
     }
 }
