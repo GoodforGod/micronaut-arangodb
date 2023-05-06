@@ -33,11 +33,9 @@ public class ArangoSerdeFactory {
                 try {
                     return mapper.writeValueAsBytes(value);
                 } catch (IOException e) {
-                    if (value == null) {
-                        throw new SerializationException("Can't serialize", e);
-                    } else {
-                        throw new SerializationException("Can't serialize: " + value.getClass(), e);
-                    }
+                    throw (value == null)
+                            ? new SerializationException("Can't serialize", e)
+                            : new SerializationException("Can't serialize: " + value.getClass(), e);
                 }
             }
 

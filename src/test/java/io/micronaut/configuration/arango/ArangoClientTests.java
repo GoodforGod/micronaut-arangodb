@@ -8,6 +8,7 @@ import com.arangodb.serde.jackson.Key;
 import com.arangodb.serde.jackson.internal.JacksonSerdeImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.context.ApplicationContext;
+import io.micronaut.serde.annotation.Serdeable;
 import io.testcontainers.arangodb.containers.ArangoContainer;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +44,7 @@ class ArangoClientTests extends ArangoRunner {
         }
     }
 
-    static final class Example {
+    static final class CustomSerializationExample {
 
         @Key
         private String id;
@@ -103,18 +104,76 @@ class ArangoClientTests extends ArangoRunner {
             final CollectionEntity custom = client.db().collection(collection).create();
             assertNotNull(custom);
 
-            final Example created = new Example();
+            final CustomSerializationExample created = new CustomSerializationExample();
             created.setId("12345");
             created.setName("bob");
 
             final DocumentCreateEntity<Void> createdEntity = client.db().collection(collection).insertDocument(created);
             assertNotNull(createdEntity);
 
-            final Example found = client.db().collection(collection).getDocument(created.getId(), Example.class);
+            final CustomSerializationExample found = client.db().collection(collection).getDocument(created.getId(),
+                    CustomSerializationExample.class);
             assertEquals(created.getId(), found.getId());
             assertEquals(created.getName(), found.getName());
 
             assertNotEquals(0, counter.get());
+        }
+    }
+
+    @Serdeable
+    static class MicronautSerializationExample {
+
+        @Key
+        private String id;
+        private String name;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    @Test
+    void createWithDefaultMicronautSerialization() {
+        final Map<String, Object> properties = new HashMap<>();
+        final String database = "micronaut-serialization";
+        final String collection = "micronaut-serialization";
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
+        properties.put("arangodb.database", database);
+
+        try (final ApplicationContext context = ApplicationContext.run(properties)) {
+            final ArangoClient client = context.getBean(ArangoClient.class);
+            assertEquals(database, client.db().name());
+            assertNotNull(client.toString());
+
+            final Boolean dbCreated = client.db().create();
+            assertTrue(dbCreated);
+
+            final CollectionEntity custom = client.db().collection(collection).create();
+            assertNotNull(custom);
+
+            final MicronautSerializationExample created = new MicronautSerializationExample();
+            created.setId("12345");
+            created.setName("bob");
+
+            final DocumentCreateEntity<Void> createdEntity = client.db().collection(collection).insertDocument(created);
+            assertNotNull(createdEntity);
+
+            final MicronautSerializationExample found = client.db().collection(collection).getDocument(created.getId(),
+                    MicronautSerializationExample.class);
+            assertEquals(created.getId(), found.getId());
+            assertEquals(created.getName(), found.getName());
         }
     }
 
