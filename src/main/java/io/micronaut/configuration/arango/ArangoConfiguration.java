@@ -68,7 +68,8 @@ public class ArangoConfiguration {
 
         @Override
         public Optional<Integer> getTimeout() {
-            return Optional.of(configuration.getTimeout().toMillisPart());
+            return Optional.of(configuration.getTimeout())
+                    .map(d -> Math.toIntExact(d.toMillis()));
         }
 
         @Override
@@ -93,12 +94,14 @@ public class ArangoConfiguration {
 
         @Override
         public Optional<Long> getConnectionTtl() {
-            return Optional.ofNullable(configuration.getConnectionTtl());
+            return Optional.ofNullable(configuration.getConnectionTtl())
+                    .map(Duration::toMillis);
         }
 
         @Override
         public Optional<Integer> getKeepAliveInterval() {
-            return Optional.ofNullable(configuration.getKeepAliveInterval());
+            return Optional.ofNullable(configuration.getKeepAliveInterval())
+                    .map(d -> Math.toIntExact(d.toSeconds()));
         }
 
         @Override
@@ -108,7 +111,8 @@ public class ArangoConfiguration {
 
         @Override
         public Optional<Integer> getAcquireHostListInterval() {
-            return Optional.of(configuration.getAcquireHostListInterval());
+            return Optional.of(configuration.getAcquireHostListInterval())
+                    .map(d -> Math.toIntExact(d.toMillis()));
         }
 
         @Override
@@ -143,14 +147,14 @@ public class ArangoConfiguration {
     private List<String> hosts;
     private String database = SYSTEM_DATABASE;
     private Protocol protocol = ArangoDefaults.DEFAULT_PROTOCOL;
-    private Duration timeout = Duration.ofSeconds(10);
     private int chunksize = ArangoDefaults.DEFAULT_CHUNK_SIZE;
     private int connectionMax = ArangoDefaults.MAX_CONNECTIONS_HTTP2_DEFAULT;
-    private Long connectionTtl;
-    private Integer keepAliveInterval;
+    private Duration timeout = Duration.ofSeconds(60);
+    private Duration connectionTtl;
+    private Duration keepAliveInterval;
     private Boolean verifyHost = ArangoDefaults.DEFAULT_VERIFY_HOST;
     private boolean acquireHostList = ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST;
-    private int acquireHostListInterval = ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL;
+    private Duration acquireHostListInterval = Duration.ofMillis(ArangoDefaults.DEFAULT_ACQUIRE_HOST_LIST_INTERVAL);
     private LoadBalancingStrategy loadBalancingStrategy = ArangoDefaults.DEFAULT_LOAD_BALANCING_STRATEGY;
     private int responseQueueTimeSamples = ArangoDefaults.DEFAULT_RESPONSE_QUEUE_TIME_SAMPLES;
 
@@ -191,14 +195,15 @@ public class ArangoConfiguration {
         properties.setProperty(ArangoProperties.CHUNK_SIZE, String.valueOf(getChunksize()));
         properties.setProperty(ArangoProperties.MAX_CONNECTIONS, String.valueOf(getConnectionMax()));
         if (getConnectionTtl() != null) {
-            properties.setProperty(ArangoProperties.CONNECTION_TTL, String.valueOf(getConnectionTtl()));
+            properties.setProperty(ArangoProperties.CONNECTION_TTL, String.valueOf(getConnectionTtl().toMillis()));
         }
         if (getKeepAliveInterval() != null) {
-            properties.setProperty(ArangoProperties.KEEP_ALIVE_INTERVAL, String.valueOf(getKeepAliveInterval()));
+            properties.setProperty(ArangoProperties.KEEP_ALIVE_INTERVAL, String.valueOf(getKeepAliveInterval().toSeconds()));
         }
 
         properties.setProperty(ArangoProperties.ACQUIRE_HOST_LIST, String.valueOf(getAcquireHostList()));
-        properties.setProperty(ArangoProperties.ACQUIRE_HOST_LIST_INTERVAL, String.valueOf(getAcquireHostListInterval()));
+        properties.setProperty(ArangoProperties.ACQUIRE_HOST_LIST_INTERVAL,
+                String.valueOf(getAcquireHostListInterval().toMillis()));
         properties.setProperty(ArangoProperties.LOAD_BALANCING_STRATEGY, String.valueOf(getLoadBalancingStrategy()));
         properties.setProperty(ArangoProperties.RESPONSE_QUEUE_TIME_SAMPLES, String.valueOf(getResponseQueueTimeSamples()));
         return properties;
@@ -393,11 +398,11 @@ public class ArangoConfiguration {
      * @see com.arangodb.ArangoDB.Builder#connectionTtl(Long)
      * @return value
      */
-    public Long getConnectionTtl() {
+    public Duration getConnectionTtl() {
         return connectionTtl;
     }
 
-    public void setConnectionTtl(Long connectionTtl) {
+    public void setConnectionTtl(Duration connectionTtl) {
         this.connectionTtl = connectionTtl;
     }
 
@@ -405,11 +410,11 @@ public class ArangoConfiguration {
      * @see com.arangodb.ArangoDB.Builder#keepAliveInterval(Integer)
      * @return value
      */
-    public Integer getKeepAliveInterval() {
+    public Duration getKeepAliveInterval() {
         return keepAliveInterval;
     }
 
-    public void setKeepAliveInterval(Integer keepAliveInterval) {
+    public void setKeepAliveInterval(Duration keepAliveInterval) {
         this.keepAliveInterval = keepAliveInterval;
     }
 
@@ -428,11 +433,11 @@ public class ArangoConfiguration {
      * @see com.arangodb.ArangoDB.Builder#acquireHostListInterval(Integer)
      * @return value
      */
-    public int getAcquireHostListInterval() {
+    public Duration getAcquireHostListInterval() {
         return acquireHostListInterval;
     }
 
-    public void setAcquireHostListInterval(int acquireHostListInterval) {
+    public void setAcquireHostListInterval(Duration acquireHostListInterval) {
         this.acquireHostListInterval = acquireHostListInterval;
     }
 
