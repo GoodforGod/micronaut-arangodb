@@ -12,7 +12,7 @@ This project includes integration between Micronaut and ArangoDB.
 
 [**Gradle**](https://mvnrepository.com/artifact/com.github.goodforgod/micronaut-arangodb)
 ```groovy
-implementation "com.github.goodforgod:micronaut-arangodb:4.0.0"
+implementation "com.github.goodforgod:micronaut-arangodb:4.0.1"
 ```
 
 [**Maven**](https://mvnrepository.com/artifact/com.github.goodforgod/micronaut-arangodb)
@@ -20,7 +20,7 @@ implementation "com.github.goodforgod:micronaut-arangodb:4.0.0"
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>4.0.0</version>
+    <version>4.0.1</version>
 </dependency>
 ```
 
@@ -134,15 +134,15 @@ arangodb:
   password: password                      # default - null
   database: _system                       # default - _system
   protocol: HTTP2_JSON                    # default - HTTP2_JSON
-  timeout: 10000ms                        # default - 10000 in milliseconds
   jwt: YourToken                          # default - null
   chunksize: 3000                         # default - 30000
+  timeout: 60s                            # default - 60000 in milliseconds (1 min)
   connection-max: 30                      # default - 1
-  connection-ttl: 200                     # default - null
+  connection-ttl: 2000ms                  # default - null
+  keep-alive-interval: 2000ms             # default - null
   verify-host: true                       # default - true
-  keep-alive-interval: 200                # default - null
   acquire-host-list: true                 # default - false
-  acquire-host-list-interval: 360000      # default - 3600000 (hour)
+  acquire-host-list-interval: 1h          # default - 3600000 in millis (1 hour)
   load-balancing-strategy: ONE_RANDOM     # default - NONE (check LoadBalancingStrategy for more)
   response-queue-time-samples: 10         # default - 10
 ```

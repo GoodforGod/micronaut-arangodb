@@ -5,6 +5,7 @@ import com.arangodb.Protocol;
 import com.arangodb.entity.DatabaseEntity;
 import io.micronaut.context.ApplicationContext;
 import io.testcontainers.arangodb.containers.ArangoContainer;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,9 +61,9 @@ class ArangoClientAuthTests extends ArangoRunner {
 
             configuration.setProtocol(Protocol.VST);
             configuration.setAcquireHostList(true);
-            configuration.setConnectionTtl(10000L);
-            configuration.setKeepAliveInterval(10000);
-            configuration.setConnectionTtl(10000L);
+            configuration.setConnectionTtl(Duration.ofMillis(10000L));
+            configuration.setKeepAliveInterval(Duration.ofMillis(10000));
+            configuration.setConnectionTtl(Duration.ofMillis(10000L));
             configuration.setHosts(List.of("localhost:8080", "localhost:8081"));
             configuration.setJwt("123");
             configuration.setResponseQueueTimeSamples(123);
