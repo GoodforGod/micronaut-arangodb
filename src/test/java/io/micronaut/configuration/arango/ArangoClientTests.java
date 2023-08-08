@@ -26,13 +26,12 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 class ArangoClientTests extends ArangoRunner {
 
     @Container
-    private static final ArangoContainer CONTAINER = getContainer()
-            .withoutAuth();
+    private static final ArangoContainer<?> CONTAINER_3_11 = new ArangoContainer<>(IMAGE_3_11).withoutAuth();
 
     @Test
     void createConnectionWithCustomDatabaseAndDatabaseNotExistByDefault() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER_3_11.getPort()));
         properties.put("arangodb.database", "custom");
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
@@ -72,7 +71,7 @@ class ArangoClientTests extends ArangoRunner {
         final Map<String, Object> properties = new HashMap<>();
         final String database = "custom-serialization";
         final String collection = "custom-serialization";
-        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER_3_11.getPort()));
         properties.put("arangodb.database", database);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
@@ -149,7 +148,7 @@ class ArangoClientTests extends ArangoRunner {
         final Map<String, Object> properties = new HashMap<>();
         final String database = "micronaut-serialization";
         final String collection = "micronaut-serialization";
-        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER_3_11.getPort()));
         properties.put("arangodb.database", database);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
@@ -180,7 +179,7 @@ class ArangoClientTests extends ArangoRunner {
     @Test
     void createDatabaseSuccess() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER_3_11.getPort()));
         properties.put("arangodb.database", "async-custom");
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
@@ -199,7 +198,7 @@ class ArangoClientTests extends ArangoRunner {
         final String collection = "custom123456";
 
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER_3_11.getPort()));
         properties.put("arangodb.database", database);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
@@ -227,7 +226,7 @@ class ArangoClientTests extends ArangoRunner {
     @Test
     void createDatabaseForProtocolHttpSimpleQuerySuccess() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER_3_11.getPort()));
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.protocol", "HTTP_JSON");
 
@@ -256,7 +255,7 @@ class ArangoClientTests extends ArangoRunner {
     @Test
     void createDatabaseSyncSuccess() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER_3_11.getPort()));
         properties.put("arangodb.database", "sync-custom");
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
@@ -275,7 +274,7 @@ class ArangoClientTests extends ArangoRunner {
     @Test
     void createConfigurationForHostsAsListValidClient() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER_3_11.getPort()));
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClient client = context.getBean(ArangoClient.class);
@@ -286,7 +285,8 @@ class ArangoClientTests extends ArangoRunner {
     @Test
     void createConfigurationForHostsAsStringValidClient() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", String.format("localhost:%s,localhost:%s", CONTAINER.getPort(), CONTAINER.getPort()));
+        properties.put("arangodb.hosts",
+                String.format("localhost:%s,localhost:%s", CONTAINER_3_11.getPort(), CONTAINER_3_11.getPort()));
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
             final ArangoClient client = context.getBean(ArangoClient.class);

@@ -80,7 +80,7 @@ class ArangoConfigurationTests extends ArangoRunner {
             final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
             assertNotNull(configuration);
             assertNotNull(configuration.getHosts());
-            assertEquals(1, configuration.getHosts().size());
+            assertEquals(2, configuration.getHosts().size());
             assertTrue(configuration.getHosts().contains("localhost:8528"));
         }
     }
@@ -94,7 +94,7 @@ class ArangoConfigurationTests extends ArangoRunner {
             final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
             assertNotNull(configuration);
             assertNotNull(configuration.getHosts());
-            assertEquals(1, configuration.getHosts().size());
+            assertEquals(2, configuration.getHosts().size());
             assertTrue(configuration.getHosts().contains("localhost:8528"));
         }
     }
