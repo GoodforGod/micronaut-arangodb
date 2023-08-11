@@ -1,9 +1,9 @@
 # Micronaut ArangoDB Configuration
 
 ![GraalVM Enabled](https://img.shields.io/badge/GraalVM-Ready-orange?style=plastic)
-[![Minimum required Java version](https://img.shields.io/badge/Java-11%2B-blue?logo=openjdk)](https://openjdk.org/projects/jdk/11/)
+[![Minimum required Java version](https://img.shields.io/badge/Java-17%2B-blue?logo=openjdk)](https://openjdk.org/projects/jdk/17/)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.goodforgod/micronaut-arangodb/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.goodforgod/micronaut-arangodb)
-![Java CI](https://github.com/GoodforGod/micronaut-arangodb/workflows/Release/badge.svg)
+![Java CI](https://github.com/GoodforGod/micronaut-arangodb/workflows/CI%20Master/badge.svg)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=GoodforGod_micronaut-arangodb&metric=alert_status)](https://sonarcloud.io/dashboard?id=GoodforGod_micronaut-arangodb)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=GoodforGod_micronaut-arangodb&metric=coverage)](https://sonarcloud.io/dashboard?id=GoodforGod_micronaut-arangodb)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=GoodforGod_micronaut-arangodb&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=GoodforGod_micronaut-arangodb)
@@ -335,7 +335,7 @@ check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Micronaut Compatability
 
-Starting from version *5.0.0* library ships for *Micronaut 4*.
+Starting from version *5.0.0* library ships for *Micronaut 4* and Java 17 is required.
 
 Starting from version *3.0.0* library ships for *Micronaut 3*.
 

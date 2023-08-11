@@ -1,4 +1,4 @@
-name: Dev
+name: CI Dev
 
 on:
   push:

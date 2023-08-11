@@ -1,4 +1,4 @@
-name: Pull Request
+name: CI Pull Request
 
 on:
   pull_request:
@@ -29,7 +29,7 @@ jobs:
         run: './gradlew classes'
 
       - name: Test
-        run: './gradlew test jacocoTestReport testCodeCoverageReport'
+        run: './gradlew test jacocoTestReport'
 
       - name: SonarQube
         if: matrix.java == '17'
