@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -19,6 +20,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  * @since 11.3.2020
  */
 @Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ArangoClientAuthTests extends ArangoRunner {
 
     private static final String PASS = "mypass";

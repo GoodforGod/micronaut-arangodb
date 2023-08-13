@@ -7,11 +7,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 /**
  * @author Anton Kurako (GoodforGod)
  * @since 03.09.2021
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ArangoHealthModelsTests extends Assertions {
 
     @Test

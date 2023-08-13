@@ -8,11 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 /**
  * @author Anton Kurako (GoodforGod)
  * @since 28.2.2020
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ArangoConfigurationTests extends ArangoRunner {
 
     @Test

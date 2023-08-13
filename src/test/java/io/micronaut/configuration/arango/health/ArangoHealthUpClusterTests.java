@@ -12,10 +12,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import reactor.core.publisher.Flux;
@@ -28,6 +26,7 @@ import reactor.core.publisher.Mono;
  * @since 29.2.2020
  */
 @Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ArangoHealthUpClusterTests extends ArangoRunner {
 
     @Container
@@ -35,17 +34,33 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
     @Container
     private static final ArangoCluster CLUSTER_3_7 = ArangoCluster.builder(IMAGE_3_7).build();
 
-    static Stream<Arguments> data() {
-        return Stream.of(
-                Arguments.of(CLUSTER_3_11),
-                Arguments.of(CLUSTER_3_7));
+    @Test
+    void healthSingleUpForSystemDatabase() {
+        checkHealthSingleUpForSystemDatabase(CLUSTER_3_7);
+        checkHealthSingleUpForSystemDatabase(CLUSTER_3_11);
     }
 
-    @MethodSource("data")
-    @ParameterizedTest
-    void healthSingleUpForSystemDatabase(ArangoCluster cluster) {
+    @Test
+    void healthSingleUpForCustomDatabase() {
+        checkHealthSingleUpForCustomDatabase(CLUSTER_3_7);
+        checkHealthSingleUpForCustomDatabase(CLUSTER_3_11);
+    }
+
+    @Test
+    void healthClusterUpForSystemDatabase() {
+        checkHealthClusterUpForSystemDatabase(CLUSTER_3_7);
+        checkHealthClusterUpForSystemDatabase(CLUSTER_3_11);
+    }
+
+    @Test
+    void healthClusterUpForCustomDatabase() {
+        checkHealthClusterUpForCustomDatabase(CLUSTER_3_7);
+        checkHealthClusterUpForCustomDatabase(CLUSTER_3_11);
+    }
+
+    void checkHealthSingleUpForSystemDatabase(ArangoCluster cluster) {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", List.of(cluster.getHost() + ":" + cluster.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + cluster.getPort()));
         properties.put("arangodb.create-database-if-not-exist", true);
         properties.put("endpoints.health.arangodb.cluster.enabled", true);
 
@@ -63,11 +78,9 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
         }
     }
 
-    @MethodSource("data")
-    @ParameterizedTest
-    void healthSingleUpForCustomDatabase(ArangoCluster cluster) {
+    void checkHealthSingleUpForCustomDatabase(ArangoCluster cluster) {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", List.of(cluster.getHost() + ":" + cluster.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + +cluster.getPort()));
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.create-database-timeout", Duration.ofSeconds(50));
         properties.put("endpoints.health.arangodb.cluster.enabled", true);
@@ -86,11 +99,9 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
         }
     }
 
-    @MethodSource("data")
-    @ParameterizedTest
-    void healthClusterUpForSystemDatabase(ArangoCluster cluster) {
+    void checkHealthClusterUpForSystemDatabase(ArangoCluster cluster) {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", List.of(cluster.getHost() + ":" + cluster.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + +cluster.getPort()));
         properties.put("endpoints.health.arangodb.cluster.enabled", true);
 
         try (final ApplicationContext context = ApplicationContext.run(properties)) {
@@ -109,11 +120,9 @@ class ArangoHealthUpClusterTests extends ArangoRunner {
         }
     }
 
-    @MethodSource("data")
-    @ParameterizedTest
-    void healthClusterUpForCustomDatabase(ArangoCluster cluster) {
+    void checkHealthClusterUpForCustomDatabase(ArangoCluster cluster) {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", List.of(cluster.getHost() + ":" + cluster.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + +cluster.getPort()));
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.create-database-if-not-exist", true);
         properties.put("arangodb.create-database-timeout", Duration.ofSeconds(50));

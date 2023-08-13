@@ -11,10 +11,12 @@ import java.util.List;
 import java.util.Map;
 import javax.net.ssl.SSLContext;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ArangoSSLContextTests extends ArangoRunner {
 
     @Container

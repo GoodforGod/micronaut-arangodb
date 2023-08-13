@@ -55,7 +55,7 @@ dependencies {
     testRuntimeOnly "com.arangodb:jackson-dataformat-velocypack:4.1.0"
     testRuntimeOnly "ch.qos.logback:logback-classic:1.4.9"
     testImplementation "org.testcontainers:junit-jupiter:1.17.6"
-    testImplementation "com.github.goodforgod:arangodb-testcontainer:3.0.0"
+    testImplementation "com.github.goodforgod:arangodb-testcontainer:3.0.1"
 
     testCompileOnly "io.micronaut.serde:micronaut-serde-jackson"
     testImplementation "io.micronaut.test:micronaut-test-core"
@@ -68,11 +68,12 @@ dependencies {
 }
 
 test {
-    failFast(true)
+    failFast(false)
     useJUnitPlatform()
     testLogging {
         events("passed", "skipped", "failed")
         exceptionFormat("full")
+        showStandardStreams(false)
     }
 
     reports {
@@ -104,8 +105,8 @@ nexusPublishing {
         sonatype {
             username = System.getenv("OSS_USERNAME")
             password = System.getenv("OSS_PASSWORD")
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
         }
     }
 }

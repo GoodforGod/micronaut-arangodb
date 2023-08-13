@@ -7,10 +7,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -20,6 +17,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ArangoDatabaseInitializerTests extends ArangoRunner {
 
     @Container

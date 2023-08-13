@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -23,6 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  * @since 28.2.2020
  */
 @Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ArangoClientTests extends ArangoRunner {
 
     @Container
