@@ -1,7 +1,9 @@
 # Micronaut ArangoDB Configuration
 
-[![Minimum required Java version](https://img.shields.io/badge/Java-11%2B-blue?logo=openjdk)](https://openjdk.org/projects/jdk/11/)
-![Java CI](https://github.com/GoodforGod/micronaut-arangodb/workflows/Java%20CI/badge.svg)
+![GraalVM Enabled](https://img.shields.io/badge/GraalVM-Ready-orange?style=plastic)
+[![Minimum required Java version](https://img.shields.io/badge/Java-17%2B-blue?logo=openjdk)](https://openjdk.org/projects/jdk/17/)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.goodforgod/micronaut-arangodb/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.goodforgod/micronaut-arangodb)
+![Java CI](https://github.com/GoodforGod/micronaut-arangodb/workflows/CI%20Master/badge.svg)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=GoodforGod_micronaut-arangodb&metric=alert_status)](https://sonarcloud.io/dashboard?id=GoodforGod_micronaut-arangodb)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=GoodforGod_micronaut-arangodb&metric=coverage)](https://sonarcloud.io/dashboard?id=GoodforGod_micronaut-arangodb)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=GoodforGod_micronaut-arangodb&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=GoodforGod_micronaut-arangodb)
@@ -12,7 +14,7 @@ This project includes integration between Micronaut and ArangoDB.
 
 [**Gradle**](https://mvnrepository.com/artifact/com.github.goodforgod/micronaut-arangodb)
 ```groovy
-implementation "com.github.goodforgod:micronaut-arangodb:4.0.1"
+implementation "com.github.goodforgod:micronaut-arangodb:5.0.0"
 ```
 
 [**Maven**](https://mvnrepository.com/artifact/com.github.goodforgod/micronaut-arangodb)
@@ -20,7 +22,7 @@ implementation "com.github.goodforgod:micronaut-arangodb:4.0.1"
 <dependency>
     <groupId>com.github.goodforgod</groupId>
     <artifactId>micronaut-arangodb</artifactId>
-    <version>4.0.1</version>
+    <version>5.0.0</version>
 </dependency>
 ```
 
@@ -332,6 +334,8 @@ TestContainers allows you to use integration tests against real database in all 
 check here for [TestContainers](https://www.testcontainers.org/).
 
 ## Micronaut Compatability
+
+Starting from version *5.0.0* library ships for *Micronaut 4* and Java 17 is required.
 
 Starting from version *3.0.0* library ships for *Micronaut 3*.
 

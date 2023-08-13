@@ -8,11 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 /**
  * @author Anton Kurako (GoodforGod)
  * @since 28.2.2020
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ArangoConfigurationTests extends ArangoRunner {
 
     @Test
@@ -80,7 +82,7 @@ class ArangoConfigurationTests extends ArangoRunner {
             final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
             assertNotNull(configuration);
             assertNotNull(configuration.getHosts());
-            assertEquals(1, configuration.getHosts().size());
+            assertEquals(2, configuration.getHosts().size());
             assertTrue(configuration.getHosts().contains("localhost:8528"));
         }
     }
@@ -94,7 +96,7 @@ class ArangoConfigurationTests extends ArangoRunner {
             final ArangoConfiguration configuration = context.getBean(ArangoConfiguration.class);
             assertNotNull(configuration);
             assertNotNull(configuration.getHosts());
-            assertEquals(1, configuration.getHosts().size());
+            assertEquals(2, configuration.getHosts().size());
             assertTrue(configuration.getHosts().contains("localhost:8528"));
         }
     }

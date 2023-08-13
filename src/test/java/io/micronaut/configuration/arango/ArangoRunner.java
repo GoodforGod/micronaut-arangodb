@@ -1,6 +1,5 @@
 package io.micronaut.configuration.arango;
 
-import io.testcontainers.arangodb.containers.ArangoContainer;
 import org.junit.jupiter.api.Assertions;
 
 /**
@@ -9,9 +8,6 @@ import org.junit.jupiter.api.Assertions;
  */
 public abstract class ArangoRunner extends Assertions {
 
-    protected static final String TAG = "3.10.5";
-
-    protected static ArangoContainer getContainer() {
-        return new ArangoContainer(TAG);
-    }
+    protected static final String IMAGE_3_11 = "arangodb:3.11.2";
+    protected static final String IMAGE_3_7 = "arangodb:3.7.18";
 }

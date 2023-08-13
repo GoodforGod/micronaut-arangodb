@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -19,19 +20,18 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  * @since 11.3.2020
  */
 @Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ArangoClientAuthTests extends ArangoRunner {
 
     private static final String PASS = "mypass";
 
     @Container
-    private static final ArangoContainer CONTAINER = getContainer()
-            .withFixedPort(ArangoContainer.DEFAULT_PORT)
-            .withPassword(PASS);
+    private static final ArangoContainer<?> CONTAINER_3_11 = new ArangoContainer<>(IMAGE_3_11).withPassword(PASS);
 
     @Test
     void createConnectionWithUserAndPassword() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
+        properties.put("arangodb.hosts", List.of(CONTAINER_3_11.getHost() + ":" + CONTAINER_3_11.getPort()));
         properties.put("arangodb.user", "tom");
         properties.put("arangodb.password", "1234");
 
@@ -48,7 +48,7 @@ class ArangoClientAuthTests extends ArangoRunner {
     @Test
     void createConnectionSuccessWithCorrectAuth() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER_3_11.getPort()));
         properties.put("arangodb.user", "root");
         properties.put("arangodb.password", PASS);
 

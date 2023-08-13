@@ -7,10 +7,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -20,17 +17,17 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ArangoDatabaseInitializerTests extends ArangoRunner {
 
     @Container
-    private static final ArangoContainer CONTAINER = getContainer()
-            .withoutAuth();
+    private static final ArangoContainer<?> CONTAINER_3_11 = new ArangoContainer<>(IMAGE_3_11).withoutAuth();
 
     @Order(1)
     @Test
     void createConnectionWithCreateDatabaseIfNotExistOnStartup() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER_3_11.getPort()));
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.create-database-if-not-exist", true);
 
@@ -45,7 +42,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
     @Test
     void createdDatabaseInitIsSkipped() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER_3_11.getPort()));
         properties.put("arangodb.database", "custom");
         properties.put("arangodb.create-database-if-not-exist", true);
 
@@ -60,7 +57,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
     @Test
     void defaultDatabaseInitializationIsSkipped() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER_3_11.getPort()));
         properties.put("arangodb.database", ArangoSettings.SYSTEM_DATABASE);
         properties.put("arangodb.create-database-if-not-exist", true);
 
@@ -75,7 +72,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
     @Test
     void databaseCreationIsOff() {
         final Map<String, Object> properties = new HashMap<>();
-        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER_3_11.getPort()));
         properties.put("arangodb.database", "nodata");
         properties.put("arangodb.create-database-if-not-exist", false);
 
@@ -126,7 +123,7 @@ class ArangoDatabaseInitializerTests extends ArangoRunner {
     void databaseCreateAsync() {
         final Map<String, Object> properties = new HashMap<>();
         final String database = "asyncdb";
-        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER.getPort()));
+        properties.put("arangodb.hosts", List.of("localhost:" + CONTAINER_3_11.getPort()));
         properties.put("arangodb.database", database);
         properties.put("arangodb.create-database-if-not-exist", true);
         properties.put("arangodb.create-database-async", true);

@@ -5,11 +5,9 @@ import io.micronaut.context.annotation.Property;
 import io.micronaut.health.HealthStatus;
 import io.micronaut.management.health.indicator.HealthResult;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import io.testcontainers.arangodb.containers.ArangoContainer;
 import jakarta.inject.Inject;
 import java.time.Duration;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import reactor.core.publisher.Flux;
 
@@ -24,11 +22,6 @@ import reactor.core.publisher.Flux;
 @MicronautTest
 @Testcontainers
 class ArangoHealthDownTests extends ArangoRunner {
-
-    @Container
-    private static final ArangoContainer ARANGO_CONTAINER = getContainer()
-            .withoutAuth()
-            .withFixedPort(8528);
 
     @Inject
     private ArangoHealthIndicator healthIndicator;
