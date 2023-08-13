@@ -2,10 +2,10 @@ package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDBException;
 import io.micronaut.context.annotation.Context;
+import io.micronaut.context.annotation.Parallel;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.runtime.exceptions.ApplicationStartupException;
-import jakarta.annotation.PostConstruct;
 import java.time.Duration;
 import java.util.concurrent.*;
 import org.slf4j.Logger;
@@ -22,12 +22,21 @@ import org.slf4j.LoggerFactory;
 @Requires(beans = ArangoConfiguration.class)
 @Context
 @Internal
+@Parallel
 public class ArangoDatabaseInitializer {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @PostConstruct
-    public void setupDatabase(ArangoClient client, ArangoConfiguration configuration) {
+    private final ArangoClient client;
+    private final ArangoConfiguration configuration;
+
+    public ArangoDatabaseInitializer(ArangoClient client, ArangoConfiguration configuration) {
+        this.client = client;
+        this.configuration = configuration;
+        setupDatabase();
+    }
+
+    public void setupDatabase() {
         final String database = configuration.getDatabase();
         if (ArangoSettings.SYSTEM_DATABASE.equals(database)) {
             logger.debug("ArangoDB is configured to use System Database, skipping initialization");
