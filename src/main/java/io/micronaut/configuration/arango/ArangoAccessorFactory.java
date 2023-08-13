@@ -28,7 +28,7 @@ public class ArangoAccessorFactory {
     ArangoDB getAccessor(ArangoConfiguration configuration,
                          SSLContextProvider sslContextProvider,
                          @Nullable ArangoSerde serde) {
-        return getAccessorPrototype(configuration, sslContextProvider, serde);
+        return createAccessor(configuration, sslContextProvider, serde);
     }
 
     /**
@@ -46,6 +46,12 @@ public class ArangoAccessorFactory {
     ArangoDB getAccessorPrototype(ArangoConfiguration configuration,
                                   SSLContextProvider sslContextProvider,
                                   @Nullable ArangoSerde serde) {
+        return createAccessor(configuration, sslContextProvider, serde);
+    }
+
+    private ArangoDB createAccessor(ArangoConfiguration configuration,
+                                    SSLContextProvider sslContextProvider,
+                                    @Nullable ArangoSerde serde) {
         final ArangoSSLConfiguration sslConfiguration = configuration.getSslConfiguration();
 
         final ArangoDB.Builder builder = new ArangoDB.Builder();

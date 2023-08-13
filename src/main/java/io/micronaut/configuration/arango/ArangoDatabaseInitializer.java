@@ -2,6 +2,7 @@ package io.micronaut.configuration.arango;
 
 import com.arangodb.ArangoDBException;
 import io.micronaut.context.annotation.Context;
+import io.micronaut.context.annotation.Parallel;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.runtime.exceptions.ApplicationStartupException;
@@ -19,15 +20,24 @@ import org.slf4j.LoggerFactory;
  * @since 16.3.2020
  */
 @Requires(property = ArangoSettings.PREFIX + ".create-database-if-not-exist", value = "true", defaultValue = "false")
-@Requires(beans = ArangoConfiguration.class)
+@Requires(beans = { ArangoClient.class, ArangoConfiguration.class })
 @Context
 @Internal
+@Parallel
 public class ArangoDatabaseInitializer {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    private final ArangoClient client;
+    private final ArangoConfiguration configuration;
+
+    public ArangoDatabaseInitializer(ArangoClient client, ArangoConfiguration configuration) {
+        this.client = client;
+        this.configuration = configuration;
+    }
+
     @PostConstruct
-    public void setupDatabase(ArangoClient client, ArangoConfiguration configuration) {
+    public void setupDatabase() {
         final String database = configuration.getDatabase();
         if (ArangoSettings.SYSTEM_DATABASE.equals(database)) {
             logger.debug("ArangoDB is configured to use System Database, skipping initialization");
