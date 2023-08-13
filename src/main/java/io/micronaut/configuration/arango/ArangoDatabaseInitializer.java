@@ -6,6 +6,7 @@ import io.micronaut.context.annotation.Parallel;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Internal;
 import io.micronaut.runtime.exceptions.ApplicationStartupException;
+import jakarta.annotation.PostConstruct;
 import java.time.Duration;
 import java.util.concurrent.*;
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * @since 16.3.2020
  */
 @Requires(property = ArangoSettings.PREFIX + ".create-database-if-not-exist", value = "true", defaultValue = "false")
-@Requires(beans = ArangoConfiguration.class)
+@Requires(beans = { ArangoClient.class, ArangoConfiguration.class })
 @Context
 @Internal
 @Parallel
@@ -33,9 +34,9 @@ public class ArangoDatabaseInitializer {
     public ArangoDatabaseInitializer(ArangoClient client, ArangoConfiguration configuration) {
         this.client = client;
         this.configuration = configuration;
-        setupDatabase();
     }
 
+    @PostConstruct
     public void setupDatabase() {
         final String database = configuration.getDatabase();
         if (ArangoSettings.SYSTEM_DATABASE.equals(database)) {
